@@ -3,7 +3,7 @@ import {create } from "zustand"
 
 const BASE_URL = import.meta.env.MODE === "development" ? process.env.BACKEND_API_BASE_URL : "/"
 
-export const useAppStore = create((set,get)=>({
+export const useAuthStore = create((set,get)=>({
    token: localStorage.getItem("token") || null,
    authUser : null,
 

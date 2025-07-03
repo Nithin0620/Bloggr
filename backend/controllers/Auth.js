@@ -41,10 +41,15 @@ export const signup = async(req,res)=>{
             message:"Invalid OTP",
          })
       }
+
+      const profile = {
+         
+      }
+
       const hashedPassword = await bcrypt.hash(password , 10);
       const profilePic = `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`
 
-      const payload = {firstName , lastName , email , hashedPassword , profilePic}
+      const payload = {firstName , lastName , email , hashedPassword , profilePic,profile}
       const response = await User.create(payload);
 
       if(!response) {
@@ -62,5 +67,15 @@ export const signup = async(req,res)=>{
          success:false,
          message:"Error occured in the backend in the Signup controller", 
       })
+   }
+}
+
+
+export const login = (req,res)=>{
+   try{
+
+   }
+   catch(e){
+
    }
 }
