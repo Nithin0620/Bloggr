@@ -11,15 +11,15 @@ const profileSchema = new mongoose.Schema({
    },
    followers:[{
       type:mongoose.Schema.Types.ObjectId,
-      ref:User,
+      ref:"User",
    }],
    following:[{
       type:mongoose.Schema.Types.ObjectId,
-      ref:User,
+      ref:"User",
    }],
    posts:[{
       type:mongoose.Schema.Types.ObjectId,
-      ref:Post,
+      ref:"Post",
    }],
    theme:{
       type:String,
