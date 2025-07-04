@@ -1,7 +1,10 @@
+import user from "../modals/user";
+
 const User = require("../modals/user")
 const OTP = require("../modals/otp")
 const bcrypt = require("bcrypt")
 const gravatar = require('gravatar');
+const otpGenerator = require("otpGenerator");
 
 export const signup = async(req,res)=>{
    try{
@@ -43,7 +46,8 @@ export const signup = async(req,res)=>{
       }
 
       const profile = {
-         
+         name: firstName+""+lastName,
+         bio:"Hi i am a new User to Bloggr and i would like to connect with you all",
       }
 
       const hashedPassword = await bcrypt.hash(password , 10);
@@ -71,11 +75,115 @@ export const signup = async(req,res)=>{
 }
 
 
-export const login = (req,res)=>{
+export const login = async(req,res)=>{
    try{
+      const {email,password}= req.body;
 
+      if(!email || !password){
+         return res.status(400).json({
+            success:false,
+            message:"All fields are required",
+         })
+      }
+
+      const user = await User.findOne({email:email}).populate("profile").exec();
+      if(!user){
+         return res.status(400).json({
+            success:false,
+            message:"unable to find the user with this email",
+         })
+      }
+
+      const compared = bcrypt.compare(password,user.password);
+      if(compared){
+         const payload={
+            email:user.email,
+            id:user._id,
+         }
+
+         const Token = jwt.sign(payload,process.env.JWT_SECRET,{
+            expiresIn:"2h",
+         })
+
+         user.token = Token;
+         user.password = undefined;
+
+         const options = {
+            expires:new Date(Date.now()+3*24*60*60*1000),
+            httpOnly:true,
+         }
+
+         res.cookie("token",Token,{
+            expires:new Date(Date.now()+3*24*60*60*1000),
+            httpOnly:true,
+            secure:false,
+            sameSite:"lax",
+         }).status(200).json({
+            success:true,
+            Token,
+            data:user,
+            message:"Login successfull",
+         })
+      }else{
+            return res.status(500).json({
+            success: false,
+            message: "Password is incorrect",
+         });
+      }
+   } catch (e) {
+      console.log(e);
+      return res.status(500).json({
+         success: false,
+         message: "Error occured in login controller",
+      });
    }
-   catch(e){
+};
 
+
+export const sendOtp = async(req,res)=>{
+   try{
+      const {email} = req.body;
+
+      const checkUserPresent = await User.findOne({email:email});
+
+      if(checkUserPresent){
+         return res.status(401).json({
+            success:false,
+            message:"User already registered",
+         })
+      }
+
+      var otp = otpGenerator.generate(6,{
+         upperCaseAlphabets:false,
+         lowwerCaseAlphabets:false,
+         specialChars:false,
+      })
+
+      var result = await OTP.findOne({otp:otp});
+
+      while(result){
+         otp = otpGenerator.generate(6,{
+            upperCaseAlphabets:false,
+            lowwerCaseAlphabets:false,
+            specialChars:false,
+         })
+
+         result = await OTP.findOne({otp:otp});
+      }
+
+      const otpBody = await OTP.create({email,otp});
+
+      return res.status(200).json({
+         success:true,
+         otp:otpBody,
+         message:"Otp sent successfully",
+      })
+   }
+   catch (e) {
+      console.log(e);
+      return res.status(500).json({
+         success: false,
+         message: e.message,
+      });
    }
 }

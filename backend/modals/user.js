@@ -22,6 +22,9 @@ const userSchema = new mongoose.Schema({
       type:String,
       default:"",
    },
+   token:{
+      type:String,
+   },
    profile:{
       type:mongoose.Schema.Types.ObjectId,
       ref:Profile,
