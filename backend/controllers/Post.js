@@ -1,10 +1,7 @@
-import post from "../modals/post";
-import Profile from "../modals/profile";
-
 const User = require("../modals/user");
 const Post = require("../modals/post");
+const Profile = require("../modals/profile")
 const Category = require("../modals/category");
-
 const cloudinary = require("../configuration/cloudinary");
 
 export const createPost = async (req, res) => {
