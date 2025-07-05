@@ -172,7 +172,7 @@ export const getAllPosts = async (req, res) => {
     const response = await Post.find()
       .populate("author", "firstName lastName image")
       .populate("categories", "name")
-      .populate("likes", "firstName lastName")
+      .populate("likes", "firstName lastName createdAt")
       .populate({
         path: "comments",
         populate: { path: "user", select: "firstName lastName image" },

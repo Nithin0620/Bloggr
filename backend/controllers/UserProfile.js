@@ -257,7 +257,7 @@ export const getFollowersList = async(req,res)=>{
    try{
       const userId = req.params.id;
 
-      const user = await User.findById(userId).populate("profile");
+      const user = await User.findById(userId).populate({path:"profile" , populate:"followers"} );
       if(!user){
          return res.status(404).json({
             success:false,
@@ -286,7 +286,7 @@ export const getFollowingList = async(req,res)=>{
    try{
       const userId = req.params.id;
 
-      const user = await User.findById(userId).populate("profile");
+      const user = await User.findById(userId).populate({path:"profile" , populate:"following"} );
       if(!user){
          return res.status(404).json({
             success:false,
