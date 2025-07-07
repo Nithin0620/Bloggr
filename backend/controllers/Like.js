@@ -4,7 +4,7 @@ const Post = require("../modals/post");
 export const likeUnlikeAPost = async (req, res) => {
   try {
       const userId = req.user.id;
-      const { postId } = req.body;
+      const postId = req.params.id;
 
       const user = await User.findById(userId);
       if (!user) {

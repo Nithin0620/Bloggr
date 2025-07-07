@@ -4,7 +4,11 @@ const User = require("../modals/user");
 
 export const createCategory = async(req,res)=>{
    try{
+      const userId = req.user.id;
       const categoryName = req.body;
+
+      const user= await User.findById(userId);
+      if(!user) return res.status(404).json({success:false,message:"user not found"})
 
       if(!categoryName) return res.status(400).json({success:false,message:"Category Name required"});
 
@@ -20,15 +24,6 @@ export const createCategory = async(req,res)=>{
 
 export const getAllCategory = async(req,res)=>{
    try{
-      const userId = req.user.id;
-      
-      const user = await User.findById(userId);
-      if (!user) {
-         return res.status(404).json({
-            success: false,
-            message: "User not found",
-         });
-      }
 
       const categories = await Category.find();
       if(!categories) return res.status(404).json({success:false,message:"categories not found"});

@@ -74,7 +74,7 @@ export const markAllAsRead = async(req,res)=>{
 export const deleteaNotification = async(req,res)=>{
    try{
       const userId = req.user.id;
-      const {notificationId} = req.body;
+      const notificationId = req.params.id;
 
       const user = await User.findById(userId);
       if (!user) {
@@ -100,7 +100,7 @@ export const deleteaNotification = async(req,res)=>{
 export const setNotificationAsRead = async(req,res)=>{
    try{
       const userId = req.user.id;
-      const {notificationId} = req.body;
+      const notificationId = req.params.id;
 
       const user = await User.findById(userId);
       if (!user) {
