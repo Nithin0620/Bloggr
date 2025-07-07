@@ -6,7 +6,7 @@ const cloudinary = require("../configuration/cloudinary");
 
 export const createPost = async (req, res) => {
   try {
-    const { author } = req.user._id;
+    const { author } = req.user.id;
     const { title, content, categories, image, readTime } = req.body;
 
     if (!title || !content || !categories || !image || !readTime) {
@@ -40,7 +40,7 @@ export const createPost = async (req, res) => {
     await Promise.all(
       categories.map(async (categoryId) => {
         await Category.findByIdAndUpdate(categoryId, {
-          $push: { posts: post._id },
+          $push: { posts: response._id },
         });
       })
     );
@@ -67,7 +67,7 @@ export const createPost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
   try {
-    const author = req.user._id;
+    const author = req.user.id;
     const { title, content, categories, image, readTime } = req.body;
     const postId = req.params.id;
 
@@ -125,7 +125,7 @@ export const updatePost = async (req, res) => {
 export const deletePost = async (req, res) => {
   try {
     const { postId } = req.params.id;
-    const userId = req.user._id;
+    const userId = req.user.id;
 
     if (!postId) {
       return res.status(400).json({
