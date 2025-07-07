@@ -74,7 +74,6 @@ export const signup = async(req,res)=>{
    }
 }
 
-
 export const login = async(req,res)=>{
    try{
       const {email,password}= req.body;
@@ -98,7 +97,7 @@ export const login = async(req,res)=>{
       if(compared){
          const payload={
             email:user.email,
-            id:user._id,
+            userId:user._id,
          }
 
          const Token = jwt.sign(payload,process.env.JWT_SECRET,{
@@ -113,7 +112,7 @@ export const login = async(req,res)=>{
             httpOnly:true,
          }
 
-         res.cookie("token",Token,{
+         res.cookie("jwt",Token,{
             expires:new Date(Date.now()+3*24*60*60*1000),
             httpOnly:true,
             secure:false,
@@ -138,7 +137,6 @@ export const login = async(req,res)=>{
       });
    }
 };
-
 
 export const sendOtp = async(req,res)=>{
    try{

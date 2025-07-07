@@ -6,7 +6,7 @@ const Comment = require("../modals/comment")
 
 export const addComment = async(req,res)=>{
    try{
-      const userId = req.user.id;
+      const userId = req.user._id;
       const postId = req.params.id;
 
       const {comment} = req.body;
@@ -42,7 +42,7 @@ export const addComment = async(req,res)=>{
 
 export const deleteComment = async(req,res)=>{
    try{
-      const userId = req.user.id;
+      const userId = req.user._id;
       const postId = req.params.id;
 
       const user= await User.findById(userId);

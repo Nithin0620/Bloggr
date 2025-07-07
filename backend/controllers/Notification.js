@@ -5,7 +5,7 @@ const User = require("../modals/user")
 
 export const getAllNotification = async (req, res) => {
    try {
-      const userId = req.user.id;
+      const userId = req.user._id;
 
       const user = await User.findById(userId);
       if (!user) {
@@ -34,7 +34,7 @@ export const getAllNotification = async (req, res) => {
 
 export const markAllAsRead = async(req,res)=>{
    try{
-      const userId = req.user.id;
+      const userId = req.user._id;
 
       const user = await User.findById(userId);
       if (!user) {
@@ -73,7 +73,7 @@ export const markAllAsRead = async(req,res)=>{
 
 export const deleteaNotification = async(req,res)=>{
    try{
-      const userId = req.user.id;
+      const userId = req.user._id;
       const notificationId = req.params.id;
 
       const user = await User.findById(userId);
@@ -99,7 +99,7 @@ export const deleteaNotification = async(req,res)=>{
 
 export const setNotificationAsRead = async(req,res)=>{
    try{
-      const userId = req.user.id;
+      const userId = req.user._id;
       const notificationId = req.params.id;
 
       const user = await User.findById(userId);

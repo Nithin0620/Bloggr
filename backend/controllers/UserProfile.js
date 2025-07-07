@@ -44,7 +44,7 @@ export const viewUserProfile = async(req,res)=>{
 
 export const updateProfileInfo = async (req, res) => {
   try {
-      const userId = req.user.id;
+      const userId = req.user._id;
 
       const user = await User.findById(userId).populate("profile");
       
@@ -98,7 +98,7 @@ export const updateProfileInfo = async (req, res) => {
 
 export const uploadProfilePic = async(req,res)=>{
    try{
-      const userId = req.user.id;
+      const userId = req.user._id;
 
       const user = await User.findById(userId);
       
@@ -129,7 +129,7 @@ export const uploadProfilePic = async(req,res)=>{
 
 export const deleteProfilePic = async(req,res)=>{
    try{
-      const userId = req.user.id;
+      const userId = req.user._id;
 
       const user = await User.findById(userId);
       
@@ -155,7 +155,7 @@ export const deleteProfilePic = async(req,res)=>{
 
 export const followUser = async (req, res) => {
   try {
-      const currentUserId = req.user.id;
+      const currentUserId = req.user._id;
       const targetUserId = req.params.id;
 
       if (currentUserId === targetUserId) {
@@ -207,7 +207,7 @@ export const followUser = async (req, res) => {
 
 export const unfollowUser = async(req,res)=>{
    try{
-      const currentUserId = req.user.id;
+      const currentUserId = req.user._id;
       const targetUserId = req.params.id;
 
       if (currentUserId === targetUserId) {
