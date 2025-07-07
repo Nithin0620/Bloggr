@@ -1,5 +1,6 @@
 const express = require("express")
 const router = express.Router();
+const {protectRoutes} = require("../middlewares/auth.middleware")
 
 const { 
    addComment,
@@ -12,6 +13,7 @@ const {
 } = require("../controllers/Like")
 
 const {
+   createNotification,
    getAllNotification,
    markAllAsRead,
    deleteaNotification,
@@ -29,6 +31,7 @@ router.get("/getcomments/:id",getComments)
 router.put("/like-unlikepost/:id",protectRoutes,likeUnlikeAPost);
 
 //Notification
+router.post("/createnotification/:id",protectRoutes,createNotification)
 router.get("/getallnotification",protectRoutes,getAllNotification);
 router.put("/markallasread",protectRoutes,markAllAsRead);
 router.delete("/deletenotification/:id",protectRoutes,deleteaNotification);

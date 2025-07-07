@@ -1,7 +1,52 @@
-import notification from "../modals/notification";
-
 const Notification = require("../modals/notification")
 const User = require("../modals/user")
+const getReceiverSocketId = require("../configuration/socket")
+
+
+export const createNotification = async (req, res) => {
+   try {
+      const receiver = req.params.id;
+      const sender = req.user._id;
+      const { type, post } = req.body;
+
+      if (!sender) {
+         return res.status(401).json({ success: false, message: "Unauthorized user" });
+      }
+
+      if (!type) {
+         return res.status(400).json({ success: false, message: "Notification type is required" });
+      }
+
+      if ((type === "like" || type === "comment") && !post) {
+         return res.status(400).json({ success: false, message: "Post ID is required for like/comment notifications" });
+      }
+
+      const payload = { sender, receiver, type, ...(post && { post }) };
+
+      const response = await Notification.create(payload);
+      const user = await User.findById(sender);
+
+      if (!user) {
+         return res.status(404).json({ success: false, message: "User not found" });
+      }
+
+      if (!response) {
+         return res.status(400).json({ success: false, message: "Error occurred in creating new notification" });
+      }
+
+      const receiverSocketId = getReceiverSocketId(receiver);
+      if (receiverSocketId) {
+         io.to(receiverSocketId).emit("newNotification", { response, user });
+      }
+
+      return res.status(200).json({ success: true, message: "Notification created" });
+
+   } 
+   catch (e) {
+      console.log(e);
+      return res.status(500).json({ success: false, message: "Error occurred in creating new notification" });
+   }
+};
 
 export const getAllNotification = async (req, res) => {
    try {
