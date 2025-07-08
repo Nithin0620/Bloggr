@@ -46,7 +46,7 @@ exports.likeUnlikeAPost = async (req, res) => {
    }
 };
 
-exports.isCurrentUserLiked = async(req,res)=>{
+exports.haveCurrentUserLiked = async(req,res)=>{
    try{
       const userId = req.user._id;
       const postId = req.params.id;

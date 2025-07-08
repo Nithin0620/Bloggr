@@ -1,6 +1,7 @@
 const Notification = require("../modals/notification")
 const User = require("../modals/user")
 const getReceiverSocketId = require("../configuration/socket")
+const Post = require("../modals/post")
 
 
 exports.createNotification = async (req, res) => {
@@ -21,7 +22,12 @@ exports.createNotification = async (req, res) => {
          return res.status(400).json({ success: false, message: "Post ID is required for like/comment notifications" });
       }
 
-      const payload = { sender, receiver, type, ...(post && { post }) };
+      var PostResponse;
+      if(post){
+         PostResponse = await Post.findById(post).populate("author");
+      }
+
+      const payload = { sender, receiver, type, ...(post && { PostResponse }) };
 
       const response = await Notification.create(payload);
       const user = await User.findById(sender);
@@ -39,7 +45,7 @@ exports.createNotification = async (req, res) => {
          io.to(receiverSocketId).emit("newNotification", { response, user });
       }
 
-      return res.status(200).json({ success: true, message: "Notification created" });
+      return res.status(200).json({ success: true, message: "Notification created",data:response });
 
    } 
    catch (e) {
@@ -99,7 +105,6 @@ exports.markAllAsRead = async(req,res)=>{
          )
       );
 
-      await notifications.save();
 
       return res.status(200).json({
          success: true,
@@ -130,11 +135,11 @@ exports.deleteaNotification = async(req,res)=>{
       }
 
       const notification = await Notification.findById(notificationId);
-      if(notification.receiver !== userId) return res.status(401).json({success:false,message:"You can't delete this notification"})
+      if(notification.receiver.toString() !== userId.toString()) return res.status(401).json({success:false,message:"You can't delete this notification"})
 
       const deletedNotification = await Notification.findByIdAndDelete(notificationId);
 
-      return res.status(200).json({success:true,message:"Notification deleted successfully"});
+      return res.status(200).json({success:true,message:"Notification deleted successfully",data:deletedNotification});
    }
    catch(e){
       console.log(e)
@@ -156,11 +161,11 @@ exports.setNotificationAsRead = async(req,res)=>{
       }
 
       const notification = await Notification.findById(notificationId);
-      if(notification.receiver !== userId) return res.status(401).json({success:false,message:"You can't update this notification"})
+      if(notification.receiver.toString() !== userId.toString()) return res.status(401).json({success:false,message:"You can't update this notification"})
 
       const updatedNotification = await Notification.findByIdAndUpdate(notificationId,{isRead:true},{new:true});
 
-      return res.status(200).json({success:true,message:"Notification marked as read successfully"});
+      return res.status(200).json({success:true,message:"Notification marked as read successfully",data:updatedNotification});
    }
    catch(e){
       console.log(e)

@@ -10,7 +10,7 @@ const {
 
 router.get("/getusersforsidebar", protectRoute, getUsersForSidebar);
 
-router.get("getmessages/:id", protectRoute, getMessages);
+router.get("/getmessages/:id", protectRoute, getMessages);
 
 router.post("/sendmessage/:id", protectRoute, sendMessage);
 
