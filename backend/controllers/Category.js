@@ -2,17 +2,17 @@ const Category = require("../modals/category")
 const User = require("../modals/user");
 
 
-export const createCategory = async(req,res)=>{
+exports.createCategory = async(req,res)=>{
    try{
       const userId = req.user._id;
-      const categoryName = req.body;
+      const {categoryName} = req.body;
 
       const user= await User.findById(userId);
       if(!user) return res.status(404).json({success:false,message:"user not found"})
 
       if(!categoryName) return res.status(400).json({success:false,message:"Category Name required"});
 
-      const newCategory = await Category.create(categoryName);
+      const newCategory = await Category.create({name:categoryName});
 
       return res.status(200).json({success:true,message:"New category created successfully",data:newCategory});
    }
@@ -22,7 +22,7 @@ export const createCategory = async(req,res)=>{
    }
 }
 
-export const getAllCategory = async(req,res)=>{
+exports.getAllCategory = async(req,res)=>{
    try{
 
       const categories = await Category.find();
@@ -36,7 +36,7 @@ export const getAllCategory = async(req,res)=>{
    }
 }
 
-export const getPostsByCategory = async (req, res) => {
+exports.getPostsByCategory = async (req, res) => {
   try {
       const categoryName = req.params.category;
 

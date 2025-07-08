@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../modals/user")
 require("dotenv").config();
 
-export const protectRoute = async(req,res,next)=>{
+exports.protectRoute = async(req,res,next)=>{
    try{
       const token = req.cookies.jwt;
 
@@ -32,3 +32,4 @@ export const protectRoute = async(req,res,next)=>{
       res.status(500).json({success:false,message:"Error occured in the middlware in the protection middleware"});
    }
 }
+

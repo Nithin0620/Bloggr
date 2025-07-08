@@ -3,7 +3,7 @@ const User = require("../modals/user")
 const getReceiverSocketId = require("../configuration/socket")
 
 
-export const createNotification = async (req, res) => {
+exports.createNotification = async (req, res) => {
    try {
       const receiver = req.params.id;
       const sender = req.user._id;
@@ -48,7 +48,7 @@ export const createNotification = async (req, res) => {
    }
 };
 
-export const getAllNotification = async (req, res) => {
+exports.getAllNotification = async (req, res) => {
    try {
       const userId = req.user._id;
 
@@ -77,7 +77,7 @@ export const getAllNotification = async (req, res) => {
    }
 };
 
-export const markAllAsRead = async(req,res)=>{
+exports.markAllAsRead = async(req,res)=>{
    try{
       const userId = req.user._id;
 
@@ -116,7 +116,7 @@ export const markAllAsRead = async(req,res)=>{
    }
 };
 
-export const deleteaNotification = async(req,res)=>{
+exports.deleteaNotification = async(req,res)=>{
    try{
       const userId = req.user._id;
       const notificationId = req.params.id;
@@ -142,7 +142,7 @@ export const deleteaNotification = async(req,res)=>{
    }
 }
 
-export const setNotificationAsRead = async(req,res)=>{
+exports.setNotificationAsRead = async(req,res)=>{
    try{
       const userId = req.user._id;
       const notificationId = req.params.id;

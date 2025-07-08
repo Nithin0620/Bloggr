@@ -4,7 +4,7 @@ const User = require("../modals/user")
 const Profile = require("../modals/profile")
 
 
-export const viewUserProfile = async(req,res)=>{
+exports.viewUserProfile = async(req,res)=>{
    try{
       const Id = req.params.id;
 
@@ -42,7 +42,7 @@ export const viewUserProfile = async(req,res)=>{
    }  
 }
 
-export const updateProfileInfo = async (req, res) => {
+exports.updateProfileInfo = async (req, res) => {
   try {
       const userId = req.user._id;
 
@@ -96,7 +96,7 @@ export const updateProfileInfo = async (req, res) => {
    }
 };
 
-export const uploadProfilePic = async(req,res)=>{
+exports.uploadProfilePic = async(req,res)=>{
    try{
       const userId = req.user._id;
 
@@ -127,7 +127,7 @@ export const uploadProfilePic = async(req,res)=>{
    }
 };
 
-export const deleteProfilePic = async(req,res)=>{
+exports.deleteProfilePic = async(req,res)=>{
    try{
       const userId = req.user._id;
 
@@ -153,7 +153,7 @@ export const deleteProfilePic = async(req,res)=>{
    }
 };
 
-export const followUser = async (req, res) => {
+exports.followUser = async (req, res) => {
   try {
       const currentUserId = req.user._id;
       const targetUserId = req.params.id;
@@ -205,7 +205,7 @@ export const followUser = async (req, res) => {
    }
 };
 
-export const unfollowUser = async(req,res)=>{
+exports.unfollowUser = async(req,res)=>{
    try{
       const currentUserId = req.user._id;
       const targetUserId = req.params.id;
@@ -253,7 +253,7 @@ export const unfollowUser = async(req,res)=>{
    }
 };
 
-export const getFollowersList = async(req,res)=>{
+exports.getFollowersList = async(req,res)=>{
    try{
       const userId = req.params.id;
 
@@ -282,7 +282,7 @@ export const getFollowersList = async(req,res)=>{
    }
 }
 
-export const getFollowingList = async(req,res)=>{
+exports.getFollowingList = async(req,res)=>{
    try{
       const userId = req.params.id;
 

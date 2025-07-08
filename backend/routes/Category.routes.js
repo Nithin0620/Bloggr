@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router();
-const {protectRoutes} = require("../middlewares/auth.middleware")
+const {protectRoute} = require("../middlewares/auth.middleware")
 
 const { 
    createCategory,
@@ -9,9 +9,9 @@ const {
 } = require("../controllers/Category")
 
 
-router.post("/createcategory/",protectRoute,createCategory);
+router.post("/createcategory",protectRoute,createCategory);
 router.get("/getallcategory",getAllCategory)
-router.post("/getpostsbycategory/:category",getPostsByCategory);
+router.get("/getpostsbycategory/:category",getPostsByCategory);
 
 
 

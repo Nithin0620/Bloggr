@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 
-export const dbConnect = ()=>{
+exports.dbConnect = ()=>{
    mongoose.connect(process.env.DATABASE_URL)
    .then(()=>{
       console.log("DataBase connected Successfully");
@@ -13,3 +13,4 @@ export const dbConnect = ()=>{
       process.exit(1);
    })
 }
+

@@ -10,21 +10,15 @@ const {app,server} = require("./configuration/socket")
 const authRoutes = require("./routes/Auth.routes");
 const categoryRoutes = require("./routes/Category.routes");
 const interactionRoutes = require("./routes/Interactions.routes");
+const messageRoutes = require("./routes/Message.routes")
 const postRoutes = require("./routes/Post.routes");
 const profileRoutes = require("./routes/Profile.routes");
 
 const PORT  = process.env.PORT || 5000;
 
 
-//Mounting API's
-app.use("/api/auth",authRoutes);
-app.use("/api/category",categoryRoutes);
-app.use("api/interactions",interactionRoutes);
-app.use("/api/post",postRoutes);
-app.use("/api/profile",profileRoutes);
-
-
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
    cors({
@@ -32,6 +26,15 @@ app.use(
       credentials:true
    })
 );
+
+
+//Mounting API's
+app.use("/api/auth",authRoutes);
+app.use("/api/category",categoryRoutes);
+app.use("/api/interactions",interactionRoutes);
+app.use("/api/messages",messageRoutes);
+app.use("/api/post",postRoutes);
+app.use("/api/profile",profileRoutes);
 
 
 server.listen(PORT,()=>{

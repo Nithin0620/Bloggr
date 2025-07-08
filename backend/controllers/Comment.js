@@ -4,12 +4,14 @@ const Comment = require("../modals/comment")
 
 
 
-export const addComment = async(req,res)=>{
+exports.addComment = async(req,res)=>{
    try{
       const userId = req.user._id;
       const postId = req.params.id;
 
       const {comment} = req.body;
+
+      if(!comment) return res.status(400).json({success:false,message:"Comment data is required"});
 
       const user= await User.findById(userId);
       if(!user) return res.status(404).json({success:false,message:"user not found"})
@@ -17,7 +19,7 @@ export const addComment = async(req,res)=>{
       const post = await Post.findById(postId);
       if(!post) return res.status(404).json({success:false,message:"Post not found"})
 
-      const newComment = await Comment.create({userId , postId , comment});
+      const newComment = await Comment.create({post:postId ,user:userId, text:comment});
 
       if(!newComment) return res.status(403).json({success:false,message:"failed to create new Comment"})
 
@@ -40,10 +42,13 @@ export const addComment = async(req,res)=>{
    }
 }
 
-export const deleteComment = async(req,res)=>{
+exports.deleteComment = async(req,res)=>{
    try{
       const userId = req.user._id;
-      const postId = req.params.id;
+      const postId = req.params.postid;
+
+      // console.log("post id ", postId);
+      // console.log("user id currently",userId)
 
       const user= await User.findById(userId);
       if(!user) return res.status(404).json({success:false,message:"user not found"})
@@ -51,11 +56,21 @@ export const deleteComment = async(req,res)=>{
       const post = await Post.findById(postId);
       if(!post) return res.status(404).json({success:false,message:"Post not found"})
 
-      const commentId = req.body;
-
+      const commentId = req.params.commentid;
+      // console.log("Comment id",commentId)
+      
       const comment = await Comment.findById(commentId);
 
-      if(comment.user !== userId) return res.status(401).json({success:false,message:"this user is not authorized to delete this comment"})
+      if (!comment) {
+         return res.status(404).json({
+            success: false,
+            message: "Comment not found"
+         });
+      }
+
+      // console.log("user who made this post",comment)
+
+      if(comment.user.toString() !== userId.toString()) return res.status(401).json({success:false,message:"this user is not authorized to delete this comment"})
       
       const updatedPost = await Post.findByIdAndUpdate(postId,{
          $pull:{comments:commentId},
@@ -78,11 +93,11 @@ export const deleteComment = async(req,res)=>{
    }
 }
 
-export const getComments = async(req,res)=>{
+exports.getComments = async(req,res)=>{
    try{
       const postId = req.params.id;
 
-      const post = await Post.findById(postId).populate({path:"comments",options:{sort:{createdAt:-1}} , populate:"user"});
+      const post = await Post.findById(postId).populate({path:"comments",options:{sort:{createdAt:-1}} , populate:{path:"user",select:"firstName lastName profile"}});
 
       if(!post) return res.status(404).json({
          success:false,

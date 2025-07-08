@@ -4,12 +4,12 @@ const Profile = require("../modals/profile")
 const Category = require("../modals/category");
 const cloudinary = require("../configuration/cloudinary");
 
-export const createPost = async (req, res) => {
+exports.createPost = async (req, res) => {
   try {
-    const { author } = req.user._id;
+    const author = req.user._id;
     const { title, content, categories, image, readTime } = req.body;
 
-    if (!title || !content || !categories || !image || !readTime) {
+    if (!title || !content || !categories || !readTime) {
       return res.status(400).json({
         success: false,
         message: "All the Fields are required",
@@ -24,26 +24,46 @@ export const createPost = async (req, res) => {
       });
     }
 
-    const imageUpload = await cloudinary.uploader.upload(image);
+    const categoryDocs = await Category.find({ name: { $in: categories } });
+    if (categoryDocs.length !== categories.length) {
+      return res.status(400).json({
+        success: false,
+        message: "One or more categories not found",
+      });
+    }
+    const categoryIds = categoryDocs.map(cat => cat._id);
+
+    var imageUpload;
+
+    if(image){
+      imageUpload = await cloudinary.uploader.upload(image);
+    }  
 
     const payload = {
       author: author,
       title: title,
       content: content,
       readTime: readTime,
-      categories: categories,
-      image: imageUpload.secure_url,
+      categories: categoryIds,
+      image:imageUpload ? imageUpload.secure_url : undefined
     };
 
     const response = await Post.create(payload);
 
+    // Add post to each category's posts array
     await Promise.all(
-      categories.map(async (categoryId) => {
+      categoryIds.map(async (categoryId) => {
         await Category.findByIdAndUpdate(categoryId, {
           $push: { posts: response._id },
         });
       })
     );
+
+    const user = await User.findById(author);
+
+    await Profile.findByIdAndUpdate(user.profile,{
+      $push:{posts: response._id},
+    })
 
     if (!response) {
       return res.status(500).json({
@@ -55,6 +75,7 @@ export const createPost = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Post created Successfully",
+      data: response,
     });
   } catch (e) {
     console.log(e);
@@ -65,13 +86,13 @@ export const createPost = async (req, res) => {
   }
 };
 
-export const updatePost = async (req, res) => {
+exports.updatePost = async (req, res) => {
   try {
     const author = req.user._id;
     const { title, content, categories, image, readTime } = req.body;
     const postId = req.params.id;
 
-    if (!title || !content || !categories || !image || !readTime) {
+    if (!title || !content || !categories || !readTime) {
       return res.status(400).json({
         success: false,
         message: "All the Fields are required",
@@ -86,6 +107,15 @@ export const updatePost = async (req, res) => {
       });
     }
 
+    const categoryDocs = await Category.find({ name: { $in: categories } });
+    if (categoryDocs.length !== categories.length) {
+      return res.status(400).json({
+        success: false,
+        message: "One or more categories not found",
+      });
+    }
+    const categoryIds = categoryDocs.map(cat => cat._id);
+
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(402).json({
@@ -94,15 +124,19 @@ export const updatePost = async (req, res) => {
       });
     }
 
-    const imageUpload = await cloudinary.uploader.upload(image);
+    var imageUpload;
+
+    if(image){
+      imageUpload = await cloudinary.uploader.upload(image);
+    }
 
     const payload = {
       author: author,
       title: title,
       content: content,
       readTime: readTime,
-      categories: categories,
-      image: imageUpload.secure_url,
+      categories: categoryIds,
+      image: imageUpload ? imageUpload.secure_url : undefined,
     };
 
     const response = await Post.findByIdAndUpdate(postId, payload, {
@@ -112,6 +146,7 @@ export const updatePost = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Post created Successfully",
+      data:response
     });
   } catch (e) {
     console.log(e);
@@ -122,9 +157,9 @@ export const updatePost = async (req, res) => {
   }
 };
 
-export const deletePost = async (req, res) => {
+exports.deletePost = async (req, res) => {
   try {
-    const { postId } = req.params.id;
+    const postId  = req.params.id;
     const userId = req.user._id;
 
     if (!postId) {
@@ -167,7 +202,7 @@ export const deletePost = async (req, res) => {
   }
 };
 
-export const getAllPosts = async (req, res) => {
+exports.getAllPosts = async (req, res) => {
   try {
     const response = await Post.find()
       .populate("author", "firstName lastName image")
@@ -176,15 +211,15 @@ export const getAllPosts = async (req, res) => {
       .populate({
         path: "comments",
         populate: { path: "user", select: "firstName lastName image" },
-      })
+      }).sort({ createdAt: -1 })
       .exec();
 
-    const finalResponse = response.sort({ createdAt: -1 }); //jo naya, vo  pehle ayega
+    // const finalResponse = response.sort({ createdAt: -1 }); //jo naya, vo  pehle ayega
 
     return res.status(200).json({
       success: true,
       message: "All posts fetched successfully",
-      data: finalResponse,
+      data: response,
     });
   } catch (e) {
     console.log(e);
@@ -195,7 +230,7 @@ export const getAllPosts = async (req, res) => {
   }
 };
 
-export const getPostById = async (req, res) => {
+exports.getPostById = async (req, res) => {
   try {
     const postId = req.params.id;
 
@@ -224,7 +259,7 @@ export const getPostById = async (req, res) => {
   }
 };
 
-export const getPostByCategory = async (req, res) => {
+exports.getPostByCategory = async (req, res) => {
   try {
       const categoryName = req.params.category;
 
@@ -264,7 +299,7 @@ export const getPostByCategory = async (req, res) => {
    }
 };
 
-export const getPostByUser = async(req,res)=>{
+exports.getPostByUser = async(req,res)=>{
    try{
       const userId = req.params.id;
 
@@ -295,7 +330,7 @@ export const getPostByUser = async(req,res)=>{
       return res.status(200).json({
          success: true,
          message: "Posts fetched by User Id successfully",
-         data: response.posts,
+         data: response,
       });
    }
    catch (e) {

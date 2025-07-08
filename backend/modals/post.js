@@ -17,7 +17,7 @@ const postSchema = new mongoose.Schema({
    categories:[
       {
          type:mongoose.Schema.Types.ObjectId,
-         ref:"category",
+         ref:"Category",
       }
    ],
    likes:[

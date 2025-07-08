@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router();
-const {protectRoutes} = require("../middlewares/auth.middleware")
+const {protectRoute} = require("../middlewares/auth.middleware")
 
 const { 
    addComment,
@@ -23,19 +23,19 @@ const {
 
 
 //Comment;
-router.post("/addcomment/:id",protectRoutes,addComment);
-router.delete("/deletecomment/:id",protectRoutes,deleteComment);
+router.post("/addcomment/:id",protectRoute,addComment);
+router.delete("/deletecomment/:postid/:commentid",protectRoute,deleteComment);
 router.get("/getcomments/:id",getComments)
 
 //Like
-router.put("/like-unlikepost/:id",protectRoutes,likeUnlikeAPost);
+router.put("/like-unlikepost/:id",protectRoute,likeUnlikeAPost);
 
 //Notification
-router.post("/createnotification/:id",protectRoutes,createNotification)
-router.get("/getallnotification",protectRoutes,getAllNotification);
-router.put("/markallasread",protectRoutes,markAllAsRead);
-router.delete("/deletenotification/:id",protectRoutes,deleteaNotification);
-router.put("/setnotificationasread/:id",protectRoutes,setNotificationAsRead);
+router.post("/createnotification/:id",protectRoute,createNotification)
+router.get("/getallnotification",protectRoute,getAllNotification);
+router.put("/markallasread",protectRoute,markAllAsRead);
+router.delete("/deletenotification/:id",protectRoute,deleteaNotification);
+router.put("/setnotificationasread/:id",protectRoute,setNotificationAsRead);
 
 
 module.exports = router;

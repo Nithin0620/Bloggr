@@ -6,7 +6,7 @@ const cloudinary = require("../configuration/cloudinary");
 const {getReceiverSocketId , io} = require("../configuration/cloudinary");
 
 
-export const getUsersForSidebar = async(req,res)=>{
+exports.getUsersForSidebar = async(req,res)=>{
    try{
       const loggedInUserId = req.user._id;
       const filteredUsers = await User.find({_id:{$ne:loggedInUserId}}).select("-password");
@@ -19,7 +19,7 @@ export const getUsersForSidebar = async(req,res)=>{
    }
 }
 
-export const getMessages = async(req,res)=>{
+exports.getMessages = async(req,res)=>{
    try{
       const {id:userToChatId} = req.params;
       const myId = req.user._id;
@@ -42,7 +42,7 @@ export const getMessages = async(req,res)=>{
    }
 }
 
-export const sendMessage = async(req,res)=>{
+exports.sendMessage = async(req,res)=>{
    try{
       const {text,image} = req.body;
       const {id:receiverId}=req.params;

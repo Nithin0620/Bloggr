@@ -1,12 +1,12 @@
-import user from "../modals/user";
-
 const User = require("../modals/user")
 const OTP = require("../modals/otp")
 const bcrypt = require("bcrypt")
 const gravatar = require('gravatar');
-const otpGenerator = require("otpGenerator");
+const otpGenerator = require("otp-generator");
+const Profile = require("../modals/profile")
+const jwt = require("jsonwebtoken")
 
-export const signup = async(req,res)=>{
+exports.signup = async(req,res)=>{
    try{
       const {firstName , lastName , email , password , confirmPassword , agreetermsofservice , otp} = req.body;
 
@@ -31,8 +31,8 @@ export const signup = async(req,res)=>{
             message: "User already exist's",
          });
       }
-      const recentOtp = await OTP.findOne({emai:email}).sort({createdAt:-1}).limit(1);
-      if(recentOtp.length === 0){
+      const recentOtp = await OTP.findOne({email:email}).sort({createdAt:-1}).limit(1);
+      if(recentOtp && recentOtp.length === 0){
          return res.status(400).json({
             success: false,
             message: "The OTP is not valid",
@@ -45,15 +45,17 @@ export const signup = async(req,res)=>{
          })
       }
 
-      const profile = {
-         name: firstName+""+lastName,
+      const profilePayload = {
+         name: firstName+" "+lastName,
          bio:"Hi i am a new User to Bloggr and i would like to connect with you all",
       }
+
+      const Profileresponse = await Profile.create(profilePayload);
 
       const hashedPassword = await bcrypt.hash(password , 10);
       const profilePic = `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`
 
-      const payload = {firstName , lastName , email , hashedPassword , profilePic,profile}
+      const payload = {firstName , lastName , email , password:hashedPassword , profilePic, profile:Profileresponse._id}
       const response = await User.create(payload);
 
       if(!response) {
@@ -67,6 +69,7 @@ export const signup = async(req,res)=>{
       })      
    }
    catch(e){
+      console.log(e);
       return res.status(500).json({
          success:false,
          message:"Error occured in the backend in the Signup controller", 
@@ -74,7 +77,7 @@ export const signup = async(req,res)=>{
    }
 }
 
-export const login = async(req,res)=>{
+exports.login = async(req,res)=>{
    try{
       const {email,password}= req.body;
 
@@ -138,7 +141,7 @@ export const login = async(req,res)=>{
    }
 };
 
-export const sendOtp = async(req,res)=>{
+exports.sendOtp = async(req,res)=>{
    try{
       const {email} = req.body;
 
@@ -153,7 +156,7 @@ export const sendOtp = async(req,res)=>{
 
       var otp = otpGenerator.generate(6,{
          upperCaseAlphabets:false,
-         lowwerCaseAlphabets:false,
+         lowerCaseAlphabets:false,
          specialChars:false,
       })
 
@@ -162,7 +165,7 @@ export const sendOtp = async(req,res)=>{
       while(result){
          otp = otpGenerator.generate(6,{
             upperCaseAlphabets:false,
-            lowwerCaseAlphabets:false,
+            lowerCaseAlphabets:false,
             specialChars:false,
          })
 
@@ -186,7 +189,7 @@ export const sendOtp = async(req,res)=>{
    }
 }
 
-export const logout = (req, res) => {
+exports.logout = (req, res) => {
   try {
       res.cookie("jwt", "", { maxAge: 0 });
       res.status(200).json({ success:true,message: "Logged out successfully" });
