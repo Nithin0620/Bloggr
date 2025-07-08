@@ -10,10 +10,15 @@ exports.viewUserProfile = async(req,res)=>{
 
       if(!Id) return res.status(401).json({success:false,message:"id not found on the link"});
 
-      const response = await User.findById(Id)
+      console.log(Id);
+
+      // const user = await User.findById(Id);
+      // console.log("User without populate:", user);
+
+      const user = await User.findById(Id)
       .populate({
          path:"profile",
-         populate:{
+         populate:[{
             path:"posts" ,
             populate:[
                { path: "author", select: "firstName lastName image" },
@@ -24,16 +29,16 @@ exports.viewUserProfile = async(req,res)=>{
                   populate: { path: "user", select: "firstName lastName image" },
                },
             ],     
-         }
+         },{path:"followers"},{path:"following"}]
       });
 
 
-      if(!response) return res.status(404).json({success:false,message:"User details not found"});
+      if(!user) return res.status(404).json({success:false,message:"User details not found",data:user});
 
       return res.status(200).json({
          success:true,
          message:"User details fetched successfully",
-         data:response
+         data:user
       })
    }
    catch(e){
