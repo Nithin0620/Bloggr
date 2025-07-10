@@ -1,9 +1,19 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Footbar from './components/Footbar'
 import Navbar from './components/Navbar'
 import {Outlet} from "react-router-dom"
+import { useAuthStore } from './store/AuthStore'
+import { useNavigate } from 'react-router-dom'
 
 const App = () => {
+  const navigate = useNavigate();
+  const {setnavigate} = useAuthStore();
+
+  useEffect(() => {
+    setnavigate(navigate);
+  }, [navigate]);
+
+  
   return (
     <div>
       <Navbar/>
