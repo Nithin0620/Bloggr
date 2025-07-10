@@ -1,73 +1,96 @@
-import React, { useState } from 'react'
-import {useNavigate} from "react-router-dom"
-import toast from "react-hot-toast"
+import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Login = () => {
-   const navigate = useNavigate();
-   const [email,setEmail] = useState('');
-   const [password,setPassword] = useState('');
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-   const handleLogin = ()=>{
-      if(!email){
-         toast.error("Email id is required !");
-         return;
-      }
-      if(!password){
-         toast.error("please enter your password 🫣")
-         return;
-      }
-   }
+  const handleLogin = () => {
+    if (!email) {
+      toast.error("Email id is required !");
+      return;
+    }
+    if (!password) {
+      toast.error("Please enter your password 🫣");
+      return;
+    }
+  };
 
-   const handleForgotPassword = ()=>{
-
-   }
-
+  const handleForgotPassword = () => {
+    // your forgot password logic
+  };
 
   return (
-    <div className='flex flex-col justify-between'>
-      <div className='flex h-[80%] place-items-center '>
-         <div className='flex flex-col justify-evenly pt-4'>
-            <h1 className='text-2xl font-bold'>
-               Welcome Back
-            </h1>
-            <p className='font-serif text-sm opacity-95'>
-               Sign in to continue to your Bloggr account.
-            </p>
-            <div className='flex flex-col justify-evenly'>
-               <input   className='p-5 h-5 w-56 border-0 border-opacity-80 focus:border-opacity-100 placeholder:opacity-80 hover:placeholder:opacity-95'
-                     type="text"
-                     placeholder='Email ID'   
-                     onChange={(e)=> setEmail(e.target.value)}
-                     value={email}
-               />
-               <input className='p-5 h-5 w-56 border-0 border-opacity-80 focus:border-opacity-100 placeholder:opacity-80 hover:placeholder:opacity-95' 
-                     type="text"
-                     placeholder='Password'
-                     onChange={(e)=> setPassword(e.target.value)}
-                     value={password}
-               />
-            </div>
-            <div>
-               <button className='hover:font-semibold font-medium' onClick={handleForgotPassword}>
-                  Forgot Password ?
-               </button>
-            </div>
-            <div className='hover:scale-110 font-semibold text-lg' onClick={handleLogin}>
-               Log in
-            </div>
-            <div className='flex justify-center'>
-               <p className='font-light opacity-80 text-base'>Don't have a account?</p>
-               <button className='font-medium hover:font-bold hover:scale-105' onClick={navigate("/signup")}>
-                  Sign up
-               </button>
-            </div>
-         </div>
+    <div className="h-[90%] mt-5 flex flex-col gap-16 items-center justify-start">
+      
+      {/* Main Login Card */}
+      <div className="flex items-center justify-center w-full mt-10 ">
+         <div className="bg-white rounded-xl shadow-md px-10 py-8 w-[95%] max-w-sm flex flex-col gap-4">
+          
+          {/* Title */}
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-1">Welcome back</h1>
+            <p className="text-sm opacity-80 font-serif">Sign in to continue to your Bloggr account.</p>
+          </div>
+
+          {/* Input Fields */}
+          <div className="flex flex-col gap-4 mt-4">
+            <input
+              type="text"
+              placeholder="Email"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-black/20 text-sm"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-black/20 text-sm"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          {/* Forgot Password */}
+          <div className="text-right">
+            <button
+              onClick={handleForgotPassword}
+              className="text-sm hover:underline font-medium"
+            >
+              Forgot password?
+            </button>
+          </div>
+
+          {/* Login Button */}
+          <button
+            onClick={handleLogin}
+            className="w-full py-2 rounded-md font-semibold hover:scale-[1.02] transition bg-black text-white"
+          >
+            Log in
+          </button>
+
+          {/* Signup Redirect */}
+          <div className="text-center text-sm mt-2">
+            <span className="opacity-80">Don't have an account? </span>
+            <button
+              onClick={() => navigate("/signup")}
+              className="font-medium hover:underline"
+            >
+              Sign up
+            </button>
+          </div>
+        </div>
       </div>
-      <div className='h-[20%] m-4 opacity-90 font-serif'>
-         © 2025 Bloggr. All rights reserved.
+
+      {/* Footer */}
+      <div className="text-center text-xs opacity-70 font-serif ">
+        © 2024 Bloggr. All rights reserved.
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

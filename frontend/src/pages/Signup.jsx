@@ -1,7 +1,8 @@
-import React from "react";
+import { React, useState } from "react";
 import { useForm } from "react-hook-form";
 import { PiEyeSlash } from "react-icons/pi";
 import { IoEyeSharp } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const {
@@ -10,138 +11,159 @@ const Signup = () => {
     formState: { errors },
   } = useForm();
 
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSignUp = (data) => {
-
+    // handle sign up logic here
   };
 
   return (
-    <div className="flex flex-col justify-between">
-      <div className="flex h-[80%] place-items-center ">
-        <div className="flex flex-col justify-evenly pt-4">
-            <h1 className="text-2xl font-bold">Create Your Account</h1>
-            <p className="font-serif text-sm opacity-95">
-               Join Bloggr and start sharing your thoughts.
-            </p>
-
-            <form onSubmit={handleSubmit(handleSignUp)}>
-               
-               <div>
-                  <input
-                     className=""
-                     type="text"
-                     placeholder="First name"
-                     {...register("firstName", { required: true })}
-                  />
-                  {
-                     errors.firstName && (<div className="text-sm text-red-500 mt-1">
-                        First Name is required 
-                     </div>)
-                  }
-               </div>
-               
-               <div>
-                  <input
-                     className=""
-                     type="text"
-                     placeholder="Last name"
-                     {...register("lastName", { required: true })}
-                  />
-                  {
-                     errors.lastName && (<div className="text-sm text-red-500 mt-1">
-                        *Last Name is required 
-                     </div>)
-                  }
-               </div>
-
-               <div>
-                  <input
-                     className=""
-                     type="email"
-                     placeholder="email@gmail.com"
-                     {...register("email", { required: true })}
-                  />
-                  {
-                     errors.email && (<div className="text-sm text-red-500 mt-1">
-                        *Email Id is required 
-                     </div>)
-                  }
-               </div>
-
-               <div>
-                  <div>
-                     <div>
-                        <input
-                           className=""
-                           type={showPassword ? "text" : "password"}
-                           placeholder="Password"
-                           {...register("password", { required: true })}
-                        />
-                        
-                        <div onClick={() => setShowPassword(!showPassword)}>
-                           {showPassword ? <PiEyeSlash /> : <IoEyeSharp />}
-                        </div>
-                     </div>
-                     {
-                        errors.password && (<div className="text-sm text-red-500 mt-1">
-                           *This field is required 
-                        </div>)
-                     }
-                  </div>
-                  <div>
-                     <div>
-                        <input
-                           className=""
-                           type={showConfirmPassword ? "text" : "password"}
-                           placeholder="Confirm Password"
-                           {...register("confirmPassword", { required: true })}
-                        />
-               
-                        <div
-                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        >
-                           {showConfirmPassword ? <PiEyeSlash /> : <IoEyeSharp />}
-                        </div>
-                     </div>
-                     {
-                        errors.confirmPassword && (<div className="text-sm text-red-500 mt-1">
-                           *this field is required 
-                        </div>)
-                     }
-                  </div>
-               </div>
-
-               <div>
-                  <div>
-                     <input
-                        type="checkbox"
-                        {...register("agreetermsofservice", { required: true })}
-                     />
-                     <p>I agree to the </p>
-                     <p>Terms of Service</p>
-                  </div>
-                  {
-                     errors.agreetermsofservice && (<div className="text-sm text-red-500 mt-1">
-                        *this field is required 
-                     </div>)
-                  }
-               </div>
-
-               <button type="submit">Sign Up</button>
-            </form>
-
-            <div className='flex justify-center'>
-               <p className='font-light opacity-80 text-base'>Already have an Account?</p>
-               <button className='font-medium hover:font-bold hover:scale-105' onClick={navigate("/login")}>
-                  Log in
-               </button>
-            </div>
+    <div className="h-[90%] mt-5 flex flex-col gap-0 items-center justify-start">
+      {/* Card */}
+      <div className="w-[95%] max-w-md bg-white shadow-md rounded-xl px-10 py-8 flex flex-col gap-5">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Create your account</h1>
+          <p className="text-sm font-serif opacity-90">
+            Join Bloggr and start sharing your thoughts.
+          </p>
         </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit(handleSignUp)} className="flex flex-col gap-5 relative">
+          {/* Name Fields */}
+          <div className="flex gap-4">
+            <div className="relative w-full">
+              <input
+                type="text"
+                placeholder="First name"
+                {...register("firstName", { required: true })}
+                className="w-full px-4 py-2 border rounded-md text-sm"
+              />
+              {errors.firstName && (
+                <p className="absolute text-xs text-red-500 -mt-1 left-1">
+                  First Name is required
+                </p>
+              )}
+            </div>
+
+            <div className="relative w-full">
+              <input
+                type="text"
+                placeholder="Last name"
+                {...register("lastName", { required: true })}
+                className="w-full px-4 py-2 border rounded-md text-sm"
+              />
+              {errors.lastName && (
+                <p className="absolute text-xs text-red-500 -mt-1 left-1">
+                  Last Name is required
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Email */}
+          <div className="relative">
+            <input
+              type="email"
+              placeholder="Email address"
+              {...register("email", { required: true })}
+              className="w-full px-4 py-2 border rounded-md text-sm"
+            />
+            {errors.email && (
+              <p className="absolute text-xs text-red-500 -mt-1 left-1">
+                Email is required
+              </p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              {...register("password", { required: true })}
+              className="w-full px-4 py-2 border rounded-md text-sm pr-10"
+            />
+            <div
+              className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <PiEyeSlash /> : <IoEyeSharp />}
+            </div>
+            {errors.password && (
+              <p className="absolute text-xs text-red-500 -mt-1 left-1">
+                Password is required
+              </p>
+            )}
+          </div>
+
+          {/* Confirm Password */}
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Confirm password"
+              {...register("confirmPassword", { required: true })}
+              className="w-full px-4 py-2 border rounded-md text-sm pr-10"
+            />
+            <div
+              className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? <PiEyeSlash /> : <IoEyeSharp />}
+            </div>
+            {errors.confirmPassword && (
+              <p className="absolute text-xs text-red-500 -mt-1 left-1">
+                Confirm password is required
+              </p>
+            )}
+          </div>
+
+          {/* Terms of Service */}
+          <div className="relative mb-2 mt-1">
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                {...register("agreetermsofservice", { required: true })}
+              />
+              <span>
+                I agree to the <span className="font-semibold">Terms of Service</span>
+              </span>
+            </label>
+            {errors.agreetermsofservice && (
+              <p className="absolute text-xs text-red-500 -mt-1 left-1">
+                You must agree to continue
+              </p>
+            )}
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full py-2 rounded-md font-semibold hover:scale-[1.02] transition bg-black text-white"
+          >
+            Sign up
+          </button>
+
+          {/* Login Redirect */}
+          <div className="text-center text-sm mt-2">
+            <span className="opacity-80">Already have an account? </span>
+            <button
+              type="button"
+              onClick={() => navigate("/login")}
+              className="font-medium hover:underline"
+            >
+              Log in
+            </button>
+          </div>
+        </form>
       </div>
-      <div className="h-[20%] m-4 opacity-90 font-serif">
-         © 2025 Bloggr. All rights reserved.
+
+      {/* Footer */}
+      <div className="text-center text-xs opacity-70 font-serif mt-6">
+        © 2024 Bloggr. All rights reserved.
       </div>
     </div>
   );

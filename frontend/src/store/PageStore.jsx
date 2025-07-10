@@ -1,7 +1,7 @@
-import {Create} from "zustand"
+import {create} from "zustand"
 
-export const usePageStore = Create((get,set)=>({
-   currentPage : homePage,
+export const usePageStore = create((get,set)=>({
+   currentPage : "homePage",
    setCurrentPage : async(page)=>{
       set({currentPage:page});
    }
