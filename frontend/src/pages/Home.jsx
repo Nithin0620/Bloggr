@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { useAuthStore } from "../store/AuthStore";
-import { useNavigate } from "react-router-dom";
+// import { useAuthStore } from "../store/AuthStore";
+// import { useNavigate } from "react-router-dom";
 import { IoSearch } from "react-icons/io5";
 import HeroCard from "../components/HeroCard";
 
 const Home = () => {
-  const { token } = useAuthStore();
-  const navigate = useNavigate();
+  // const { token } = useAuthStore();
+  // const navigate = useNavigate();
   const [categories, setCategories] = useState(["Tech"]);
 
   return (

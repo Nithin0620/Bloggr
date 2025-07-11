@@ -2,61 +2,63 @@ import React from 'react'
 import { useAuthStore } from '../store/AuthStore'
 
 const Profile = () => {
-
-   const authUser = useAuthStore();
-
+  const authUser = useAuthStore();
 
   return (
-   <div >
-      {/* profile wala component */}
-      <div className='mt-10 mb-10 shadow-[0px_4px_24px_0px_rgba(0,_0,_0,_0.3)]'>
-         {/* round image wala div */}
-         <div className='w-[20%] flex items-start'>
+    <div className="flex justify-center mx-auto px-4 py-5">
+      {/* Profile Card */}
+      <div className='w-[85%] rounded-lg p-8 bg-slate-100'>
+         <div className="bg-white rounded-xl shadow-md p-6 flex flex-col md:flex-row items-start justify-between">
+         {/* Left - Image and Basic Info */}
+         <div className="flex items-start gap-6 w-full md:w-auto">
+            <img
+               src={authUser.profilePic}
+               alt="profile"
+               className="rounded-full w-24 h-24 md:w-28 md:h-28 object-cover"
+            />
             <div>
-               <img src={authUser.profilePic} alt="" className='rounded-full w-52 aspect-square'/>
-            </div>
-         </div>
-
-         {/* details wala compo */}
-         <div>
-            <h1>{authUser.firstName} {authUser.lastName}</h1>
-            <p>{authUser.profession}</p>
-            <p>joined in {authUser.createdAt}</p>
-
-            <p>
-               {authUser.description}
-            </p>
-            
-            <button>
+               <h1 className="text-xl font-semibold">{authUser.firstName} {authUser.lastName}</h1>
+               <p className="text-sm text-gray-600">{authUser.profession}</p>
+               <p className="text-sm text-gray-500">Joined in {authUser.createdAt}</p>
+               <p className="mt-2 text-sm text-gray-700">{authUser.description}</p>
+               <button className="mt-4 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium py-1.5 px-4 rounded-md">
                Follow {authUser.firstName}
-            </button>
-         </div>
-
-         {/* stand alone ek border jasa line */}
-         <div className='w-0 h-80'></div>
-
-         {/*followrs and folloing container*/}
-         <div className='w-[20%] flex items-start p-10'>
-            <div className='mb-5'>
-               <p className='font-bold'>{authUser.profile.followers}</p>
-               <p className='font-medium'>Followers</p>
-            </div>
-            <div>
-               <p className='font-bold'>{authUser.profile.following}</p>
-               <p className='font-medium'>Following</p>
+               </button>
             </div>
          </div>
-      </div>
 
-      <div>
-         <h1>Posts</h1>
-         <div className='w-10'></div>
-      </div>
+         {/* Divider - only on large screen */}
+         <div className="hidden md:block w-px bg-gray-300 mx-6 h-24"></div>
 
-      <div>
-         
+         {/* Right - Followers */}
+         <div className="flex md:flex-col items-center gap-6 mt-6 md:mt-0 w-full md:w-auto justify-around">
+            <div className="text-center">
+               <p className="text-xl font-bold">{authUser.profile}</p>
+               <p className="text-sm font-medium text-gray-600">Followers</p>
+            </div>
+            <div className="text-center">
+               <p className="text-xl font-bold">{authUser.profile}</p>
+               <p className="text-sm font-medium text-gray-600">Following</p>
+            </div>
+         </div>
+         </div>
+
+         {/* Posts Section */}
+         <div className="mt-10">
+         <h2 className="text-lg font-semibold border-b-2 border-blue-500 inline-block pb-1">Posts</h2>
+
+         <div className="mt-6 space-y-6">
+            
+            <div className="bg-white rounded-xl shadow p-4 flex flex-col md:flex-row gap-4">
+               
+               {/* cards */}
+            </div>
+
+            {/* Add more cards as needed */}
+         </div>
+         </div>
       </div>
-   </div>
+    </div>
   )
 }
 

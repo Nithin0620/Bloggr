@@ -1,8 +1,13 @@
 import {create} from "zustand"
 
 export const usePageStore = create((get,set)=>({
-   currentPage : "homePage",
-   setCurrentPage : async(page)=>{
+   navigate:null,
+   currentPage : null,
+   setCurrentPage : (page)=>{
       set({currentPage:page});
+      // console.log(get().currentPage)
+   },
+   setNavigate : (navigate)=>{
+      set({navigate:navigate});
    }
 }))

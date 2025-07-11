@@ -1,15 +1,29 @@
-import { React, useState } from "react";
+import { React, useEffect, useState,useRef } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { IoSettingsOutline } from "react-icons/io5";
 import { useAuthStore } from "../store/AuthStore";
-import { FaAngleDown, FaAngleUp } from "react-icons/fa";
+import { FaAngleDown } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import ProfileDropDown from "./ProfileDropDown";
 import { toast } from "react-hot-toast";
+import { usePageStore } from "../store/PageStore";
 
 const Navbar = () => {
+  const dropdownRef = useRef();
+  useEffect(()=>{
+    
+    const handleOutsideClick = (event)=>{
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenProfileDropDown(false);
+      }
+    }
+    document.addEventListener("mousedown",handleOutsideClick)
+  },[])
+
   const { token,  } = useAuthStore();
   const navigate = useNavigate();
+
+  const {currentPage,setCurrentPage} = usePageStore.getState();
 
   const [openProfileDropDown, setOpenProfileDropDown] = useState(false);
 
@@ -22,10 +36,17 @@ const Navbar = () => {
     }
   };
 
+  const handleOnClickForNavigate = (page)=>{
+    setCurrentPage(`${page}`)
+    console.log(currentPage);
+    if(page === "home") navigate("/")
+    else navigate(`/${page}`)
+  }
+
   return (
     <div className="flex items-center justify-between px-6 py-3 shadow-md bg-white sticky top-0 z-50">
       {/* Left: Logo */}
-      <div onClick={()=>navigate("/")} className="flex items-center space-x-2 cursor-pointer">
+      <div onClick={()=>handleOnClickForNavigate("home")} className="flex items-center space-x-2 cursor-pointer">
         <svg
           className="w-8 h-8 text-black"
           fill="currentColor"
@@ -52,13 +73,13 @@ const Navbar = () => {
         <div>
           {token === null ? (
             <div
-              onClick={() => navigate("/login")}
+              onClick={()=>handleOnClickForNavigate("login")}
               className="text-sm font-medium cursor-pointer hover:underline"
             >
               Log in
             </div>
           ) : (
-            <div className="cursor-pointer hover:scale-105 transition">
+            <div onClick={()=>handleOnClickForNavigate("settings")} className="cursor-pointer hover:scale-105 transition">
               <IoSettingsOutline className="text-xl" />
             </div>
           )}
@@ -66,26 +87,27 @@ const Navbar = () => {
 
         {/* Signup or Profile */}
         <div>
-          {token === null ? (
+          {token !== null ? (
             <div
-              onClick={() => navigate("/signup")}
+              onClick={()=>handleOnClickForNavigate("signup")}
               className="text-sm font-medium cursor-pointer hover:underline"
             >
               Sign up
             </div>
           ) : (
             <div
-              onClick={() => setOpenProfileDropDown(true)}
-              className="relative flex items-center space-x-2 cursor-pointer"
+              onClick={() => setOpenProfileDropDown(!openProfileDropDown)}
+              className="relative flex  items-center space-x-2 cursor-pointer"
+              ref={dropdownRef}
             >
               <img
                 src={image}
                 alt="Profile"
-                className="w-8 h-8 rounded-full object-cover border border-gray-400"
+                className="w-8 h-8 rounded-full object-cover border border-gray-400 "
               />
-              {openProfileDropDown ? <FaAngleUp /> : <FaAngleDown />}
+              <FaAngleDown  className={`transition-transform duration-200 animate-[wiggle_3s_ease-in-out_infinite] ${openProfileDropDown ? "rotate-180" : ""}`}/>
               {openProfileDropDown && (
-                <div className="absolute right-0 top-full mt-2 z-10">
+                <div className="absolute right-0  top-full mt-1 z-10 " >
                   <ProfileDropDown
                     setOpenProfileDropDown={setOpenProfileDropDown}
                   />
