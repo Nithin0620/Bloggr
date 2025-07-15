@@ -5,6 +5,7 @@ import Signup from "./pages/Signup"
 import Home from "./pages/Home"
 import Profile from "./pages/Profile"
 import Notification from "./pages/Notification"
+import Settings from "./pages/Settings"
 
 
 export const router = createBrowserRouter([
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
          {
             path:"notification",
             element:<Notification/>
+         },
+         {
+            path:"settings",
+            element:<Settings/>
          }
       ]
    },
