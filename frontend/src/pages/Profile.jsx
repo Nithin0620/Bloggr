@@ -1,8 +1,49 @@
 import React from 'react'
 import { useAuthStore } from '../store/AuthStore'
+import ProfilePostCard from '../components/ProfilePostCard';
 
 const Profile = () => {
   const authUser = useAuthStore();
+
+   const dummyProfilePosts = [
+      {
+         title: "The Future of AI in Software Development",
+         description:
+            "A deep dive into how artificial intelligence is reshaping the landscape of software engineering, from code generation to automated testing.",
+         image: "https://source.unsplash.com/80x80/?ai,software",
+         author: { _id: "user123", name: "Nithin KS" },
+         readTime: 4,
+         updatedTime: Date.now() - 6 * 60 * 1000, // 6 minutes ago
+         likes: [1, 2, 3],
+         comments: [1],
+         categories: ["Tech"]
+      },
+      {
+         title: "React vs Vue: Choosing the Right Framework",
+         description:
+            "When starting a new project, picking the right JavaScript framework is critical. This article explores the pros and cons of React and Vue for beginners and pros alike.",
+         image: "https://source.unsplash.com/80x80/?javascript,react",
+         author: { _id: "user123", name: "Nithin KS" },
+         readTime: 6,
+         updatedTime: Date.now() - 15 * 60 * 1000, // 15 minutes ago
+         likes: [1, 2],
+         comments: [],
+         categories: ["Frontend", "JS"]
+      },
+      {
+         title: "Mastering MongoDB Aggregations",
+         description:
+            "MongoDB’s aggregation pipeline is a powerful tool for data manipulation. This post explains how to use match, group, project, and sort stages effectively.",
+         image: "https://source.unsplash.com/80x80/?database,mongodb",
+         author: { _id: "user456", name: "Alex Morgan" },
+         readTime: 8,
+         updatedTime: Date.now() - 60 * 60 * 1000, // 1 hour ago
+         likes: [],
+         comments: [1, 2, 3, 4],
+         categories: ["Database", "Backend"]
+      }
+   ]
+
 
   return (
     <div className="flex justify-center mx-auto px-4 py-5">
@@ -49,16 +90,16 @@ const Profile = () => {
 
          <div className="mt-6 space-y-6">
             
-            <div className="bg-white rounded-xl shadow p-4 flex flex-col md:flex-row gap-4">
-               
-               {/* cards */}
-            </div>
+            {dummyProfilePosts.map((post, index) => (
+               <ProfilePostCard key={index} post={post} />
+            ))}
+            
+         </div>
 
-            {/* Add more cards as needed */}
+           
          </div>
          </div>
       </div>
-    </div>
   )
 }
 

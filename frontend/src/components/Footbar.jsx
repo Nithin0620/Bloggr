@@ -21,9 +21,13 @@ const Footbar = () => {
   const labelWrapper = `flex items-center justify-center font-[475] text-xs mt-1`
   const underline = (page) => `h-[2px] z-[-10px] mt-1 rounded-full transition-all duration-300 ${currentPage === page ? "opacity-100 scale-100 bg-black" : "opacity-0 scale-0"}`
 
+  useEffect(() => {
+    console.log("Current Page Changed:", currentPage);
+  }, [currentPage]);
+
   const handleClickInBar = (page)=>{
     setCurrentPage(`${page}`);
-    console.log(currentPage);
+
     if(page === "home") navigate("/")
     else navigate(`/${page}`)
     
@@ -31,7 +35,7 @@ const Footbar = () => {
 
   return (
     <div className='fixed bottom-4 left-1/2 -translate-x-1/2 w-11/12 gap-5 max-w-md z-50'>
-      <div className='flex justify-evenly h-16 rounded-full gap-14 bg-white shadow-[0px_17px_49px_-21px_rgba(0,_0,_0,_0.7)] px-6 py-0'>
+      <div className='flex justify-evenly h-12 rounded-full gap-14 backdrop-blur-lg opacity-99 shadow-[0px_17px_49px_-21px_rgba(0,_0,_0,_0.7)] px-6 py-0'>
         
         <div onClick={()=>handleClickInBar("home")} className={tabClass("home")}>
           <div className={iconWrapper}>{currentPage === "home" ? <IoHomeSharp /> : <IoHomeOutline />}</div>

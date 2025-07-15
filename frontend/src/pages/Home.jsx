@@ -3,8 +3,34 @@ import React, { useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import { IoSearch } from "react-icons/io5";
 import HeroCard from "../components/HeroCard";
+import HomePostCards from "../components/HomePostCards";
 
 const Home = () => {
+  const dummyPosts = [
+    {
+        title: "Exploring AI in Modern Education",
+        description: "Artificial Intelligence is transforming classrooms, from personalized tutoring to smart grading. Here's how educators can adapt to the evolving tech landscape.",
+        image: "https://source.unsplash.com/featured/?ai,education",
+        author: "John Doe",
+        readTime: 5,
+        updatedTime: Date.now() - 5 * 60 * 1000, // 5 minutes ago
+        likes: [1, 2, 3],
+        comments: [1, 2],
+        categories: ["AI", "Education","Future","Reccession","Scope"]
+    },
+    {
+        title: "Mastering the MERN Stack: A Beginner’s Guide",
+        description: "The MERN stack (MongoDB, Express, React, Node.js) is one of the most popular web development stacks. This post helps you get started from scratch.",
+        image: "https://source.unsplash.com/featured/?mern,code",
+        author: "Jane Smith",
+        readTime: 7,
+        updatedTime: Date.now() - 20 * 60 * 1000, // 20 minutes ago
+        likes: [1],
+        comments: [],
+        categories: ["WebDev", "MERN"]
+    }
+  ]
+
   // const { token } = useAuthStore();
   // const navigate = useNavigate();
   const [categories, setCategories] = useState(["Tech"]);
@@ -47,7 +73,9 @@ const Home = () => {
           id="PostSection"
           className="grid grid-cols-1 min-h-screen sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-
+          {dummyPosts.map((post, index) => (
+            <HomePostCards key={index} post={post} />
+          ))}
 
         </div>
       </div>

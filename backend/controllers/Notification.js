@@ -54,6 +54,16 @@ exports.createNotification = async (req, res) => {
    }
 };
 
+
+exports.clearAllNotification = async(req,res)=>{
+   try{
+
+   }
+   catch(e){
+      
+   }
+}
+
 exports.getAllNotification = async (req, res) => {
    try {
       const userId = req.user._id;

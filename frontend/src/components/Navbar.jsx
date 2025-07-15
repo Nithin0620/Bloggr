@@ -38,7 +38,7 @@ const Navbar = () => {
 
   const handleOnClickForNavigate = (page)=>{
     setCurrentPage(`${page}`)
-    console.log(currentPage);
+
     if(page === "home") navigate("/")
     else navigate(`/${page}`)
   }
@@ -87,7 +87,7 @@ const Navbar = () => {
 
         {/* Signup or Profile */}
         <div>
-          {token !== null ? (
+          {token === null ? (
             <div
               onClick={()=>handleOnClickForNavigate("signup")}
               className="text-sm font-medium cursor-pointer hover:underline"

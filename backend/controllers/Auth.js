@@ -56,7 +56,7 @@ exports.signup = async(req,res)=>{
       const profilePic = `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`
 
       const payload = {firstName , lastName , email , password:hashedPassword , profilePic, profile:Profileresponse._id}
-      const response = await User.create(payload);
+      const response = (await User.create(payload)).populate("profile");
 
       if(!response) {
          throw new Error("Error occured in creating new User")

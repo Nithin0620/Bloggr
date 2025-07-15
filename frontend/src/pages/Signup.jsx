@@ -20,7 +20,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="h-[90%] mt-5 flex flex-col gap-0 items-center justify-start">
+    <div className="min-h-screen mt-5 flex flex-col gap-0 items-center justify-start">
       {/* Card */}
       <div className="w-[95%] max-w-md bg-white shadow-md rounded-xl px-10 py-8 flex flex-col gap-5">
         {/* Header */}

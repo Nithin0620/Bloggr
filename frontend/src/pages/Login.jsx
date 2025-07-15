@@ -16,6 +16,8 @@ const Login = () => {
       toast.error("Please enter your password 🫣");
       return;
     }
+
+    
   };
 
   const handleForgotPassword = () => {
@@ -23,7 +25,7 @@ const Login = () => {
   };
 
   return (
-    <div className="h-[90%] mt-5 flex flex-col gap-16 items-center justify-start">
+    <div className="min-h-screen mt-5 flex flex-col gap-16 items-center justify-start">
       
       {/* Main Login Card */}
       <div className="flex items-center justify-center w-full mt-10 ">
