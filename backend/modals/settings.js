@@ -7,12 +7,12 @@ const settingsSchema = new mongoose.Schema({
    },
    mode:{
       type:String,
-      enum:["dark","light"],
-      default:"light",
+      enum:["Dark","Light"],
+      default:"Light",
    },
    theme:{
       type:String,
-      default:"green",
+      default:"Green",
    },
    pushNotification:{
       type:Boolean,

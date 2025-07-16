@@ -5,7 +5,7 @@ const gravatar = require('gravatar');
 const otpGenerator = require("otp-generator");
 const Profile = require("../modals/profile")
 const jwt = require("jsonwebtoken");
-const Settings = require("../modals/settings");
+// const Settings = require("../modals/settings");
 
 exports.signup = async(req,res)=>{
    try{
@@ -59,7 +59,7 @@ exports.signup = async(req,res)=>{
       const payload = {firstName , lastName , email , password:hashedPassword , profilePic, profile:Profileresponse._id}
       const response = (await User.create(payload)).populate("profile");
 
-      const settingsResponse = await Settings.create({user:response._id});
+      // const settingsResponse = await Settings.create({user:response._id});
 
       if(!response) {
          throw new Error("Error occured in creating new User")
