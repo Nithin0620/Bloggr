@@ -39,3 +39,74 @@
       transform: rotate(1turn);
    }
 }
+
+
+
+/* theme setting section */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:root {
+  /* fallback values - not enforced if JS sets it */
+  --accent: var(--accent, #22c55e);
+  --accent-bg-light: var(--accent-bg-light, #d1fae5);
+  --accent-bg-dark: var(--accent-bg-dark, #15803d);
+  --accent-border: var(--accent-border, #166534);
+  --accent-underline: var(--accent-underline, #22c55e);
+  --accent-shadow: var(--accent-shadow,  0px 0px 70px 5px rgba(34, 197, 94, 0.5));
+  --accent-highlight: var(--accent-highlight, rgba(34, 197, 94, 0.08));
+}
+
+.shadow-accent-box {
+  box-shadow: var(--accent-shadow);
+}
+
+.accent-underline{
+  text-decoration: underline;
+  text-decoration-color: var(--accent-bg-dark)
+}
+
+.accent-text {
+  color: var(--accent) !important;
+}
+
+.accent-bg {
+  background-color: var(--accent) !important;
+}
+
+.accent-bg-light {
+  background-color: var(--accent-bg-light) !important;
+}
+
+.accent-bg-dark {
+  background-color: var(--accent-bg-dark) !important;
+}
+
+.accent-border {
+  border-color: var(--accent-border) !important;
+}
+
+.accent-underline {
+  text-decoration: underline;
+  text-decoration-color: var(--accent-underline);
+}
+
+.accent-shadow {
+  text-shadow: var(--accent-shadow);
+}
+
+.accent-highlight {
+  background-color: var(--accent-highlight) !important;
+}

@@ -4,16 +4,26 @@ import Navbar from './components/Navbar'
 import {Outlet} from "react-router-dom"
 import { useAuthStore } from './store/AuthStore'
 import { useNavigate } from 'react-router-dom'
+import { useSettingsStore } from './store/SettingsStore'
+import { applyTheme } from './utility/SetColours'
 // import { usePageStore } from './store/PageStore'
 
 const App = () => {
   const navigate = useNavigate();
   const {setnavigate} = useAuthStore();
+  const {getSettings,theme,mode} = useSettingsStore();
   // const {setNavigate} = usePageStore();
 
   useEffect(() => {
     setnavigate(navigate);
-    // setNavigate(navigate);
+    const response = getSettings();
+
+    const savedAccent = localStorage.getItem("accent-color");
+    if (savedAccent) {
+      applyTheme(savedAccent)
+    }
+    applyTheme(response.data);
+    localStorage.setItem("accent-color", response.data);
   }, [navigate]);
 
   

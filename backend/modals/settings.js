@@ -24,7 +24,7 @@ const settingsSchema = new mongoose.Schema({
    },
    homeFeedType:{
       type:String,
-      default:"all",
+      default:"All",
    }
 },{
    timestamps:true

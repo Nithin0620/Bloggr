@@ -17,7 +17,7 @@ const Login = () => {
       return;
     }
 
-    
+    // Add your login logic here
   };
 
   const handleForgotPassword = () => {
@@ -29,12 +29,12 @@ const Login = () => {
       
       {/* Main Login Card */}
       <div className="flex items-center justify-center w-full mt-10 ">
-         <div className="bg-white rounded-xl shadow-md px-10 py-8 w-[95%] max-w-sm flex flex-col gap-4">
+        <div className="bg-white rounded-xl shadow-md px-10 py-8 w-[95%] max-w-sm flex flex-col gap-4 accent-border border">
           
           {/* Title */}
           <div className="text-center">
-            <h1 className="text-2xl font-bold mb-1">Welcome back</h1>
-            <p className="text-sm opacity-80 font-serif">Sign in to continue to your Bloggr account.</p>
+            <h1 className="text-2xl font-bold mb-1 accent-text">Welcome back</h1>
+            <p className="text-sm opacity-80 font-serif accent-text">Sign in to continue to your Bloggr account.</p>
           </div>
 
           {/* Input Fields */}
@@ -42,7 +42,7 @@ const Login = () => {
             <input
               type="text"
               placeholder="Email"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-black/20 text-sm"
+              className="w-full px-4 py-2 border accent-border rounded-md outline-none focus:ring-2 focus:ring-[var(--accent)] text-sm"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -50,7 +50,7 @@ const Login = () => {
             <input
               type="password"
               placeholder="Password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-black/20 text-sm"
+              className="w-full px-4 py-2 border accent-border rounded-md outline-none focus:ring-2 focus:ring-[var(--accent)] text-sm"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -60,7 +60,7 @@ const Login = () => {
           <div className="text-right">
             <button
               onClick={handleForgotPassword}
-              className="text-sm hover:underline font-medium"
+              className="text-sm font-medium accent-underline hover:opacity-90"
             >
               Forgot password?
             </button>
@@ -69,7 +69,7 @@ const Login = () => {
           {/* Login Button */}
           <button
             onClick={handleLogin}
-            className="w-full py-2 rounded-md font-semibold hover:scale-[1.02] transition bg-black text-white"
+            className="w-full py-2 rounded-md font-semibold hover:scale-[1.02] transition accent-bg text-white"
           >
             Log in
           </button>
@@ -79,7 +79,7 @@ const Login = () => {
             <span className="opacity-80">Don't have an account? </span>
             <button
               onClick={() => navigate("/signup")}
-              className="font-medium hover:underline"
+              className="font-medium accent-underline hover:opacity-90"
             >
               Sign up
             </button>
@@ -88,7 +88,7 @@ const Login = () => {
       </div>
 
       {/* Footer */}
-      <div className="text-center text-xs opacity-70 font-serif ">
+      <div className="text-center text-xs opacity-70 font-serif accent-text">
         © 2024 Bloggr. All rights reserved.
       </div>
     </div>

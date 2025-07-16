@@ -5,47 +5,50 @@ import { useAuthStore } from "../store/AuthStore";
 const HeroCard = () => {
   const { token } = useAuthStore();
   const navigate = useNavigate();
+
   return (
-    <div className="shadow-lg w-[98%] rounded-lg m-5 p-2 bg-white space-y-4">
+    <div className="shadow-md accent-box-shadow accent-border border w-[98%] rounded-xl m-5 p-5 bg-white/80 space-y-4">
+      {/* =========================== Not Logged In =========================== */}
       {token === null && (
-        <div className="text-center space-y-3">
-          <div className="relative text-center space-y-3">
-            {/* Top Right Share Button */}
-            <div className="absolute right-0 top-0 flex items-center gap-1 text-xs font-thin italic cursor-pointer hover:underline">
+        <div className="text-center space-y-4">
+          {/* Top Right Share Button */}
+          <div className="relative">
+            <div className="absolute right-0 top-0 flex items-center gap-1 text-xs font-thin italic cursor-pointer hover:accent-underline transition">
               <IoMdShare />
               <span>Share Bloggr</span>
             </div>
 
-            {/* Center Title */}
-            <h1 className="text-2xl font-bold">Welcome to Bloggr</h1>
+            {/* Title */}
+            <h1 className="text-2xl font-bold accent-text">Welcome to Bloggr</h1>
           </div>
+
           <p className="text-sm font-serif leading-relaxed max-w-3xl mx-auto">
             Step into the future of blogging — a space where your voice finds
             clarity, your stories find purpose, and your ideas reach the world.
-            Bloggr isn’t just a platform; it’s a thoughtfully designed home for
-            modern creators who believe in the power of words to inspire,
-            connect, and lead.
+            <span className="font-medium"> Bloggr</span> isn’t just a platform;
+            it’s a thoughtfully designed home for creators who believe in the
+            power of words to inspire, connect, and lead.
           </p>
+
+          {/* Buttons */}
           <div className="flex justify-center flex-wrap gap-4 pt-2">
             <button
               onClick={() => navigate("/login")}
-              className="px-4 py-2 rounded-md font-medium shadow-sm hover:scale-105 transition"
+              className="px-4 py-2 border rounded-md font-medium hover:scale-105 transition accent-text accent-border"
             >
               Login
             </button>
             <button
               onClick={() =>
-                document
-                  .getElementById("PostSection")
-                  ?.scrollIntoView({ behavior: "smooth" })
+                document.getElementById("PostSection")?.scrollIntoView({ behavior: "smooth" })
               }
-              className="px-4 py-2 rounded-md font-medium shadow-sm hover:scale-105 transition"
+              className="px-4 py-2 border rounded-md font-medium hover:scale-105 transition accent-text accent-border"
             >
               Explore
             </button>
             <button
               onClick={() => navigate("/signup")}
-              className="px-4 py-2 rounded-md font-medium shadow-sm hover:scale-105 transition"
+              className="px-4 py-2 border rounded-md font-medium hover:scale-105 transition accent-text accent-border"
             >
               Create Account
             </button>
@@ -53,55 +56,52 @@ const HeroCard = () => {
         </div>
       )}
 
+      {/* =========================== Logged In =========================== */}
       {token !== null && (
-        <div className="text-center space-y-3">
-          <div className="relative text-center space-y-3">
-            {/* Top Right Share Button */}
-            <div className="absolute right-0 top-0 flex items-center gap-1 text-xs font-thin italic cursor-pointer hover:underline">
+        <div className="text-center space-y-4">
+          <div className="relative">
+            <div className="absolute right-0 top-0 flex items-center gap-1 text-xs font-thin italic cursor-pointer hover:accent-underline transition">
               <IoMdShare />
               <span>Share Bloggr</span>
             </div>
 
-            {/* Center Title */}
-            <h1 className="text-2xl font-bold">Welcome back, creator.</h1>
+            <h1 className="text-2xl font-bold accent-text">Welcome back, creator.</h1>
           </div>
+
           <p className="text-sm font-serif leading-relaxed max-w-3xl mx-auto">
             You're no longer just exploring — you're{" "}
             <span className="font-semibold">building</span>. At{" "}
-            <span className="font-semibold">Bloggr</span>, your words are your
-            power, and now is the time to{" "}
-            <span className="font-semibold">amplify your voice</span>,
-            <span className="font-semibold"> grow your influence</span>, and
-            <span className="font-semibold">
-              {" "}
-              shape the conversations that matter
-            </span>
-            .
+            <span className="font-semibold accent-text">Bloggr</span>, your words are your
+            power. It's time to{" "}
+            <span className="font-semibold">amplify your voice</span>,{" "}
+            <span className="font-semibold">grow your influence</span>, and{" "}
+            <span className="font-semibold">shape the conversations that matter</span>.
           </p>
+
           <p className="text-base sm:text-lg md:text-xl font-medium opacity-95">
             Let your next post not just inform, but{" "}
-            <span className="font-semibold">inspire</span>.
+            <span className="font-semibold accent-text">inspire</span>.
           </p>
+
+          {/* Buttons */}
           <div className="flex justify-center flex-wrap gap-4 pt-2">
             <button
               onClick={() => navigate("/myprofile")}
-              className="px-4 py-2 rounded-md font-medium shadow-sm hover:scale-105 transition"
+              className="px-4 py-2 border rounded-md font-medium hover:scale-105 transition accent-text accent-border"
             >
               View Profile
             </button>
             <button
               onClick={() =>
-                document
-                  .getElementById("PostSection")
-                  ?.scrollIntoView({ behavior: "smooth" })
+                document.getElementById("PostSection")?.scrollIntoView({ behavior: "smooth" })
               }
-              className="px-4 py-2 rounded-md font-medium shadow-sm hover:scale-105 transition"
+              className="px-4 py-2 border rounded-md font-medium hover:scale-105 transition accent-text accent-border"
             >
               Explore
             </button>
             <button
               onClick={() => navigate("/settings")}
-              className="px-4 py-2 rounded-md font-medium shadow-sm hover:scale-105 transition"
+              className="px-4 py-2 border rounded-md font-medium hover:scale-105 transition accent-text accent-border"
             >
               Settings
             </button>

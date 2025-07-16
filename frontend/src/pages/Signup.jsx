@@ -22,11 +22,11 @@ const Signup = () => {
   return (
     <div className="min-h-screen mt-5 flex flex-col gap-0 items-center justify-start">
       {/* Card */}
-      <div className="w-[95%] max-w-md bg-white shadow-md rounded-xl px-10 py-8 flex flex-col gap-5">
+      <div className="w-[95%] max-w-md bg-white shadow-md rounded-xl px-10 py-8 flex flex-col gap-5 accent-border border">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-2xl font-bold">Create your account</h1>
-          <p className="text-sm font-serif opacity-90">
+          <h1 className="text-2xl font-bold accent-text">Create your account</h1>
+          <p className="text-sm font-serif opacity-90 accent-text">
             Join Bloggr and start sharing your thoughts.
           </p>
         </div>
@@ -40,7 +40,7 @@ const Signup = () => {
                 type="text"
                 placeholder="First name"
                 {...register("firstName", { required: true })}
-                className="w-full px-4 py-2 border rounded-md text-sm"
+                className="w-full px-4 py-2 border accent-border rounded-md text-sm"
               />
               {errors.firstName && (
                 <p className="absolute text-xs text-red-500 -mt-1 left-1">
@@ -54,7 +54,7 @@ const Signup = () => {
                 type="text"
                 placeholder="Last name"
                 {...register("lastName", { required: true })}
-                className="w-full px-4 py-2 border rounded-md text-sm"
+                className="w-full px-4 py-2 border accent-border rounded-md text-sm"
               />
               {errors.lastName && (
                 <p className="absolute text-xs text-red-500 -mt-1 left-1">
@@ -70,7 +70,7 @@ const Signup = () => {
               type="email"
               placeholder="Email address"
               {...register("email", { required: true })}
-              className="w-full px-4 py-2 border rounded-md text-sm"
+              className="w-full px-4 py-2 border accent-border rounded-md text-sm"
             />
             {errors.email && (
               <p className="absolute text-xs text-red-500 -mt-1 left-1">
@@ -85,7 +85,7 @@ const Signup = () => {
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               {...register("password", { required: true })}
-              className="w-full px-4 py-2 border rounded-md text-sm pr-10"
+              className="w-full px-4 py-2 border accent-border rounded-md text-sm pr-10"
             />
             <div
               className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
@@ -106,7 +106,7 @@ const Signup = () => {
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm password"
               {...register("confirmPassword", { required: true })}
-              className="w-full px-4 py-2 border rounded-md text-sm pr-10"
+              className="w-full px-4 py-2 border accent-border rounded-md text-sm pr-10"
             />
             <div
               className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
@@ -129,7 +129,8 @@ const Signup = () => {
                 {...register("agreetermsofservice", { required: true })}
               />
               <span>
-                I agree to the <span className="font-semibold">Terms of Service</span>
+                I agree to the{" "}
+                <span className="font-semibold accent-underline">Terms of Service</span>
               </span>
             </label>
             {errors.agreetermsofservice && (
@@ -142,7 +143,7 @@ const Signup = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-2 rounded-md font-semibold hover:scale-[1.02] transition bg-black text-white"
+            className="w-full py-2 rounded-md font-semibold hover:scale-[1.02] transition accent-bg text-white"
           >
             Sign up
           </button>
@@ -153,7 +154,7 @@ const Signup = () => {
             <button
               type="button"
               onClick={() => navigate("/login")}
-              className="font-medium hover:underline"
+              className="font-medium accent-underline hover:opacity-90"
             >
               Log in
             </button>
@@ -162,7 +163,7 @@ const Signup = () => {
       </div>
 
       {/* Footer */}
-      <div className="text-center text-xs opacity-70 font-serif mt-6">
+      <div className="text-center text-xs opacity-70 font-serif mt-6 accent-text">
         © 2024 Bloggr. All rights reserved.
       </div>
     </div>
