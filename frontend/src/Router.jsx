@@ -7,6 +7,7 @@ import Profile from "./pages/Profile"
 import Notification from "./pages/Notification"
 import Settings from "./pages/Settings"
 import VerifyOtp from "./pages/VerifyOtp"
+import Message from "./pages/Message"
 
 
 export const router = createBrowserRouter([
@@ -40,6 +41,10 @@ export const router = createBrowserRouter([
          },{
             path:"verifyemail",
             element:<VerifyOtp/>
+         },
+         {
+            path:"message",
+            element:<Message/>
          }
       ]
    },

@@ -11,15 +11,16 @@ const VerifyEmail = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Entered OTP:", otp);
-    // TODO: Validate OTP
     navigate("/dashboard");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-950 text-white">
-      <div className="w-full max-w-md p-8 rounded-xl border border-neutral-800">
-        <h2 className="text-2xl font-bold text-center mb-2">Verify Email</h2>
-        <p className="text-center text-neutral-400 mb-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br to-neutral-950 px-4">
+      <div className="w-full max-w-md p-8 rounded-2xl border accent-border shadow-accent-box backdrop-blur-lg">
+        <h2 className="text-3xl font-bold text-center mb-3 tracking-wide">
+          Verify Email
+        </h2>
+        <p className="text-center mb-6 text-sm">
           A verification code has been sent to your email. Enter the code below.
         </p>
 
@@ -28,35 +29,35 @@ const VerifyEmail = () => {
             value={otp}
             onChange={handleChange}
             numInputs={6}
+            
             renderInput={(props) => (
               <input
                 {...props}
-                className="w-12 h-12 text-xl text-center rounded-md border border-neutral-700 bg-transparent text-white focus:outline-none accent-border"
+                placeholder="꘎"
+                className="!w-10 h-12 md:!w-10 md:h-14 text-2xl text-center rounded-lg border accent-border bg-transparent focus:outline-none focus:ring-2  transition duration-200"
               />
             )}
-            containerStyle="flex justify-between gap-2"
+            containerStyle="flex justify-center gap-3"
           />
 
           <button
             type="submit"
-            className="w-full py-3 rounded-md font-semibold accent-bg text-black shadow-accent-box hover:opacity-90 transition"
+            className="w-full py-3 rounded-xl font-semibold accent-bg  shadow-accent-box hover:scale-[1.01] hover:opacity-90 transition duration-200"
           >
             Verify Email
           </button>
         </form>
 
-        <div className="flex justify-between items-center mt-4 text-sm">
+        <div className="flex justify-between items-center mt-6 text-sm">
           <button
             onClick={() => navigate("/signup")}
-            className="text-neutral-400 hover:underline"
+            className="hover:underline transition"
           >
             ← Back To Signup
           </button>
           <button
-            onClick={() => {
-              alert("Resend logic goes here");
-            }}
-            className="accent-text hover:underline"
+            onClick={() => alert("Resend logic goes here")}
+            className="hover:underline transition"
           >
             ↻ Resend it
           </button>

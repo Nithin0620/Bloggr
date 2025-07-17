@@ -2,7 +2,7 @@ import React, { use, useEffect, useState } from 'react';
 import { IoMdClose } from "react-icons/io";
 import { BiLogOut } from "react-icons/bi";
 import { CiSaveUp1 } from "react-icons/ci";
-import { applyTheme } from '../utility/SetColours';
+import { applyTheme } from '../lib/SetColours';
 
 const Settings = () => {
    const colorMap = {

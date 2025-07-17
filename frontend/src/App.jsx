@@ -5,7 +5,7 @@ import {Outlet} from "react-router-dom"
 import { useAuthStore } from './store/AuthStore'
 import { useNavigate } from 'react-router-dom'
 import { useSettingsStore } from './store/SettingsStore'
-import { applyTheme } from './utility/SetColours'
+import { applyTheme } from './lib/SetColours'
 // import { usePageStore } from './store/PageStore'
 
 const App = () => {

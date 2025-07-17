@@ -30,8 +30,8 @@ const Footbar = () => {
 
   const underline = (page) =>
     `h-[2px] z-[-10px] mt-1 rounded-full transition-all ease-in-out duration-300 ${
-      currentPage === page ? "opacity-100 scale-100 accent-bg" : "opacity-0 scale-0"
-    }`;
+    currentPage === page ? "opacity-100 scale-100 accent-bg" : "opacity-0 scale-0"
+  }`;
 
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-11/12 gap-5  max-w-md z-50">

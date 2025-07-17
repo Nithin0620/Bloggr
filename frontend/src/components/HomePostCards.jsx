@@ -56,17 +56,17 @@ const HomePostCards = ({ post }) => {
           </button>
 
           <div className="flex gap-4 items-center text-sm text-gray-700">
-            <button className="flex items-center gap-1 hover:text-red-500 transition">
+            <button className="flex items-center gap-1 hover:text-red-500 transition duration-200">
               {post.likes.length}
               <FaRegHeart />
             </button>
 
-            <button className="flex items-center gap-1 hover:text-blue-500 transition">
+            <button className="flex items-center gap-1 hover:text-blue-500 transition duration-200">
               {post.comments.length}
               <FaRegCommentDots />
             </button>
 
-            <div className="flex items-center gap-1 hover:text-green-500 transition">
+            <div className="flex items-center gap-1 hover:text-green-500 transition duration-200">
               {Math.floor(Math.random() * 10)}
               <IoIosStats />
             </div>

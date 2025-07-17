@@ -55,12 +55,14 @@ const Notification = () => {
   const handleMarkAllasRead = () => {};
   const handleClearAll = () => {};
   const handleDeleteNotification = (notificationId) => {};
-  const handleViewPost = (postId) => {};
+  const handleViewPost = (postId) => {
+    
+  };
   const handleChatClick = () => {};
   const handleSenderProfileClick = (senderId) => {};
 
   return (
-    <div className="p-6 max-w-3xl min-h-screen mx-auto">
+    <div className="p-6 max-w-3xl text-black min-h-screen mx-auto">
       {/* Header */}
       <div className="text-xl font-semibold mb-4 accent-text">🔔 Notifications</div>
 
@@ -100,11 +102,12 @@ const Notification = () => {
       <hr className="mb-6" />
 
       {/* Notifications List */}
-      <div className="space-y-6">
+      <div className="space-y-4">
         {NotificationArray.map((notification) => (
           <div
             key={notification._id}
-            className="border accent-border rounded p-4 flex flex-col gap-3 shadow-accent-box"
+            onClick={() => handleViewPost(notification.post._id)}
+            className="border accent-border rounded  p px-4 cursor-pointer py-2 40 flex flex-col gap-0 shadow-accent-box"
           >
             {/* Header */}
             <div className="flex items-center gap-3">
@@ -169,14 +172,6 @@ const Notification = () => {
 
             {/* Footer Actions */}
             <div className="flex gap-4 text-sm accent-text">
-              {notification.post && (
-                <button
-                  onClick={() => handleViewPost(notification.post._id)}
-                  className="accent-underline"
-                >
-                  View Post
-                </button>
-              )}
               <button
                 onClick={() => handlenotificationmarkasread(notification._id)}
                 className="accent-underline"
@@ -185,7 +180,7 @@ const Notification = () => {
               </button>
               <button
                 onClick={() => handleDeleteNotification(notification._id)}
-                className="flex items-center gap-1 accent-underline"
+                className="flex items-center gap-1 text-red-600 hover:underline "
               >
                 <MdOutlineDeleteOutline /> Delete
               </button>

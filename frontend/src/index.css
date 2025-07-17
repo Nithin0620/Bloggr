@@ -97,7 +97,10 @@
 .accent-border {
   border-color: var(--accent-border) !important;
 }
-
+.accent-underline:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--accent-underline);
+}
 .accent-underline {
   text-decoration: underline;
   text-decoration-color: var(--accent-underline);

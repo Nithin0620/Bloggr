@@ -63,8 +63,8 @@ const themePresets = {
 
 export const applyTheme = (themeName) => {
   const selectedTheme = themePresets[themeName];
-  console.log(themeName)
-  console.log(selectedTheme)
+//   console.log(themeName)
+//   console.log(selectedTheme)
   if (!selectedTheme) return;
 
    Object.entries(selectedTheme).forEach(([key, value]) => {
