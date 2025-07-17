@@ -40,8 +40,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="flex items-center justify-between px-6 py-3 sticky top-0 z-50 bg-white/90 backdrop-blur-md accent-box-shadow shadow-sm rounded-b-xl">
-      {/* Left: Logo */}
+    <div className="min-w-full flex items-center justify-between px-6 py-3 top-0 sticky z-50 transition-colors duration-300 accent-text-mode accent-bg-mode  accent-box-shadow shadow-sm ">
       <div
         onClick={() => handleOnClickForNavigate("home")}
         className="flex items-center space-x-2 cursor-pointer accent-text  transition"
@@ -57,9 +56,7 @@ const Navbar = () => {
         <h1 className="text-xl font-bold tracking-wide">Bloggr</h1>
       </div>
 
-      {/* Right: Controls */}
       <div className="flex items-center space-x-6">
-        {/* Create Post */}
         <div
           onClick={handleCreatePostClick}
           className="flex items-center space-x-2 cursor-pointer hover:scale-105 transition rounded-3xl p-[0.15rem] accent-highlight accent-shadow"
@@ -68,12 +65,13 @@ const Navbar = () => {
           <span className="text-sm font-medium">Create Post</span>
         </div>
 
-        {/* Settings or Login */}
         <div>
           {!token ? (
             <div
               onClick={() => handleOnClickForNavigate("login")}
-              className={`text-sm font-medium hover:scale-105 ${currentPage === "login"? "accent-text":""} duration-300 hover:translate-y-[-0.15rem] accent-underline cursor-pointer `}
+              className={`text-sm font-medium hover:scale-105 ${
+                currentPage === "login" ? "accent-text" : ""
+              } duration-300 hover:translate-y-[-0.15rem] accent-underline cursor-pointer `}
             >
               Log in
             </div>
@@ -85,12 +83,13 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Signup or Profile */}
         <div>
           {!token ? (
             <div
               onClick={() => handleOnClickForNavigate("signup")}
-              className={`text-sm font-medium cursor-pointer hover:scale-105 ${currentPage === "signup"? "accent-text":""} duration-300 hover:translate-y-[-0.15rem]  accent-underline `}
+              className={`text-sm font-medium cursor-pointer hover:scale-105 ${
+                currentPage === "signup" ? "accent-text" : ""
+              } duration-300 hover:translate-y-[-0.15rem]  accent-underline `}
             >
               Sign up
             </div>
@@ -112,7 +111,9 @@ const Navbar = () => {
               />
               {openProfileDropDown && (
                 <div className="absolute right-0 top-full accent-underline mt-2 z-10">
-                  <ProfileDropDown setOpenProfileDropDown={setOpenProfileDropDown} />
+                  <ProfileDropDown
+                    setOpenProfileDropDown={setOpenProfileDropDown}
+                  />
                 </div>
               )}
             </div>

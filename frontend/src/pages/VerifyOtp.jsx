@@ -15,7 +15,7 @@ const VerifyEmail = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br to-neutral-950 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br to-neutral-950 px-4 transition-colors duration-300 accent-bg-mode accent-text-mode">
       <div className="w-full max-w-md p-8 rounded-2xl border accent-border shadow-accent-box backdrop-blur-lg">
         <h2 className="text-3xl font-bold text-center mb-3 tracking-wide">
           Verify Email
@@ -24,7 +24,7 @@ const VerifyEmail = () => {
           A verification code has been sent to your email. Enter the code below.
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 transition-colors duration-300 accent-bg-mode accent-text-mode">
           <OtpInput
             value={otp}
             onChange={handleChange}
@@ -48,7 +48,7 @@ const VerifyEmail = () => {
           </button>
         </form>
 
-        <div className="flex justify-between items-center mt-6 text-sm">
+        <div className="flex justify-between items-center mt-6 text-sm transition-colors duration-300 accent-bg-mode accent-text-mode">
           <button
             onClick={() => navigate("/signup")}
             className="hover:underline transition"

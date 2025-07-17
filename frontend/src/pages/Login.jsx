@@ -25,11 +25,10 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen mt-5 flex flex-col gap-16 items-center justify-start">
+    <div className="min-h-screen flex flex-col gap-16 items-center justify-start transition-colors duration-300 accent-bg-mode accent-text-mode pt-[4.75rem]">
       
-      {/* Main Login Card */}
-      <div className="flex items-center justify-center w-full mt-10 ">
-        <div className="bg-white rounded-xl shadow-md px-10 py-8 w-[95%] max-w-sm flex flex-col gap-4 accent-border border">
+      <div className="flex items-center justify-center w-[95%] ax-w-md transition-colors duration-300 accent-bg-mode accent-text-mode">
+        <div className=" rounded-xl shadow-md px-10 py-8 w-[95%] max-w-sm flex flex-col gap-4 accent-border border transition-colors duration-300 accent-bg-mode accent-text-mode">
           
           {/* Title */}
           <div className="text-center">
@@ -42,7 +41,7 @@ const Login = () => {
             <input
               type="text"
               placeholder="Email"
-              className="w-full px-4 py-2 border accent-border rounded-md outline-none focus:ring-2 focus:ring-[var(--accent)] text-sm"
+              className="w-full px-4 py-2 border accent-border rounded-md outline-none focus:ring-2 focus:ring-[var(--accent)] text-sm transition-colors duration-300 accent-bg-mode accent-text-mode"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -50,7 +49,7 @@ const Login = () => {
             <input
               type="password"
               placeholder="Password"
-              className="w-full px-4 py-2 border accent-border rounded-md outline-none focus:ring-2 focus:ring-[var(--accent)] text-sm"
+              className="w-full px-4 py-2 border accent-border rounded-md outline-none focus:ring-2 focus:ring-[var(--accent)] text-sm transition-colors duration-300 accent-bg-mode accent-text-mode"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />

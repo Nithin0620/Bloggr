@@ -60,6 +60,20 @@ const themePresets = {
    },
 };
 
+export const applyMode = (mode)=>{
+  const selectedMode =mode;
+
+  localStorage.setItem("accent-mode",mode)
+  
+  if(selectedMode === "Light"){
+    document.documentElement.style.setProperty("--accent-text-mode","rgb(0, 3, 14)")
+    document.documentElement.style.setProperty("--accent-bg-mode","#f5f6fa" )
+  }
+  else{
+    document.documentElement.style.setProperty("--accent-text-mode","#ebebeb")
+    document.documentElement.style.setProperty("--accent-bg-mode","#000717")
+  }
+}
 
 export const applyTheme = (themeName) => {
   const selectedTheme = themePresets[themeName];

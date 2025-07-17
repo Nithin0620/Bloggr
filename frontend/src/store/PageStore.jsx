@@ -1,6 +1,10 @@
 import { create } from "zustand";
 
 export const usePageStore = create((set) => ({
-  currentPage: "home",
-  setCurrentPage: (page) => set({ currentPage: page }),
+  currentPage: localStorage.getItem("Curr-Page") || "home",
+  
+  setCurrentPage: (page) => {
+    set({ currentPage: page })
+    localStorage.setItem("Curr-Page",page);
+  }
 }));

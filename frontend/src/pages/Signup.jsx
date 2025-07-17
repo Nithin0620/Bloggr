@@ -20,9 +20,9 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen mt-5 flex flex-col gap-0 items-center justify-start">
+    <div className="min-h-screen flex  flex-col gap-0 items-center justify-start transition-colors duration-300 accent-bg-mode accent-text-mode p-5">
       {/* Card */}
-      <div className="w-[95%] max-w-md bg-white shadow-md rounded-xl px-10 py-8 flex flex-col gap-5 accent-border border">
+      <div className="w-[95%] max-w-md  bg-white shadow-md rounded-xl px-10 py-8 flex flex-col gap-5 accent-border border transition-colors duration-300 accent-bg-mode accent-text-mode">
         {/* Header */}
         <div className="text-center">
           <h1 className="text-2xl font-bold accent-text">Create your account</h1>
@@ -32,7 +32,7 @@ const Signup = () => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(handleSignUp)} className="flex flex-col gap-5 relative">
+        <form onSubmit={handleSubmit(handleSignUp)} className="flex flex-col gap-5 relative transition-colors duration-300 accent-bg-mode accent-text-mode">
           {/* Name Fields */}
           <div className="flex gap-4">
             <div className="relative w-full">
@@ -40,7 +40,7 @@ const Signup = () => {
                 type="text"
                 placeholder="First name"
                 {...register("firstName", { required: true })}
-                className="w-full px-4 py-2 border accent-border rounded-md text-sm"
+                className="w-full px-4 py-2 border accent-border rounded-md text-sm transition-colors duration-300 accent-bg-mode accent-text-mode"
               />
               {errors.firstName && (
                 <p className="absolute text-xs text-red-500 -mt-1 left-1">
@@ -54,7 +54,7 @@ const Signup = () => {
                 type="text"
                 placeholder="Last name"
                 {...register("lastName", { required: true })}
-                className="w-full px-4 py-2 border accent-border rounded-md text-sm"
+                className="w-full px-4 py-2 border accent-border rounded-md text-sm transition-colors duration-300 accent-bg-mode accent-text-mode"
               />
               {errors.lastName && (
                 <p className="absolute text-xs text-red-500 -mt-1 left-1">
@@ -70,7 +70,7 @@ const Signup = () => {
               type="email"
               placeholder="Email address"
               {...register("email", { required: true })}
-              className="w-full px-4 py-2 border accent-border rounded-md text-sm"
+              className="w-full px-4 py-2 border accent-border rounded-md text-sm transition-colors duration-300 accent-bg-mode accent-text-mode"
             />
             {errors.email && (
               <p className="absolute text-xs text-red-500 -mt-1 left-1">
@@ -85,7 +85,7 @@ const Signup = () => {
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               {...register("password", { required: true })}
-              className="w-full px-4 py-2 border accent-border rounded-md text-sm pr-10"
+              className="w-full px-4 py-2 border accent-border rounded-md text-sm pr-10 transition-colors duration-300 accent-bg-mode accent-text-mode"
             />
             <div
               className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
@@ -106,7 +106,7 @@ const Signup = () => {
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm password"
               {...register("confirmPassword", { required: true })}
-              className="w-full px-4 py-2 border accent-border rounded-md text-sm pr-10"
+              className="w-full px-4 py-2 border accent-border rounded-md text-sm pr-10 transition-colors duration-300 accent-bg-mode accent-text-mode"
             />
             <div
               className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
@@ -122,7 +122,7 @@ const Signup = () => {
           </div>
 
           {/* Terms of Service */}
-          <div className="relative mb-2 mt-1">
+          <div className="relative mb-2 mt-1 transition-colors duration-300 accent-bg-mode accent-text-mode">
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
@@ -143,7 +143,7 @@ const Signup = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-2 rounded-md font-semibold hover:scale-[1.02] transition accent-bg text-white"
+            className="w-full py-2 rounded-md font-semibold hover:scale-[1.02] transition accent-bg text-white duration-300 accent-bg-mode accent-text-mode"
           >
             Sign up
           </button>

@@ -2,7 +2,7 @@ import React, { use, useEffect, useState } from 'react';
 import { IoMdClose } from "react-icons/io";
 import { BiLogOut } from "react-icons/bi";
 import { CiSaveUp1 } from "react-icons/ci";
-import { applyTheme } from '../lib/SetColours';
+import { applyMode, applyTheme } from '../lib/SetColours';
 
 const Settings = () => {
    const colorMap = {
@@ -16,7 +16,7 @@ const Settings = () => {
 
    const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-   const [mode, setMode] = useState("Light");
+   const [mode, setMode] = useState("");
    const [theme, setTheme] = useState("");
    const [categories, setCategories] = useState(["Tect","Health","AI","Latest News"]);
    const [feed, setFeed] = useState("All");
@@ -29,6 +29,10 @@ const Settings = () => {
       const theme = localStorage.getItem("accent-theme");
       if(theme) setTheme(theme);
    },[])
+
+   useEffect(()=>{
+      applyMode(mode);
+   },[mode])
 
    const handleModeSelect = (value) => {
       if (value === "default") setMode(isDarkMode ? "Dark" : "Light");
@@ -65,15 +69,16 @@ const Settings = () => {
    const setSettingsHandler = () => {};
 
    return (
-   <div className="min-h-screen mb-12 flex items-center justify-center bg-transparent px-4">
+   <div className="min-h-screen pb-14  flex items-center top-0 justify-center bg-transparent px-4 transition-colors duration-300 accent-bg-mode accent-text-mode pt-[4.75rem]">
       <div className="w-full max-w-2xl border accent-border rounded-lg p-8 space-y-8 shadow-accent-box ">
          
          {/* Mode */}
          <div className=''>
             <p className="text-lg font-semibold mb-2">Dark/Light Mode</p>
             <select
-               className="w-full border accent-border rounded px-4 py-2"
+               className="w-full border accent-border rounded px-4 py-2 transition-colors duration-300 accent-bg-mode accent-text-mode "
                onChange={(e) => handleModeSelect(e.target.value)}
+               value={mode}
             >
                <option value="Light">Light</option>
                <option value="Dark">Dark</option>
@@ -176,7 +181,7 @@ const Settings = () => {
                </label>
 
                <select
-                  className="border accent-border rounded px-3 py-1"
+                  className="border accent-border rounded px-3 py-1 transition-colors duration-300 accent-bg-mode accent-text-mode"
                   value={selectedCategories.length > 0 ? selectedCategories[selectedCategories.length - 1] : ""}
                   onChange={(e) => handleCategorySelect(e.target.value)}
                >
