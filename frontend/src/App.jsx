@@ -11,19 +11,19 @@ import { applyTheme } from './utility/SetColours'
 const App = () => {
   const navigate = useNavigate();
   const {setnavigate} = useAuthStore();
-  const {getSettings,theme,mode} = useSettingsStore();
+  // const {getSettings,theme,mode} = useSettingsStore();
   // const {setNavigate} = usePageStore();
 
   useEffect(() => {
     setnavigate(navigate);
-    const response = getSettings();
+    // const response = getSettings();
 
-    const savedAccent = localStorage.getItem("accent-color");
+    const savedAccent = localStorage.getItem("accent-theme");
     if (savedAccent) {
-      applyTheme(savedAccent)
+      applyTheme(savedAccent);
     }
-    applyTheme(response.data);
-    localStorage.setItem("accent-color", response.data);
+    // applyTheme(response.data);
+    // localStorage.setItem("accent-theme", response.data);
   }, [navigate]);
 
   

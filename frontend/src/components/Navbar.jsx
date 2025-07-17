@@ -44,10 +44,10 @@ const Navbar = () => {
       {/* Left: Logo */}
       <div
         onClick={() => handleOnClickForNavigate("home")}
-        className="flex items-center space-x-2 cursor-pointer hover:scale-105 transition"
+        className="flex items-center space-x-2 cursor-pointer accent-text  transition"
       >
         <svg
-          className="w-8 h-8 text-black"
+          className="w-8 h-8 accent-text"
           fill="currentColor"
           viewBox="0 0 48 48"
           xmlns="http://www.w3.org/2000/svg"
@@ -62,7 +62,7 @@ const Navbar = () => {
         {/* Create Post */}
         <div
           onClick={handleCreatePostClick}
-          className="flex items-center space-x-2 cursor-pointer hover:scale-105 transition accent-text"
+          className="flex items-center space-x-2 cursor-pointer hover:scale-105 transition rounded-3xl p-[0.15rem] accent-highlight accent-shadow"
         >
           <FaPlus className="text-base" />
           <span className="text-sm font-medium">Create Post</span>
@@ -73,7 +73,7 @@ const Navbar = () => {
           {!token ? (
             <div
               onClick={() => handleOnClickForNavigate("login")}
-              className="text-sm font-medium hover:scale-105 duration-200 hover:translate-y-[-0.15rem] accent-underline cursor-pointer "
+              className={`text-sm font-medium hover:scale-105 ${currentPage === "login"? "accent-text":""} duration-300 hover:translate-y-[-0.15rem] accent-underline cursor-pointer `}
             >
               Log in
             </div>
@@ -90,7 +90,7 @@ const Navbar = () => {
           {!token ? (
             <div
               onClick={() => handleOnClickForNavigate("signup")}
-              className="text-sm font-medium cursor-pointer hover:scale-105 duration-200 hover:translate-y-[-0.15rem]  accent-underline "
+              className={`text-sm font-medium cursor-pointer hover:scale-105 ${currentPage === "signup"? "accent-text":""} duration-300 hover:translate-y-[-0.15rem]  accent-underline `}
             >
               Sign up
             </div>

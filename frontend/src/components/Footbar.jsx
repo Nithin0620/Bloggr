@@ -29,13 +29,13 @@ const Footbar = () => {
     `flex items-center justify-center font-[475] text-xs mt-1 ${currentPage === page ? 'accent-text' : ''}`;
 
   const underline = (page) =>
-    `h-[2px] z-[-10px] mt-1 rounded-full transition-all duration-300 ${
+    `h-[2px] z-[-10px] mt-1 rounded-full transition-all ease-in-out duration-300 ${
       currentPage === page ? "opacity-100 scale-100 accent-bg" : "opacity-0 scale-0"
     }`;
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-11/12 gap-5 max-w-md z-50">
-      <div className="flex justify-evenly h-12 rounded-full gap-14 px-6 py-0 backdrop-blur-lg opacity-99 shadow-accent-box bg-white border border-gray-200">
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-11/12 gap-5  max-w-md z-50">
+      <div className="flex justify-evenly h-12 rounded-full gap-14 px-6 py-0 backdrop-blur-lg opacity-99 shadow-accent-box  border border-gray-200">
         
         {/* Home */}
         <div onClick={() => handleClickInBar("home")} className={tabClass("home")}>

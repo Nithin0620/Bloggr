@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { IoMdClose } from "react-icons/io";
 import { BiLogOut } from "react-icons/bi";
 import { CiSaveUp1 } from "react-icons/ci";
@@ -17,7 +17,7 @@ const Settings = () => {
    const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
    const [mode, setMode] = useState("Light");
-   const [theme, setTheme] = useState("Green");
+   const [theme, setTheme] = useState("");
    const [categories, setCategories] = useState(["Tect","Health","AI","Latest News"]);
    const [feed, setFeed] = useState("All");
    const [selectedCategories, setSelectedCategories] = useState([]);
@@ -25,6 +25,10 @@ const Settings = () => {
       push: false,
       email: false
    });
+   useEffect(()=>{
+      const theme = localStorage.getItem("accent-theme");
+      if(theme) setTheme(theme);
+   },[])
 
    const handleModeSelect = (value) => {
       if (value === "default") setMode(isDarkMode ? "Dark" : "Light");
@@ -87,8 +91,8 @@ const Settings = () => {
                   <div
                      key={color}
                      onClick={() => handleThemeSelect(color)}
-                     className={`px-4 py-2 border rounded-full cursor-pointer transition-all duration-350
-                        ${theme === color ? `accent-border ${colorMap[color]}  accent-box-shadow ring-2 ring-offset-2` : ""}
+                     className={`px-4 py-[0.4rem] border rounded-full cursor-pointer transition-all duration-350
+                        ${theme === color ? ` ${colorMap[color]}  accent-box-shadow ring-2 ring-offset-2` : ""}
                      `}
                   >
                      {color}

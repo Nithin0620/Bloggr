@@ -38,7 +38,7 @@ const Home = () => {
   return (
     <div className="flex justify-center m-3 p-2">
       {/* Main Container */}
-      <div className="w-[85%] rounded-3xl flex flex-col items-center px-12 py-2 min-h-screen accent-bg-light shadow-accent-box border accent-border">
+      <div className="w-[80%] rounded-3xl flex flex-col items-center px-12 py-2 min-h-screen accent-bg-light shadow-accent-box border accent-border">
         
         {/* Hero Section */}
         <HeroCard />
