@@ -8,6 +8,7 @@ import Notification from "./pages/Notification"
 import Settings from "./pages/Settings"
 import VerifyOtp from "./pages/VerifyOtp"
 import Message from "./pages/Message"
+import ReadMorePost from "./pages/ReadMorePost"
 
 
 export const router = createBrowserRouter([
@@ -45,6 +46,10 @@ export const router = createBrowserRouter([
          {
             path:"message",
             element:<Message/>
+         },
+         {
+            path:"/readmore",
+            element:<ReadMorePost/>
          }
       ]
    },

@@ -5,9 +5,20 @@ import { IoIosStats } from "react-icons/io";
 import { GoPencil } from "react-icons/go";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useAuthStore } from "../store/AuthStore";
+import { useNavigate } from "react-router-dom";
+import { usePostStore } from "../store/PostStore";
 
 const ProfilePostCard = ({ post }) => {
+  const {setPost} = usePostStore();
+
+  const navigate = useNavigate();
+  
   const { authUser } = useAuthStore();
+
+  const handleReadmoreClick = (postId)=>{
+    setPost(postId)
+    navigate("/readmore")
+  }
 
   return (
     <div className="flex  rounded-2xl shadow-md border accent-border overflow-hidden w-full max-w-[55rem] h-44 mx-auto my-4 transition-transform hover:scale-[1.01] transition-colors duration-300 accent-bg-mode accent-text-mode">
@@ -47,7 +58,7 @@ const ProfilePostCard = ({ post }) => {
 
         {/* Bottom Section */}
         <div className="mt-3 flex items-center justify-between">
-          <button className="text-sm text-blue-500 hover:underline font-medium">
+          <button onClick={()=>handleReadmoreClick(post._id)} className="text-sm text-blue-500 hover:underline font-medium">
             Read More →
           </button>
 

@@ -2,8 +2,21 @@ import React from 'react';
 import { FaRegHeart } from "react-icons/fa6";
 import { FaRegCommentDots } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
+import { usePageStore } from '../store/PageStore';
+import { useNavigate } from 'react-router-dom';
+import { usePostStore } from '../store/PostStore';
 
 const HomePostCards = ({ post }) => {
+  const {setPost} = usePostStore();
+  const navigate = useNavigate();
+  const {setCurrentPage} = usePageStore();
+
+  const handleReadmoreClick = ()=>{
+    // setPost(postId)
+    setCurrentPage("ReadMore");
+    navigate("/readmore")
+  }
+
   return (
     <div className="w-full p-2 h-[29rem] rounded-2xl transition-colors duration-300 accent-bg-mode accent-text-mode">
       <div className="border accent-border accent-box-shadow rounded-xl shadow p-4 h-[28rem] flex flex-col justify-between hover:scale-[1.015] transition-transform duration-300 ease-in-out">
@@ -51,7 +64,7 @@ const HomePostCards = ({ post }) => {
 
         {/* Footer */}
         <div className="flex justify-between items-center mt-auto">
-          <button className="text-sm accent-text hover:underline transition">
+          <button onClick={()=>handleReadmoreClick()} className="text-sm accent-text hover:underline transition">
             Read More...
           </button>
 

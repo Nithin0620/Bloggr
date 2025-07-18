@@ -108,7 +108,7 @@ const Notification = () => {
             <div
               key={notification._id}
               onClick={() => handleViewPost(notification.post._id)}
-              className="border accent-border rounded  p px-4 cursor-pointer py-2 40 flex flex-col gap-0 shadow-accent-box"
+              className="border accent-border rounded  p px-4 cursor-pointer py-2 40 flex flex-col gap-0 "
             >
               {/* Header */}
               <div className="flex items-center gap-3">
@@ -172,7 +172,7 @@ const Notification = () => {
               )}
 
               {/* Footer Actions */}
-              <div className="flex gap-4 text-sm accent-text">
+              <div className="flex gap-4 text-sm accent-text ">
                 <button
                   onClick={() => handlenotificationmarkasread(notification._id)}
                   className="accent-underline"

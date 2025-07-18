@@ -1,6 +1,6 @@
 import React from 'react'
 
-const EditProfile = () => {
+const RelatedBlogs = () => {
    return (
       <div>
          
@@ -8,4 +8,4 @@ const EditProfile = () => {
    )
 }
 
-export default EditProfile
+export default RelatedBlogs
