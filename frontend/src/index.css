@@ -43,21 +43,6 @@
 
 
 /* theme setting section */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 :root {
   /* fallback values - not enforced if JS sets it */
   --accent: var(--accent, #22c55e);

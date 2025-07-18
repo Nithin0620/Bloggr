@@ -6,7 +6,7 @@ const SideBarSkeleton = () => {
   const skeletonContacts = Array(8).fill(null);
 
   return (
-    <aside className="w-full">
+    <aside className="w-full transition-colors duration-300 accent-text-mode accent-bg-mode">
       <div className="border-b border-base-300 p-5">
         <div className="flex items-center gap-2 mb-4">
           <Users className="w-6 h-6" />

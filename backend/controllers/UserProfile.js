@@ -57,7 +57,7 @@ exports.updateProfileInfo = async (req, res) => {
          return res.status(404).json({ success: false, message: "User not found" });
       }
 
-      const { firstName, lastName, password, confirmPassword, image, bio } = req.body;
+      const { firstName, lastName, password, confirmPassword,email, image, bio } = req.body;
 
       if (firstName) user.firstName = firstName;
       if (lastName) user.lastName = lastName;
@@ -73,6 +73,10 @@ exports.updateProfileInfo = async (req, res) => {
          }
          const hashedPassword = await bcrypt.hash(password, 10); 
          user.password = hashedPassword;
+
+      }
+      if(email){
+         user.email = email;
       }
 
       if (user.profile) {

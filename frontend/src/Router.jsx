@@ -9,6 +9,7 @@ import Settings from "./pages/Settings"
 import VerifyOtp from "./pages/VerifyOtp"
 import Message from "./pages/Message"
 import ReadMorePost from "./pages/ReadMorePost"
+import EditProfile from "./pages/EditProfile"
 
 
 export const router = createBrowserRouter([
@@ -50,6 +51,10 @@ export const router = createBrowserRouter([
          {
             path:"/readmore",
             element:<ReadMorePost/>
+         },
+         {
+            path:"editprofile",
+            element:<EditProfile/>
          }
       ]
    },
