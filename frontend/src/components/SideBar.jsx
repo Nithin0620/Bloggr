@@ -20,11 +20,11 @@ const SideBar = () => {
   if (isUsersLoading) return <SideBarSkeleton />;
 
   return (
-    <aside className="min-h-screen w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200 accent-bg-light shadow-accent-box">
-      <div className="border-b border-base-300 w-full p-5">
+    <aside className="min-h-screen w-20 lg:w-72 border-r border-base-300 flex flex-col shadow-accent-box transition-colors accent-box-shadow duration-300 accent-bg-mode accent-text-mode">
+      <div className="border-b accent-box-shadow accent-border border-base-300 w-full p-5">
         <div className="flex items-center gap-2">
-          <Users className="size-6" />
-          <span className="font-medium hidden lg:block">Contacts</span>
+          <Users className="size-6 accent-shadow accent-text" />
+          <span className="font-medium hidden accent-text lg:block">Contacts</span>
         </div>
 
         <div className="mt-3 hidden lg:flex items-center gap-2">
@@ -33,7 +33,7 @@ const SideBar = () => {
               type="checkbox"
               checked={showOnlineOnly}
               onChange={(e) => setShowOnlineOnly(e.target.checked)}
-              className="checkbox checkbox-sm shadow-accent-box"
+              className="checkbox checkbox-sm shadow-accent-box accent-bg-mode"
             />
             <span className="text-sm">Show online only</span>
           </label>

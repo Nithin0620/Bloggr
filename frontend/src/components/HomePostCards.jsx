@@ -5,8 +5,8 @@ import { IoIosStats } from "react-icons/io";
 
 const HomePostCards = ({ post }) => {
   return (
-    <div className="w-full p-2">
-      <div className="border accent-border accent-box-shadow bg-white/80 rounded-xl shadow p-4 h-[28rem] flex flex-col justify-between hover:scale-[1.015] transition-transform duration-300 ease-in-out">
+    <div className="w-full p-2 h-[29rem] rounded-2xl transition-colors duration-300 accent-bg-mode accent-text-mode">
+      <div className="border accent-border accent-box-shadow rounded-xl shadow p-4 h-[28rem] flex flex-col justify-between hover:scale-[1.015] transition-transform duration-300 ease-in-out">
         {/* Row 1 - Categories and Read Time */}
         <div className="flex justify-between items-center flex-wrap text-sm mb-2">
           <div className="flex gap-2 flex-wrap items-center">

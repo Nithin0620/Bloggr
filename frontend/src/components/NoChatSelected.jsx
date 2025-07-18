@@ -2,7 +2,7 @@ import { MessageSquare } from "lucide-react";
 
 const NoChatSelected = () => {
   return (
-    <div className="w-full flex flex-1 flex-col items-center justify-center min-h-screen p-16 accent-bg-light shadow-accent-box">
+    <div className="w-full flex flex-1 flex-col accent-box-shadow border-l-0 accent-border items-center justify-center min-h-screen p-16 shadow-accent-box transition-colors duration-300 accent-bg-mode accent-text-mode">
       <div className="max-w-md text-center space-y-6">
         <div className="flex justify-center gap-4 mb-4">
           <div className="relative">

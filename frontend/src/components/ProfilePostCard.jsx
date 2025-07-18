@@ -10,9 +10,9 @@ const ProfilePostCard = ({ post }) => {
   const { authUser } = useAuthStore();
 
   return (
-    <div className="flex bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden w-full max-w-[55rem] h-44 mx-auto my-4 transition-transform hover:scale-[1.01]">
+    <div className="flex  rounded-2xl shadow-md border accent-border overflow-hidden w-full max-w-[55rem] h-44 mx-auto my-4 transition-transform hover:scale-[1.01] transition-colors duration-300 accent-bg-mode accent-text-mode">
       {/* Image Section */}
-      <div className="w-1/3 min-w-[100px] flex items-center justify-center p-4 bg-gray-50">
+      <div className="w-1/3 min-w-[100px] flex items-center justify-center p-4 ">
         <img
           src={post.image}
           alt="Post"
@@ -23,23 +23,23 @@ const ProfilePostCard = ({ post }) => {
       {/* Content Section */}
       <div className="w-2/3 p-4 flex flex-col justify-between">
         {/* Categories */}
-        <div className="flex items-center gap-2 text-[0.7rem] text-gray-500 font-medium flex-wrap">
+        <div className="flex items-center gap-2 text-[0.7rem]  font-medium flex-wrap ">
           {post.categories.map((category, index) => (
-            <span key={index} className="uppercase tracking-wide">
+            <span key={index} className="uppercase tracking-wide border accent-border rounded-lg p-[0.15rem]">
               {category}
             </span>
           ))}
         </div>
 
         {/* Title */}
-        <h2 className="text-[1.1rem] font-semibold text-gray-800 mt-1">
+        <h2 className="text-[1.1rem] font-semibold accent-text  mt-1">
           {post.title.length <= 50
             ? post.title
             : post.title.substring(0, 50) + "..."}
         </h2>
 
         {/* Description */}
-        <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+        <p className="text-sm mt-1 line-clamp-2">
           {post.description.length <= 100
             ? post.description
             : post.description.substring(0, 100) + "..."}
@@ -51,26 +51,26 @@ const ProfilePostCard = ({ post }) => {
             Read More →
           </button>
 
-          <div className="flex items-center gap-4 text-gray-500 text-sm">
-            <span className="flex items-center gap-1">
+          <div className="flex items-center gap-4  text-sm">
+            <span className="flex items-center gap-1 transition-all duration-300 hover:text-red-500">
               {post.likes.length}
               <FaRegHeart />
             </span>
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap-1 transition-all duration-300 hover:text-green-500">
               {post.comments.length}
               <FaRegCommentDots />
             </span>
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap-1 hover:text-blue-500 transition-all duration-300">
               {Math.floor(Math.random() * 10)}
               <IoIosStats />
             </span>
 
-            {post.author._id === authUser._id && (
+            {post.author._id  && (
               <div className="flex items-center gap-3 text-[1rem] ml-2">
-                <button className="hover:text-gray-700 transition">
+                <button className="accent-text transition">
                   <GoPencil />
                 </button>
-                <button className="hover:text-red-600 transition">
+                <button className="hover:text-red-600 transition duration-200">
                   <RiDeleteBin6Line />
                 </button>
               </div>

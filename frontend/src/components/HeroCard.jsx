@@ -7,7 +7,7 @@ const HeroCard = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="shadow-md accent-box-shadow accent-border border w-[98%] rounded-xl m-5 p-5 bg-white/80 space-y-4">
+    <div className="shadow-md accent-box-shadow accent-border border w-[98%] rounded-xl m-5 p-5  space-y-4 transition-colors duration-300 accent-bg-mode accent-text-mode">
       {/* =========================== Not Logged In =========================== */}
       {token === null && (
         <div className="text-center space-y-4">

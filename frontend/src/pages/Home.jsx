@@ -36,29 +36,29 @@ const Home = () => {
   const [categories, setCategories] = useState(["Tech"]);
 
   return (
-    <div className="flex justify-center m-3 p-2">
+    <div className="flex justify-center p-2 transition-colors duration-300 accent-bg-mode accent-text-mode">
       {/* Main Container */}
-      <div className="w-[80%] rounded-3xl flex flex-col items-center px-12 py-2 min-h-screen accent-bg-light shadow-accent-box border accent-border">
+      <div className="w-[80%] rounded-3xl flex flex-col items-center px-12 py-2 min-h-screen shadow-accent-box border accent-border transition-colors duration-300 accent-bg-mode accent-text-mode">
         
         {/* Hero Section */}
         <HeroCard />
 
         {/* Search and Filter */}
-        <div className="w-[98%] mx-auto rounded-xl bg-white shadow p-4 mt-6 mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="w-[98%] mx-auto rounded-xl accent-box-shadow p-4 mt-6 mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 accent-border border transition-colors duration-300 accent-bg-mode accent-text-mode">
           {/* 🔍 Search Bar */}
-          <div className="flex items-center w-full md:w-[80%] bg-gray-100 rounded-md px-4 py-2 shadow-inner">
-            <IoSearch className="text-gray-500 text-lg" />
-            <div className="mx-2 h-6 w-[2px] bg-gray-400" />
+          <div className="flex items-center w-full md:w-[80%]  rounded-md px-4 py-2 shadow-inner accent-box-shadow border accent-border">
+            <IoSearch className=" text-lg transition-colors duration-300 accent-bg-mode accent-text-mode" />
+            <div className="mx-2 h-6 w-[1.5px] ml-4 transition-colors duration-300 bg-gray-400 accent-text-mode" ></div>
             <input
               type="search"
               placeholder="Search posts, authors or categories"
-              className="ml-3 w-full bg-transparent text-sm outline-none placeholder-gray-500"
+              className="ml-3 w-full bg-transparent text-sm outline-none  placeholder-gray-500"
             />
           </div>
 
           {/* ⬇️ Category Dropdown */}
-          <div className="w-full md:w-[25%]">
-            <select className="w-full text-sm px-4 py-2 border accent-border rounded-md shadow-sm bg-white text-gray-700">
+          <div className="w-full md:w-[25%] transition-colors duration-300 accent-bg-mode accent-text-mode">
+            <select className="w-full text-sm px-4 py-2 border accent-border rounded-md shadow-sm transition-colors duration-300 accent-bg-mode accent-text-mode">
               <option value="">All Categories</option>
               {categories.map((category, index) => (
                 <option key={index} value={category}>

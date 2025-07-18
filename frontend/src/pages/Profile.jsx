@@ -45,10 +45,10 @@ const Profile = () => {
   ];
 
   return (
-    <div className="flex justify-center mx-auto px-4 py-5">
-      <div className="w-[85%] rounded-lg p-8 bg-slate-100">
+    <div className="flex justify-center mx-auto px-4 py-2 transition-colors duration-300 accent-bg-mode accent-text-mode">
+      <div className="w-[85%] rounded-lg p-8 ">
         {/* Profile Card */}
-        <div className="bg-white rounded-xl p-6 flex flex-col md:flex-row items-start justify-between shadow-accent-box accent-border border">
+        <div className=" rounded-xl p-6 flex flex-col md:flex-row items-start justify-between shadow-accent-box accent-border border">
           {/* Left - Image and Basic Info */}
           <div className="flex items-start gap-6 w-full md:w-auto">
             <img
@@ -60,10 +60,10 @@ const Profile = () => {
               <h1 className="text-xl font-semibold accent-text">
                 {authUser.firstName} {authUser.lastName}
               </h1>
-              <p className="text-sm text-gray-600">{authUser.profession}</p>
-              <p className="text-sm text-gray-500">Joined in {authUser.createdAt}</p>
-              <p className="mt-2 text-sm text-gray-700">{authUser.description}</p>
-              <button className="mt-4 accent-bg hover:accent-bg-dark text-white text-sm font-medium py-1.5 px-4 rounded-md transition-all duration-150">
+              <p className="text-sm">{authUser.profession}</p>
+              <p className="text-sm ">Joined in {authUser.createdAt}</p>
+              <p className="mt-2 text-sm ">{authUser.description}</p>
+              <button className="mt-4 accent-bg hover:accent-bg-dark text-sm font-medium py-1.5 px-4 rounded-md transition-all duration-150">
                 Follow {authUser.firstName}
               </button>
             </div>
@@ -76,20 +76,22 @@ const Profile = () => {
           <div className="flex md:flex-col items-center gap-6 mt-6 md:mt-0 w-full md:w-auto justify-around">
             <div className="text-center">
               <p className="text-xl font-bold">{authUser.profile}</p>
-              <p className="text-sm font-medium text-gray-600">Followers</p>
+              <p className="text-sm font-medium ">Followers</p>
             </div>
             <div className="text-center">
               <p className="text-xl font-bold">{authUser.profile}</p>
-              <p className="text-sm font-medium text-gray-600">Following</p>
+              <p className="text-sm font-medium ">Following</p>
             </div>
           </div>
         </div>
 
         {/* Posts Section */}
         <div className="mt-10">
-          <h2 className="text-lg font-semibold accent-underline accent-text pb-1">
+          <h2 className="text-lg font-semibold accent-underline accent-text pb-3">
             Posts
           </h2>
+
+          <div className='min-w-full h-[0.12rem] accent-bg-light rounded-full'></div>
 
           <div className="mt-6 space-y-6">
             {dummyProfilePosts.map((post, index) => (

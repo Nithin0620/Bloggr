@@ -26,16 +26,16 @@ const ProfileDropDown = ({ setOpenProfileDropDown }) => {
   };
 
   return (
-    <div className="absolute right-0 mt-0 w-44 rounded-xl border bg-white shadow-lg accent-box-shadow z-50 animate-fade-in">
+    <div className="absolute right-0 mt-0 w-44 rounded-xl border shadow-lg accent-box-shadow z-50 animate-fade-in transition-colors duration-300 accent-bg-mode accent-text-mode">
       {/* Email */}
-      <div className="px-4 py-2 text-sm font-medium text-gray-600 border-b truncate">
+      <div className="px-4 py-2 text-sm font-medium  border-b truncate">
         {authUser?.email || "No email"}
       </div>
 
       {/* Share Profile */}
       <div
         onClick={handleShareProfile}
-        className="px-4 py-2 flex items-center gap-2 text-sm cursor-pointer hover:bg-gray-100"
+        className="px-4 py-2 flex items-center gap-2 text-sm cursor-pointer hover:font-semibold"
       >
         <IoMdShare />
         Share my profile
@@ -44,7 +44,7 @@ const ProfileDropDown = ({ setOpenProfileDropDown }) => {
       {/* View Profile */}
       <div
         onClick={handleViewProfile}
-        className="flex items-center px-4 py-2 gap-2 hover:bg-gray-100 cursor-pointer"
+        className="flex items-center px-4 py-2 gap-2 hover:border-0 rounded-xl transition-all duration-200 cursor-pointer"
       >
         <img
           src={authUser?.profilePic || "https://via.placeholder.com/32"}

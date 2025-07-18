@@ -8,7 +8,7 @@ const Message = () => {
   const { chatSelected } = useChatStore();
 
   return (
-    <div className="flex min-h-screen"> 
+    <div className="flex min-h-screen transition-colors duration-300 accent-bg-mode accent-text-mode"> 
       {/* Sidebar */}
       <SideBar />
 

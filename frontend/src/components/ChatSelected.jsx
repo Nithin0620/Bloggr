@@ -34,7 +34,7 @@ const ChatSelected = () => {
 
   if (isMessagesLoading) {
     return (
-      <div className="min-h-screen accent-bg-light shadow-accent-box">
+      <div className="min-h-screen accent-bg-light shadow-accent-box transition-colors duration-300 accent-bg-mode accent-text-mode">
         <ChatHeader />
         <ChatSkeleton />
         <MessageInput />
@@ -43,7 +43,7 @@ const ChatSelected = () => {
   }
 
   return (
-    <div className="min-h-screen accent-bg-light shadow-accent-box">
+    <div className="min-h-screen accent-bg-light shadow-accent-box transition-colors duration-300 accent-bg-mode accent-text-mode">
       <ChatHeader />
 
       <div className="px-4 py-2 space-y-4">

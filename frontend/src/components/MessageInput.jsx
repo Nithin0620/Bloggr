@@ -47,14 +47,14 @@ const MessageInput = () => {
   };
 
   return (
-    <div className="p-4 w-full accent-bg-light shadow-accent-box rounded-t-md">
+    <div className="p-4 w-full accent-bg-light shadow-accent-box rounded-t-md transition-colors duration-300 accent-bg-mode accent-text-mode">
       {imagePreview && (
         <div className="mb-3 flex items-center gap-2">
           <div className="relative shadow-accent-box rounded-md">
             <img
               src={imagePreview}
               alt="Preview"
-              className="w-20 h-20 object-cover rounded-lg border border-zinc-700"
+              className="w-20 h-20 object-cover rounded-lg border accent-box-shadow accent-border"
             />
             <button
               onClick={removeImage}

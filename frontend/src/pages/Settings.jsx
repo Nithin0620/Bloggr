@@ -58,6 +58,7 @@ const Settings = () => {
 
    useEffect(() => {
       if(selectedCategories.length > 0) setFeed("");
+      else if(selectedCategories.length=== 0 ) setFeed("All")
    }, [selectedCategories]);
 
    useEffect(() => {
@@ -80,9 +81,9 @@ const Settings = () => {
                onChange={(e) => handleModeSelect(e.target.value)}
                value={mode}
             >
+               <option value="default">System Default</option>
                <option value="Light">Light</option>
                <option value="Dark">Dark</option>
-               <option value="default">System Default</option>
             </select>
          </div>
 
@@ -96,8 +97,8 @@ const Settings = () => {
                   <div
                      key={color}
                      onClick={() => handleThemeSelect(color)}
-                     className={`px-4 py-[0.4rem] border rounded-full cursor-pointer transition-all duration-350
-                        ${theme === color ? ` ${colorMap[color]}  accent-box-shadow ring-2 ring-offset-2` : ""}
+                     className={`px-4 py-[0.4rem]  rounded-full cursor-pointer transition-all duration-350
+                        ${theme === color ? ` ${colorMap[color]} accent-border ring-2 ring-offset-2` : ""}
                      `}
                   >
                      {color}
@@ -181,7 +182,7 @@ const Settings = () => {
                </label>
 
                <select
-                  className="border accent-border rounded px-3 py-1 transition-colors duration-300 accent-bg-mode accent-text-mode"
+                  className="border accent-border rounded px-3 py-1 select:border-none transition-colors duration-300 accent-bg-mode accent-text-mode"
                   value={selectedCategories.length > 0 ? selectedCategories[selectedCategories.length - 1] : ""}
                   onChange={(e) => handleCategorySelect(e.target.value)}
                >
