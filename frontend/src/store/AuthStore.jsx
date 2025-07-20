@@ -2,9 +2,11 @@ import {create } from "zustand"
 import { axiosInstance } from "../lib/axios"
 import toast from "react-hot-toast";
 import {io} from "socket.io-client"
+import axios from 'axios';
+axios.defaults.withCredentials = true;
 
 
-const BASE_URL = process.env.REACT_APP_MODE === "development" ? process.env.BACKEND_API_BASE_URL : "/"
+const BASE_URL = "http://localhost:4000/api"
 
 export const useAuthStore = create((set,get)=>({
    navigate:null,
@@ -18,22 +20,31 @@ export const useAuthStore = create((set,get)=>({
    isSendingotp :false,
    isUpdatingprofile :false,
    isLoggingout:false,
+   beforeSignUpData:null,
+   
+   setBeforeSignUpData : (data)=>{
+      set({beforeSignUpData:data})
+   },
 
-   setnavigate: async(navigate)=>{
-      set({navigate:navigate});
+   setnavigate: async(navigatefn)=>{
+      // console.log("navigate",navigate)
+      set({navigate:navigatefn});
    },
 
    login : async(data)=>{
       set({isLoggingin:true});
       try{
-         const response = await axiosInstance.post("/auth/login",data);
+         const response = await axios.post(`${BASE_URL}/auth/login`,data);
 
          if(response.data.success){
             toast.success("User logged in successfully");
-            set({authUser:response.data})
+            console.log("response.data:",response.data.data);
+            console.log("response.data.token:",response.data.data.token);
+            set({authUser:response.data.data})
+            set({token:response.data.data.token});
             get().connectSocket();
-            const navigate = get().navigate;
-            if(navigate) navigate("/");
+            const navigatefn = get().navigate;
+            if(navigatefn) navigatefn("/");
          }
          else{
             throw new Error("Error occured in server");  
@@ -51,18 +62,22 @@ export const useAuthStore = create((set,get)=>({
    sendotp: async(email)=>{
       set({isSendingotp:true});
       try{
-         const response = await axiosInstance.post("/auth/sendotp",email);
-
+         // console.log("response:",email)
+         // console.log("url:",BASE_URL)
+         const response = await axiosInstance.post(`${BASE_URL}/auth/sendotp`,{email});
+         
+         // console.log("response in sendOtp:",response.data.success)
          if(response.data.success) {
-
-            const navigate = get().navigate;
-            if(navigate) navigate("/verify-email");
+            
+            toast.success(response.data.message);
+            const navigatefn = get().navigate;
+            if(navigatefn) navigatefn("/verifyemail")
          }
-         
-         
+                  
       }
       catch(e){
-
+         toast.error(e.message)
+         console.log("error in the auth store in sendotp:",e);
       }
       finally{
          set({isSendingotp:false});
@@ -72,11 +87,13 @@ export const useAuthStore = create((set,get)=>({
    signup: async(data)=>{
       set({isSigningup:true});
       try{
-         const response = await axiosInstance.post("/auth/signup",data);
+         const response = await axios.post(`${BASE_URL}/auth/signup`,data);
+         // console.log(response)
          if(response.data.success){
             toast.success("Account created Successfully");
-            const navigate = get().navigate;
-            if(navigate) navigate("/login");
+            const navigatefn  = get().navigate;
+            toast.success("please login yourself after creating account!")
+            if(navigatefn) navigatefn("/login")
          }
          else{
             throw new Error ("Error occured in the signp i think from server the error is comming from ")
@@ -84,16 +101,18 @@ export const useAuthStore = create((set,get)=>({
       }
       catch(e){
          console.log("Error occured in signup function in zustand store:",e);
+         toast.error(e.message)
       }
       finally{
          set({isSigningup:false});
       }
    },
+
    logout:async()=>{
       set({isLoggingout:true});
       try{
-         const response = await axiosInstance.post("/logout");
-         if(response){
+         const response = await axios.post(`${BASE_URL}/auth/logout`);
+         if(response.data.success){
             set({token:null});
             set({authUser:null});
             toast.success("Loggeed out Successfully");
@@ -107,10 +126,26 @@ export const useAuthStore = create((set,get)=>({
          }
       }
       catch (error) {
-         toast.error(error.response.data.message);
+         console.log("error in logour", error)
+         toast.error(error.message);
       }
       finally{
          set({isLoggingout:false});
+      }
+   },
+
+   checkAuth:async()=>{
+      try{
+         const response = await axios.get(`${BASE_URL}/auth/checkauth`);
+         // console.log("checkauth:",response.data.success)
+         if(response.data.success){
+            set({authUser:response.data.data.user});
+            set({token:response.data.data.token});
+         }
+      }
+      catch(e){
+         console.log(e);
+         toast.error("Error occured in checking auth");
       }
    },
 

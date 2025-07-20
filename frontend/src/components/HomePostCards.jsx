@@ -51,8 +51,8 @@ const HomePostCards = ({ post }) => {
         </div>
 
         {/* Description */}
-        <div className="flex flex-col gap-2 text-sm text-gray-700 mb-3">
-          <div className="text-xs text-gray-600 italic">
+        <div className="flex flex-col gap-2 text-sm accent-text-mode mb-3">
+          <div className="text-xs text-gray-400 italic">
             By {post.author} • {Math.floor((Date.now() - post.updatedTime) / (1000 * 60))} mins ago
           </div>
           <div>

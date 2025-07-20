@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useAuthStore } from '../store/AuthStore';
+import { ImSpinner3 } from "react-icons/im";
+
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const {login,setnavigate,isLoggingin} = useAuthStore();
 
   const handleLogin = () => {
     if (!email) {
@@ -16,7 +20,8 @@ const Login = () => {
       toast.error("Please enter your password 🫣");
       return;
     }
-
+    setnavigate(navigate);
+    login({email,password});
     // Add your login logic here
   };
 
@@ -70,7 +75,13 @@ const Login = () => {
             onClick={handleLogin}
             className="w-full py-2 rounded-md font-semibold hover:scale-[1.02] transition accent-bg text-white"
           >
-            Log in
+            {
+                isLoggingin ? (<div className='flex justify-center items-center accent-text-mode animate-spin'>
+                  <ImSpinner3/>
+                </div>) : (<div>
+                  Log in
+                </div>)
+              }
           </button>
 
           {/* Signup Redirect */}
@@ -78,9 +89,9 @@ const Login = () => {
             <span className="opacity-80">Don't have an account? </span>
             <button
               onClick={() => navigate("/signup")}
-              className="font-medium accent-underline hover:opacity-90"
+              className="font-medium  accent-underline hover:opacity-90"
             >
-              Sign up
+              Signup
             </button>
           </div>
         </div>

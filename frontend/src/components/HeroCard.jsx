@@ -7,7 +7,7 @@ const HeroCard = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="shadow-md accent-box-shadow accent-border border w-[98%] rounded-xl m-5 p-5  space-y-4 transition-colors duration-300 accent-bg-mode accent-text-mode">
+    <div className="shadow-md accent-box-shadow accent-border border w-[98%] rounded-xl m-5 p-5 z-20 drop-shadow-md shadow-accent-box  space-y-4 transition-colors duration-300 accent-bg-mode accent-text-mode">
       {/* =========================== Not Logged In =========================== */}
       {token === null && (
         <div className="text-center space-y-4">
@@ -19,7 +19,9 @@ const HeroCard = () => {
             </div>
 
             {/* Title */}
-            <h1 className="text-2xl font-bold accent-text">Welcome to Bloggr</h1>
+            <h1 className="text-2xl font-bold accent-text">
+              Welcome to Bloggr
+            </h1>
           </div>
 
           <p className="text-sm font-serif leading-relaxed max-w-3xl mx-auto">
@@ -40,7 +42,9 @@ const HeroCard = () => {
             </button>
             <button
               onClick={() =>
-                document.getElementById("PostSection")?.scrollIntoView({ behavior: "smooth" })
+                document
+                  .getElementById("PostSection")
+                  ?.scrollIntoView({ behavior: "smooth" })
               }
               className="px-4 py-2 border rounded-md font-medium hover:scale-105 transition accent-text accent-border"
             >
@@ -65,17 +69,22 @@ const HeroCard = () => {
               <span>Share Bloggr</span>
             </div>
 
-            <h1 className="text-2xl font-bold accent-text">Welcome back, creator.</h1>
+            <h1 className="text-2xl font-bold accent-text">
+              Welcome back, creator.
+            </h1>
           </div>
 
           <p className="text-sm font-serif leading-relaxed max-w-3xl mx-auto">
             You're no longer just exploring — you're{" "}
             <span className="font-semibold">building</span>. At{" "}
-            <span className="font-semibold accent-text">Bloggr</span>, your words are your
-            power. It's time to{" "}
+            <span className="font-semibold accent-text">Bloggr</span>, your
+            words are your power. It's time to{" "}
             <span className="font-semibold">amplify your voice</span>,{" "}
             <span className="font-semibold">grow your influence</span>, and{" "}
-            <span className="font-semibold">shape the conversations that matter</span>.
+            <span className="font-semibold">
+              shape the conversations that matter
+            </span>
+            .
           </p>
 
           <p className="text-base sm:text-lg md:text-xl font-medium opacity-95">
@@ -86,14 +95,16 @@ const HeroCard = () => {
           {/* Buttons */}
           <div className="flex justify-center flex-wrap gap-4 pt-2">
             <button
-              onClick={() => navigate("/myprofile")}
+              onClick={() => navigate("/profile")}
               className="px-4 py-2 border rounded-md font-medium hover:scale-105 transition accent-text accent-border"
             >
               View Profile
             </button>
             <button
               onClick={() =>
-                document.getElementById("PostSection")?.scrollIntoView({ behavior: "smooth" })
+                document
+                  .getElementById("PostSection")
+                  ?.scrollIntoView({ behavior: "smooth" })
               }
               className="px-4 py-2 border rounded-md font-medium hover:scale-105 transition accent-text accent-border"
             >

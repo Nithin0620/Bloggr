@@ -34,7 +34,7 @@ const Footbar = () => {
   }`;
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-11/12 gap-5  max-w-md z-50 transition-colors duration-300 accent-text-mode">
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-11/12 gap-5  max-w-md z-40 transition-colors duration-300 accent-text-mode">
       <div className="flex justify-evenly h-12 rounded-full gap-14 px-6 py-0 backdrop-blur-lg opacity-99 shadow-accent-box  border border-gray-200">
         
         {/* Home */}

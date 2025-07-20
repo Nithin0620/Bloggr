@@ -3,6 +3,7 @@ import { IoMdClose } from "react-icons/io";
 import { BiLogOut } from "react-icons/bi";
 import { CiSaveUp1 } from "react-icons/ci";
 import { applyMode, applyTheme } from '../lib/SetColours';
+import { useAuthStore } from '../store/AuthStore';
 
 const Settings = () => {
    const colorMap = {
@@ -25,6 +26,9 @@ const Settings = () => {
       push: false,
       email: false
    });
+
+   const {logout} = useAuthStore();
+
    useEffect(()=>{
       const theme = localStorage.getItem("accent-theme");
       if(theme) setTheme(theme);
@@ -66,7 +70,9 @@ const Settings = () => {
    }, [feed]);
 
    const resetButtonHandler = () => {};
-   const logoutHandler = () => {};
+   const logoutHandler = () => {
+      logout();
+   };
    const setSettingsHandler = () => {};
 
    return (
@@ -81,9 +87,9 @@ const Settings = () => {
                onChange={(e) => handleModeSelect(e.target.value)}
                value={mode}
             >
-               <option value="default">System Default</option>
                <option value="Light">Light</option>
                <option value="Dark">Dark</option>
+               <option value="default">System Default</option>
             </select>
          </div>
 

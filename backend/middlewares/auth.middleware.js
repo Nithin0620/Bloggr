@@ -23,7 +23,7 @@ exports.protectRoute = async(req,res,next)=>{
       
       if(!user) return res.status(404).json({success:false,message:"User not Found"});
    
-      req.user = user;
+      req.user = {user,token};
 
       next();
    }

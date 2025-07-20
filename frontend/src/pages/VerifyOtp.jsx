@@ -1,17 +1,21 @@
 import React, { useState } from "react";
 import OtpInput from "react-otp-input";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/AuthStore";
+import { ImSpinner3 } from "react-icons/im";
 
 const VerifyEmail = () => {
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (otpValue) => setOtp(otpValue);
+  const{signup,beforeSignUpData,isSigningup,sendotp} = useAuthStore();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Entered OTP:", otp);
-    navigate("/dashboard");
+    const data = {...beforeSignUpData , otp:otp};
+    // console.log("Data:",data);
+    signup(data);
   };
 
   return (
@@ -44,7 +48,14 @@ const VerifyEmail = () => {
             type="submit"
             className="w-full py-3 rounded-xl font-semibold accent-bg  shadow-accent-box hover:scale-[1.01] hover:opacity-90 transition duration-200"
           >
-            Verify Email
+            {
+              isSigningup ? (<div className='flex justify-center items-center accent-text-mode animate-spin'>
+                <ImSpinner3/>
+              </div>) : (<div>
+                Verify Email
+              </div>)
+            }
+            
           </button>
         </form>
 
@@ -56,7 +67,7 @@ const VerifyEmail = () => {
             ← Back To Signup
           </button>
           <button
-            onClick={() => alert("Resend logic goes here")}
+            onClick={() => sendotp()}
             className="hover:underline transition"
           >
             ↻ Resend it

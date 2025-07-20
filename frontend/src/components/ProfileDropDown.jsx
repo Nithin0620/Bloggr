@@ -1,23 +1,23 @@
-import { useAuthStore } from '../store/AuthStore';
 import { TbLogout2 } from "react-icons/tb";
 import { IoMdShare } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import {useAuthStore} from "../store/AuthStore";
 
 const ProfileDropDown = ({ setOpenProfileDropDown }) => {
-  const { authUser, logout } = useAuthStore();
+  const { authUser, logout } =useAuthStore();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    toast.success("Logged out");
+    // toast.success("Logged out");
     setOpenProfileDropDown(false);
-    navigate("/login");
+    // navigate("/login");
   };
 
   const handleViewProfile = () => {
     setOpenProfileDropDown(false);
-    navigate("/myprofile");
+    navigate("/profile");
   };
 
   const handleShareProfile = () => {
@@ -35,7 +35,7 @@ const ProfileDropDown = ({ setOpenProfileDropDown }) => {
       {/* Share Profile */}
       <div
         onClick={handleShareProfile}
-        className="px-4 py-2 flex items-center gap-2 text-sm cursor-pointer hover:font-semibold"
+        className="px-4 py-2 transition-all duration-150 flex items-center gap-2 text-sm cursor-pointer hover:scale-95"
       >
         <IoMdShare />
         Share my profile

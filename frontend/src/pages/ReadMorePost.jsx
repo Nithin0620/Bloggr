@@ -52,11 +52,11 @@ const ReadMorePost = () => {
                   {post.description}
                </div>
 
-               <div className="flex gap-4 text-sm">
-                  <span className="accent-underline cursor-pointer hover:text-red-500"> <FaRegHeart /> Like {post.likes.length}</span>
-                  <span className="accent-underline cursor-pointer hover:text-blue-500"> <FaRegCommentDots /> Comment {post.comments.length}</span>
-                  <span className="accent-underline cursor-pointer hover:text-green-500"> <IoIosStats /> Views {Math.floor(Math.random() * 10)}</span>
-                  <span className="accent-underline cursor-pointer hover:text-yellow-500"><IoMdShare/> Share</span>
+               <div className="flex gap-10 transition-all duration-300 text-sm">
+                  <span className=" cursor-pointer hover:text-red-500"> <FaRegHeart /> Like {post.likes.length}</span>
+                  <span className=" cursor-pointer hover:text-blue-500"> <FaRegCommentDots /> Comment {post.comments.length}</span>
+                  <span className=" cursor-pointer hover:text-green-500"> <IoIosStats /> Views {Math.floor(Math.random() * 10)}</span>
+                  <span className=" cursor-pointer hover:text-yellow-500"><IoMdShare/> Share</span>
                </div>
 
                <div className='flex justify-center pt-14 pb-14 font-semibold'>

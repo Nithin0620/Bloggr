@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import HeroCard from "../components/HeroCard";
 import HomePostCards from "../components/HomePostCards";
+import { useAuthStore } from "../store/AuthStore";
 
 const Home = () => {
   const dummyPosts = [
@@ -33,6 +34,9 @@ const Home = () => {
     },
   ];
 
+  const {authUser} = useAuthStore();
+  console.log("authUser,",authUser);
+
   const [categories, setCategories] = useState(["Tech"]);
 
   return (
@@ -44,7 +48,7 @@ const Home = () => {
         <HeroCard />
 
         {/* Search and Filter */}
-        <div className="w-[98%] mx-auto rounded-xl accent-box-shadow p-4 mt-6 mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 accent-border border transition-colors duration-300 accent-bg-mode accent-text-mode">
+        <div className="w-[98%] mx-auto rounded-xl shadow shadow-accent p-4 mt-6 mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-colors duration-300 accent-bg-mode accent-text-mode">
           {/* 🔍 Search Bar */}
           <div className="flex items-center w-full md:w-[80%]  rounded-md px-4 py-2 shadow-inner accent-box-shadow border accent-border">
             <IoSearch className=" text-lg transition-colors duration-300 accent-bg-mode accent-text-mode" />

@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { PiEyeSlash } from "react-icons/pi";
 import { IoEyeSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/AuthStore";
+import { ImSpinner3 } from "react-icons/im";
 
 const Signup = () => {
   const {
@@ -15,8 +17,13 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const {sendotp,setBeforeSignUpData,setnavigate,isSendingotp} = useAuthStore();
+
   const handleSignUp = (data) => {
-    // handle sign up logic here
+    setBeforeSignUpData(data);
+    setnavigate(navigate)
+    const success = sendotp(data.email);
+    // if(success===true) navigate("/verifyemail")
   };
 
   return (
@@ -145,7 +152,13 @@ const Signup = () => {
             type="submit"
             className="w-full py-2 rounded-md font-semibold hover:scale-[1.02] transition accent-bg text-white duration-300 accent-bg-mode accent-text-mode"
           >
-            Sign up
+            {
+              isSendingotp ? (<div className='flex justify-center items-center accent-text-mode animate-spin'>
+                <ImSpinner3/>
+              </div>) : (<div>
+                Sign up
+              </div>)
+            }
           </button>
 
           {/* Login Redirect */}

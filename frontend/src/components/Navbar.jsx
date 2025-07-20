@@ -7,12 +7,15 @@ import { useAuthStore } from "../store/AuthStore";
 import { usePageStore } from "../store/PageStore";
 import ProfileDropDown from "./ProfileDropDown";
 import { toast } from "react-hot-toast";
+import CreatePostHandler from "./CreatePostHandler";
+import { usePostStore } from "../store/PostStore";
 
 const Navbar = () => {
   const dropdownRef = useRef();
-  const { token, profilePic } = useAuthStore();
+  const { token, authUser } = useAuthStore();
   const navigate = useNavigate();
-  const { currentPage, setCurrentPage } = usePageStore.getState();
+  const { currentPage, setCurrentPage, setIsCreatePostOpen,isCreatePostOpen } = usePageStore();
+  // const { } = usePostStore();
 
   const [openProfileDropDown, setOpenProfileDropDown] = useState(false);
 
@@ -31,7 +34,9 @@ const Navbar = () => {
       toast.error("Login to create New Post");
       return;
     }
-    navigate("/create");
+    setCurrentPage("createPost");
+    setIsCreatePostOpen(true);
+    // navigate("/create");
   };
 
   const handleOnClickForNavigate = (page) => {
@@ -40,6 +45,7 @@ const Navbar = () => {
   };
 
   return (
+    <div>
     <div className="min-w-full flex items-center justify-between px-6 py-3 top-0 sticky z-50 transition-colors duration-300 accent-text-mode accent-bg-mode  accent-box-shadow shadow-sm ">
       <div
         onClick={() => handleOnClickForNavigate("home")}
@@ -56,13 +62,18 @@ const Navbar = () => {
         <h1 className="text-xl font-bold tracking-wide">Bloggr</h1>
       </div>
 
-      <div className="flex items-center space-x-6">
+      <div className="flex items-center transition-all duration-500 space-x-6">
         <div
           onClick={handleCreatePostClick}
           className="flex items-center space-x-2 cursor-pointer hover:scale-105 transition rounded-3xl p-[0.15rem] accent-highlight accent-shadow"
         >
           <FaPlus className="text-base" />
-          <span className="text-sm font-medium">Create Post</span>
+          <span
+            
+            className="text-sm font-medium"
+          >
+            Create Post
+          </span>
         </div>
 
         <div>
@@ -78,7 +89,11 @@ const Navbar = () => {
           ) : (
             <IoSettingsOutline
               onClick={() => handleOnClickForNavigate("settings")}
-              className="cursor-pointer text-xl hover:scale-105 transition"
+              className={`cursor-pointer text-xl hover:scale-105 transition ${
+                currentPage === "settings"
+                  ? "accent-text rotate-90 ease-in-out transition-all duration-300"
+                  : ""
+              }`}
             />
           )}
         </div>
@@ -100,12 +115,12 @@ const Navbar = () => {
               ref={dropdownRef}
             >
               <img
-                src={profilePic || "https://via.placeholder.com/32"}
+                src={authUser.profilePic || "https://via.placeholder.com/32"}
                 alt="Profile"
                 className="w-8 h-8 rounded-full object-cover  border border-gray-400"
               />
               <FaAngleDown
-                className={`transition-transform duration-200 animate-[wiggle_3s_ease-in-out_infinite] ${
+                className={`transition-transform duration-500 animate-[wiggle_3s_ease-in-out_infinite] ${
                   openProfileDropDown ? "rotate-180" : ""
                 }`}
               />
@@ -120,6 +135,12 @@ const Navbar = () => {
           )}
         </div>
       </div>
+    </div>
+    {isCreatePostOpen && (
+        <div className="z-50 ">
+          <CreatePostHandler />
+        </div>
+    )}
     </div>
   );
 };

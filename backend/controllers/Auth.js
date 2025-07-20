@@ -10,7 +10,6 @@ const jwt = require("jsonwebtoken");
 exports.signup = async(req,res)=>{
    try{
       const {firstName , lastName , email , password , confirmPassword , agreetermsofservice , otp} = req.body;
-
       if(!firstName || !lastName || !email || !password || !confirmPassword || !agreetermsofservice ,!otp){
          return res.status(403).json({
             success:false,
@@ -74,6 +73,7 @@ exports.signup = async(req,res)=>{
    catch(e){
       console.log(e);
       return res.status(500).json({
+         error:e,
          success:false,
          message:"Error occured in the backend in the Signup controller", 
       })
@@ -200,5 +200,34 @@ exports.logout = (req, res) => {
    catch (error) {
       console.log("Error in logout controller", error.message);
       res.status(500).json({success:false, message: "Internal Server Error" });
+   }
+};
+
+
+exports.checkAuth = async (req, res) => {
+   try {
+      if (!req.user.user._id) {
+         return res.status(400).json({ message: "User id not found" });
+      }
+
+      const user = await User.findById(req.user.user._id).populate("profile").exec();
+
+      if (!user) {
+         return res.status(404).json({ message: "User not found" });
+      }
+
+      const payload = {
+         user, 
+         token: req.user.token,
+      };
+
+      res.status(200).json({
+         success: true,
+         message: "Successfully checked",
+         data: payload,
+      });
+   } catch (error) {
+      console.log("Error in checkAuth controller", error.message);
+      res.status(500).json({ message: "Internal Server Error" });
    }
 };

@@ -10,11 +10,12 @@ import { applyMode, applyTheme } from './lib/SetColours'
 
 const App = () => {
   const navigate = useNavigate();
-  const {setnavigate} = useAuthStore();
+  const {setnavigate,checkAuth} = useAuthStore();
   // const {getSettings,theme,mode} = useSettingsStore();
   // const {setNavigate} = usePageStore();
 
   useEffect(() => {
+    checkAuth();
     setnavigate(navigate);
     // const response = getSettings();
     const savedMode = localStorage.getItem("accent-mode");
