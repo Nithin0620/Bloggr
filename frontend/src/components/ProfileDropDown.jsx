@@ -3,14 +3,17 @@ import { IoMdShare } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {useAuthStore} from "../store/AuthStore";
+import { useShareModalStore } from "../store/ShareModal";
 
 const ProfileDropDown = ({ setOpenProfileDropDown }) => {
-  const { authUser, logout } =useAuthStore();
+  const {openShareModal } = useShareModalStore();
+  const { authUser, logout,isLogoutModalOpen,setIsLogoutModalOpen  } =useAuthStore();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();
+    // logout();
     // toast.success("Logged out");
+    setIsLogoutModalOpen(true);
     setOpenProfileDropDown(false);
     // navigate("/login");
   };
@@ -21,7 +24,7 @@ const ProfileDropDown = ({ setOpenProfileDropDown }) => {
   };
 
   const handleShareProfile = () => {
-    toast("Profile link copied!");
+    openShareModal("profile" , {userId:authUser._id});
     // navigator.clipboard.writeText(`https://yourapp.com/user/${authUser.username}`);
   };
 

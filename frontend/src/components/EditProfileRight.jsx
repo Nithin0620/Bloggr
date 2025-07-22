@@ -7,11 +7,11 @@ import { BiLogOut } from "react-icons/bi";
 import { UserCheck, UserPlus } from "lucide-react";
 
 const EditProfileRight = () => {
-  const { authUser } = useAuthStore();
+  const { authUser,setIsLogoutModalOpen } = useAuthStore();
   const navigate = useNavigate();
 
   const logoutHandler = () => {
-  
+      setIsLogoutModalOpen(true)
    };
 
   return (

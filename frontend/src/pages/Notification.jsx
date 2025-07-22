@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { MdOutlineDeleteOutline } from "react-icons/md";
+import {toast} from "react-hot-toast"
+import { useNavigate } from "react-router-dom";
 
 const dummyNotifications = [
   {
@@ -40,6 +42,8 @@ const Notification = () => {
   const [NotificationArray, setNotificationArray] = useState(dummyNotifications);
   const [selected, setSelected] = useState("All");
 
+  const navigate = useNavigate()
+
   const handleSelected = (selector) => {
     setSelected(selector);
     if (selector === "All") setNotificationArray(dummyNotifications);
@@ -59,7 +63,9 @@ const Notification = () => {
     
   };
   const handleChatClick = () => {};
-  const handleSenderProfileClick = (senderId) => {};
+  const handleSenderProfileClick = (userId) => {
+    navigate(`/profile/${userId}`)
+  };
 
   return (
     <div className="p-6 min-h-screen flex justify-around transition-colors duration-300 accent-bg-mode accent-text-mode">
@@ -119,7 +125,7 @@ const Notification = () => {
                 />
                 <div className="text-sm">
                   <span
-                    className="font-medium cursor-pointer accent-text"
+                    className="hover:underline font-medium cursor-pointer accent-text"
                     onClick={() => handleSenderProfileClick(notification.sender._id)}
                   >
                     {notification.sender.name}

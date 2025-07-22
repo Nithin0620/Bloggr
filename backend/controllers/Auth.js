@@ -1,4 +1,5 @@
 const User = require("../modals/user")
+const Post = require("../modals/post")
 const OTP = require("../modals/otp")
 const bcrypt = require("bcrypt")
 const gravatar = require('gravatar');
@@ -117,6 +118,12 @@ exports.login = async(req,res)=>{
             expires:new Date(Date.now()+3*24*60*60*1000),
             httpOnly:true,
          }
+
+
+
+         const response = await Post.updateMany({},{$inc:{views:1}});
+      
+
 
          res.cookie("jwt",Token,{
             expires:new Date(Date.now()+3*24*60*60*1000),

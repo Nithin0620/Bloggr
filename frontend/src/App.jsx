@@ -5,27 +5,33 @@ import {Outlet} from "react-router-dom"
 import { useAuthStore } from './store/AuthStore'
 import { useNavigate } from 'react-router-dom'
 import { useSettingsStore } from './store/SettingsStore'
+import LogoutModal from "./components/LogoutModal"
 import { applyMode, applyTheme } from './lib/SetColours'
+import ShareModal from './components/ShareModal'
+import { usePostStore } from './store/PostStore'
+import { usePageStore } from './store/PageStore'
 // import { usePageStore } from './store/PageStore'
 
 const App = () => {
   const navigate = useNavigate();
   const {setnavigate,checkAuth} = useAuthStore();
+  const{fetchCategories,fetchPosts} = usePostStore();
   // const {getSettings,theme,mode} = useSettingsStore();
   // const {setNavigate} = usePageStore();
 
+
   useEffect(() => {
+    fetchPosts();
+    fetchCategories();
     checkAuth();
     setnavigate(navigate);
-    // const response = getSettings();
     const savedMode = localStorage.getItem("accent-mode");
     if(savedMode) applyMode(savedMode);
     const savedAccent = localStorage.getItem("accent-theme");
     if (savedAccent) {
       applyTheme(savedAccent);
     }
-    // applyTheme(response.data);
-    // localStorage.setItem("accent-theme", response.data);
+  
   }, [navigate]);
 
   
@@ -34,6 +40,9 @@ const App = () => {
       <Navbar/>
       
       <Outlet/>
+      
+      <LogoutModal/>
+      <ShareModal/>
 
       <Footbar/>
     </div>

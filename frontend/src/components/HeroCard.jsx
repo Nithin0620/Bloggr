@@ -1,10 +1,12 @@
 import { IoMdShare } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/AuthStore";
+import { useShareModalStore } from "../store/ShareModal";
 
 const HeroCard = () => {
   const { token } = useAuthStore();
   const navigate = useNavigate();
+  const { openShareModal} = useShareModalStore();
 
   return (
     <div className="shadow-md accent-box-shadow accent-border border w-[98%] rounded-xl m-5 p-5 z-20 drop-shadow-md shadow-accent-box  space-y-4 transition-colors duration-300 accent-bg-mode accent-text-mode">
@@ -13,7 +15,7 @@ const HeroCard = () => {
         <div className="text-center space-y-4">
           {/* Top Right Share Button */}
           <div className="relative">
-            <div className="absolute right-0 top-0 flex items-center gap-1 text-xs font-thin italic cursor-pointer hover:accent-underline transition">
+            <div onClick={()=>openShareModal("bloggr")} className="absolute right-0 top-0 flex items-center gap-1 text-xs font-thin italic cursor-pointer hover:accent-underline transition">
               <IoMdShare />
               <span>Share Bloggr</span>
             </div>
@@ -64,7 +66,7 @@ const HeroCard = () => {
       {token !== null && (
         <div className="text-center space-y-4">
           <div className="relative">
-            <div className="absolute right-0 top-0 flex items-center gap-1 text-xs font-thin italic cursor-pointer hover:accent-underline transition">
+            <div onClick={()=>openShareModal("bloggr")} className="absolute right-0 top-0 flex items-center gap-1 text-xs font-thin italic cursor-pointer hover:accent-underline transition">
               <IoMdShare />
               <span>Share Bloggr</span>
             </div>
@@ -75,20 +77,20 @@ const HeroCard = () => {
           </div>
 
           <p className="text-sm font-serif leading-relaxed max-w-3xl mx-auto">
-            You're no longer just exploring — you're{" "}
+            "You're no longer just exploring — you're{" "}
             <span className="font-semibold">building</span>. At{" "}
             <span className="font-semibold accent-text">Bloggr</span>, your
             words are your power. It's time to{" "}
             <span className="font-semibold">amplify your voice</span>,{" "}
             <span className="font-semibold">grow your influence</span>, and{" "}
             <span className="font-semibold">
-              shape the conversations that matter
+              shape the conversations that matter."
             </span>
-            .
+            
           </p>
 
           <p className="text-base sm:text-lg md:text-xl font-medium opacity-95">
-            Let your next post not just inform, but{" "}
+            Let your next Blog not just inform, but{" "}
             <span className="font-semibold accent-text">inspire</span>.
           </p>
 

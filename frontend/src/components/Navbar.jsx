@@ -12,7 +12,7 @@ import { usePostStore } from "../store/PostStore";
 
 const Navbar = () => {
   const dropdownRef = useRef();
-  const { token, authUser } = useAuthStore();
+  const { token, authUser} = useAuthStore();
   const navigate = useNavigate();
   const { currentPage, setCurrentPage, setIsCreatePostOpen,isCreatePostOpen } = usePageStore();
   // const { } = usePostStore();
@@ -46,7 +46,7 @@ const Navbar = () => {
 
   return (
     <div>
-    <div className="min-w-full flex items-center justify-between px-6 py-3 top-0 sticky z-50 transition-colors duration-300 accent-text-mode accent-bg-mode  accent-box-shadow shadow-sm ">
+    <div className="min-w-full flex items-center justify-between px-6 py-[0.65rem] top-0 sticky z-50 transition-colors duration-300 accent-text-mode accent-bg-mode  accent-box-shadow shadow-sm ">
       <div
         onClick={() => handleOnClickForNavigate("home")}
         className="flex items-center space-x-2 cursor-pointer accent-text  transition"
@@ -65,14 +65,14 @@ const Navbar = () => {
       <div className="flex items-center transition-all duration-500 space-x-6">
         <div
           onClick={handleCreatePostClick}
-          className="flex items-center space-x-2 cursor-pointer hover:scale-105 transition rounded-3xl p-[0.15rem] accent-highlight accent-shadow"
+          className="flex items-center space-x-2 cursor-pointer group group-hover:scale-105 transition rounded-3xl p-[0.15rem] accent-shadow"
         >
-          <FaPlus className="text-base" />
+          <FaPlus className="group-hover:rotate-90 transition-all duration-300 ease-in text-base" />
           <span
             
-            className="text-sm font-medium"
+            className="text-sm group-hover:scale-105 transition-all duration-300 ease-in font-medium"
           >
-            Create Post
+            Create Blog
           </span>
         </div>
 

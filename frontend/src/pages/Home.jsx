@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import { useAuthStore } from "../store/AuthStore";
 // import { useNavigate } from "react-router-dom";
 import { IoSearch } from "react-icons/io5";
 import HeroCard from "../components/HeroCard";
 import HomePostCards from "../components/HomePostCards";
 import { useAuthStore } from "../store/AuthStore";
+import { usePostStore } from "../store/PostStore";
 
 const Home = () => {
   const dummyPosts = [
@@ -34,10 +35,22 @@ const Home = () => {
     },
   ];
 
-  const {authUser} = useAuthStore();
-  console.log("authUser,",authUser);
+  const { fetchCategories, categoriesList,posts } = usePostStore();
 
-  const [categories, setCategories] = useState(["Tech"]);
+  useEffect(() => {
+    fetchCategories(); // will update Zustand store
+  }, [fetchCategories]);
+
+
+  // useEffect(() => {
+  //   console.log("categories updated:", categoriesList);
+  //   setCategories(categoriesList);
+  //   console.log(categoriesList);
+  // }, [categoriesList]);
+
+
+
+
 
   return (
     <div className="flex justify-center p-2 transition-colors duration-300 accent-bg-mode accent-text-mode">
@@ -64,7 +77,7 @@ const Home = () => {
           <div className="w-full md:w-[25%] transition-colors duration-300 accent-bg-mode accent-text-mode">
             <select className="w-full text-sm px-4 py-2 border accent-border rounded-md shadow-sm transition-colors duration-300 accent-bg-mode accent-text-mode">
               <option value="">All Categories</option>
-              {categories.map((category, index) => (
+              {categoriesList.map((category, index) => (
                 <option key={index} value={category}>
                   {category}
                 </option>
@@ -78,7 +91,7 @@ const Home = () => {
           id="PostSection"
           className="grid grid-cols-1 min-h-screen sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {dummyPosts.map((post, index) => (
+          {posts.map((post, index) => (
             <HomePostCards key={index} post={post} />
           ))}
         </div>

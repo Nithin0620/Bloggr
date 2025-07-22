@@ -8,14 +8,22 @@ import { FaRegCommentDots } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
 import { IoCaretBack } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
+import { usePageStore } from '../store/PageStore';
+import { useShareModalStore } from '../store/ShareModal';
 
 
 const ReadMorePost = () => {
    const { currentPostForReadMore: post } = usePostStore();
+   const {setCurrentPage} = usePageStore();
+   const {openShareModal} = useShareModalStore();
    const navigate=useNavigate();
+   const handleNavigate=()=>{
+      navigate(-1);
+      setCurrentPage("home")
+   }
    return (
       <div className=" px-4 md:px-12 pb-20 lg:px-24 transition-colors duration-300 accent-bg-mode accent-text-mode">
-         <div onClick={() => {navigate(-1)}} className='  pt-9 cursor-pointer flex accent-text left-0 items-center accent-shadow hover:scale-105 transition-all ease-in-out duration-500 font-sans gap-2'><IoCaretBack/> Back</div>
+         <div onClick={() => handleNavigate()} className='  pt-9 cursor-pointer flex accent-text left-0 items-center accent-shadow hover:scale-105 transition-all ease-in-out duration-500 font-sans gap-2'><IoCaretBack/> Back</div>
          <div className="flex gap-4 pt-5">
             {/* LEFT: Post Content */}
             <div className="w-full lg:w-[70%] space-y-6">
@@ -56,7 +64,7 @@ const ReadMorePost = () => {
                   <span className=" cursor-pointer hover:text-red-500"> <FaRegHeart /> Like {post.likes.length}</span>
                   <span className=" cursor-pointer hover:text-blue-500"> <FaRegCommentDots /> Comment {post.comments.length}</span>
                   <span className=" cursor-pointer hover:text-green-500"> <IoIosStats /> Views {Math.floor(Math.random() * 10)}</span>
-                  <span className=" cursor-pointer hover:text-yellow-500"><IoMdShare/> Share</span>
+                  <span onClick={()=>openShareModal("post",{postId:post._id})} className=" cursor-pointer hover:text-yellow-500"><IoMdShare/> Share</span>
                </div>
 
                <div className='flex justify-center pt-14 pb-14 font-semibold'>

@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import axios from "axios";
 
+const BASE_URL = "http://localhost:4000/api"
+
+
 export const usePostStore = create((get,set)=>({
   currentPostForReadMore : {
             "title": "Mastering React in 2025: New Patterns and Best Practices",
@@ -51,12 +54,46 @@ export const usePostStore = create((get,set)=>({
               }
 ]
   },
-
   categoriesList: [],
 
+  posts:[],
+
+  setPosts : async()=>{
+
+  },
+
   fetchCategories: async () => {
-    const res = await axios.get("/api/categories");
-    set({ categoriesList: res.data.categories });
+    try{
+      const res = await axios.get(`${BASE_URL}/category/getallcategory`);
+      
+     if (res.data.success) {
+        const categoryArray = res.data.data.map(category => category.name);
+        set({ categoriesList: categoryArray });
+        return categoryArray;
+      }
+
+      // console.log(get().categoryList)
+    }
+    catch(e){
+      console.log(e);
+      return [];
+    }
+  },
+
+  // getCategories : ()=>{
+  //   return get().categoriesList;
+  // },
+
+  fetchPosts : async()=>{
+    try{
+      const response =  await axios.get(`${BASE_URL}/post/getallposts`);
+      console.log("response",response.data.data);
+      set({posts:response.data.data.data})
+      // console.log(get().posts);
+    }
+    catch(e){
+      console.log(e);
+    }
   },
 
   createPost: async (postData) => {

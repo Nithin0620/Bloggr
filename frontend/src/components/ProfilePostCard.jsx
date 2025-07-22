@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaRegHeart } from "react-icons/fa6";
 import { FaRegCommentDots } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
@@ -7,9 +7,16 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { useAuthStore } from "../store/AuthStore";
 import { useNavigate } from "react-router-dom";
 import { usePostStore } from "../store/PostStore";
+import { usePageStore } from "../store/PageStore";
 
-const ProfilePostCard = ({ post }) => {
+const ProfilePostCard = ({ post,setIsDeleteModalOpen}) => {
+  const {setIsUpdatePostOpen,setUpdatePost} = usePageStore();
   const {setPost} = usePostStore();
+  const handleUpdatePost = ()=>{
+    setIsUpdatePostOpen(true);
+    setUpdatePost(post);
+    // console.log(post)
+  }
 
   const navigate = useNavigate();
   
@@ -21,7 +28,8 @@ const ProfilePostCard = ({ post }) => {
   }
 
   return (
-    <div className="flex  rounded-2xl shadow-md border accent-border overflow-hidden w-full max-w-[55rem] h-44 mx-auto my-4 transition-transform hover:scale-[1.01] transition-colors duration-300 accent-bg-mode accent-text-mode">
+    <div>
+    <div className="flex rounded-2xl shadow-md border accent-border overflow-hidden w-full max-w-[55rem] h-44 mx-auto my-4 hover:scale-[1.01] transition-all duration-200 accent-bg-mode accent-text-mode">
       {/* Image Section */}
       <div className="w-1/3 min-w-[100px] flex items-center justify-center p-4 ">
         <img
@@ -76,12 +84,12 @@ const ProfilePostCard = ({ post }) => {
               <IoIosStats />
             </span>
 
-            {post.author._id  && (
+            {post.author._id && (
               <div className="flex items-center gap-3 text-[1rem] ml-2">
-                <button className="accent-text transition">
+                <button onClick={()=>handleUpdatePost()} className="accent-text transition">
                   <GoPencil />
                 </button>
-                <button className="hover:text-red-600 transition duration-200">
+                <button onClick={()=>setIsDeleteModalOpen(true)} className="hover:text-red-600 transition duration-200">
                   <RiDeleteBin6Line />
                 </button>
               </div>
@@ -89,6 +97,10 @@ const ProfilePostCard = ({ post }) => {
           </div>
         </div>
       </div>
+    </div>
+    
+
+
     </div>
   );
 };

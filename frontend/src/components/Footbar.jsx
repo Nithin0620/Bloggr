@@ -2,6 +2,8 @@ import {React,useEffect} from 'react'
 import { IoHomeOutline, IoHomeSharp, IoSearch, IoChatbubbleEllipsesOutline, IoChatbubbleEllipses } from "react-icons/io5"
 import { IoIosSearch, IoIosNotificationsOutline } from "react-icons/io"
 import { IoMdNotifications } from "react-icons/io"
+import { RiGlobeLine } from "react-icons/ri";
+import { RiGlobeFill } from "react-icons/ri";
 
 import { usePageStore } from '../store/PageStore'
 import { useNavigate } from 'react-router-dom'
@@ -20,21 +22,21 @@ const Footbar = () => {
   };
 
   const tabClass = (page) =>
-    `w-[25%] py-2 cursor-pointer transition-all duration-200 ease-in-out`;
+    `w-[25%] py-2 cursor-pointer transition-all duration-1000 ease-in-out`;
 
   const iconWrapper = (page) =>
-    `flex items-center justify-center font-bold text-xl ${currentPage === page ? 'accent-text' : ''}`;
+    `flex  items-center justify-center transition-all duration-100 ease-in-out font-bold text-xl ${currentPage === page ? 'accent-text' : ''}`;
 
   const labelWrapper = (page) =>
     `flex items-center justify-center font-[475] text-xs mt-1 ${currentPage === page ? 'accent-text' : ''}`;
 
   const underline = (page) =>
-    `h-[2px] z-[-10px] mt-1 rounded-full transition-all ease-in-out duration-300 ${
+    `h-[2px] z-[-10px] mt-1 rounded-full transition-all ease-in-out duration-500 ${
     currentPage === page ? "opacity-100 scale-100 accent-bg" : "opacity-0 scale-0"
   }`;
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-11/12 gap-5  max-w-md z-40 transition-colors duration-300 accent-text-mode">
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-11/12 gap-5  max-w-md z-40 transition-all duration-300 accent-text-mode">
       <div className="flex justify-evenly h-12 rounded-full gap-14 px-6 py-0 backdrop-blur-lg opacity-99 shadow-accent-box  border border-gray-200">
         
         {/* Home */}
@@ -47,12 +49,12 @@ const Footbar = () => {
         </div>
 
         {/* Search */}
-        <div onClick={() => handleClickInBar("search")} className={tabClass("search")}>
-          <div className={iconWrapper("search")}>
-            {currentPage === "search" ? <IoSearch /> : <IoIosSearch />}
+        <div onClick={() => handleClickInBar("Explore")} className={tabClass("Explore")}>
+          <div className={iconWrapper("Explore")}>
+            {currentPage === "Explore" ? <RiGlobeFill/> : <RiGlobeLine  className='font-extralight '/>}
           </div>
-          <div className={labelWrapper("search")}>Search</div>
-          <div className={underline("search")}></div>
+          <div className={labelWrapper("Explore")}>Explore</div>
+          <div className={underline("Explore")}></div>
         </div>
 
         {/* Notifications */}

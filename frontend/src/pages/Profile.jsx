@@ -1,9 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../store/AuthStore';
 import ProfilePostCard from '../components/ProfilePostCard';
+import {usePageStore} from "../store/PageStore"
+import UpdatePostHandler from "../components/UpdatePostHandler"
+import {IoMdClose} from "react-icons/io"
+import { useParams } from 'react-router-dom';
 
 const Profile = () => {
   const authUser = useAuthStore();
+  const {isUpdatePostOpen,updatePost} = usePageStore();
+  const [isDeleteModalOpen,setIsDeleteModalOpen] = useState();
+  // console.log("isUpdatePostOpen",isUpdatePostOpen)
+  // console.log("updatePost",updatePost)
+  const {userId} = useParams();
+
+  useEffect(()=>{
+
+  },[userId])
 
   const dummyProfilePosts = [
     {
@@ -95,11 +108,58 @@ const Profile = () => {
 
           <div className="mt-6 space-y-6">
             {dummyProfilePosts.map((post, index) => (
-              <ProfilePostCard key={index} post={post} />
+              <ProfilePostCard key={index} post={post} setIsDeleteModalOpen={setIsDeleteModalOpen}/>
             ))}
           </div>
         </div>
       </div>
+
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm">
+          <div className="w-[90%] sm:w-[400px] accent-bg-mode p-6 rounded-2xl shadow-accent-box relative">
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setIsDeleteModalOpen(false)}
+              className="absolute top-3 right-3 text-red-500 text-xl hover:rotate-90 hover:scale-75 transition-all duration-500"
+            >
+              <IoMdClose />
+            </button>
+
+            {/* Title */}
+            <h2 className="text-2xl font-semibold accent-text mb-3">
+              Delete Post
+            </h2>
+
+            {/* Description */}
+            <p className="accent-text-mode mb-6">
+              Are you sure you want to delete this post? This action cannot be undone.
+            </p>
+
+            {/* Buttons */}
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="px-4 py-2 rounded-lg border accent-border accent-text-mode transition-all duration-500 hover:scale-95"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  // your delete function here
+                }}
+                className="px-4 py-2 rounded-lg accent-bg   transition-all duration-200 hover:opacity-80 text-white shadow-accent-box"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )},
+      {
+        isUpdatePostOpen && 
+        <UpdatePostHandler post={updatePost}/>
+      }
     </div>
   );
 };

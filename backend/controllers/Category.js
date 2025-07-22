@@ -4,7 +4,7 @@ const User = require("../modals/user");
 
 exports.createCategory = async(req,res)=>{
    try{
-      const userId = req.user._id;
+      const userId = req.user.user._id;
       const {categoryName} = req.body;
 
       const user= await User.findById(userId);
@@ -27,6 +27,7 @@ exports.getAllCategory = async(req,res)=>{
 
       const categories = await Category.find();
       if(!categories) return res.status(404).json({success:false,message:"categories not found"});
+
 
       return res.status(200).json({success:true,message:"Categories fetched Successfully",data:categories});
    }

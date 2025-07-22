@@ -15,6 +15,11 @@ export const useAuthStore = create((set,get)=>({
    onlineUsers: [],
    socket: null,
 
+   isLogoutModalOpen:false,
+   setIsLogoutModalOpen: (val)=>{
+      set({isLogoutModalOpen:val})
+   },
+
    isSigningup:false,
    isLoggingin:false,
    isSendingotp :false,
@@ -142,10 +147,18 @@ export const useAuthStore = create((set,get)=>({
             set({authUser:response.data.data.user});
             set({token:response.data.data.token});
          }
+
+         if (!response.data.success && response.data.code === "JWT_EXPIRED") {
+            console.log("Session expired. Showing nothing...");
+            return; 
+         }
       }
       catch(e){
+         if(e.message === "JWT_EXPIRED") {
+            toast.error("JWT EXpired")
+         } 
          console.log(e);
-         toast.error("Error occured in checking auth");
+         // toast.error("Error occured in checking auth");
       }
    },
 

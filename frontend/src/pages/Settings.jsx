@@ -27,7 +27,7 @@ const Settings = () => {
       email: false
    });
 
-   const {logout} = useAuthStore();
+   const {logout ,setIsLogoutModalOpen} = useAuthStore();
 
    useEffect(()=>{
       const theme = localStorage.getItem("accent-theme");
@@ -71,7 +71,7 @@ const Settings = () => {
 
    const resetButtonHandler = () => {};
    const logoutHandler = () => {
-      logout();
+      setIsLogoutModalOpen(true)
    };
    const setSettingsHandler = () => {};
 

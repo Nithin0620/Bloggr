@@ -10,6 +10,7 @@ import VerifyOtp from "./pages/VerifyOtp"
 import Message from "./pages/Message"
 import ReadMorePost from "./pages/ReadMorePost"
 import EditProfile from "./pages/EditProfile"
+import Explore from "./pages/Explore"
 
 
 export const router = createBrowserRouter([
@@ -30,7 +31,7 @@ export const router = createBrowserRouter([
             element:<Signup/>
          },
          {
-            path:"profile",
+            path:"profile/:userId",
             element:<Profile/>
          },
          {
@@ -49,12 +50,16 @@ export const router = createBrowserRouter([
             element:<Message/>
          },
          {
-            path:"/readmore",
+            path:"/readmore/:postId",
             element:<ReadMorePost/>
          },
          {
             path:"editprofile",
             element:<EditProfile/>
+         },
+         {
+            path:"explore",
+            element:<Explore/>
          }
       ]
    },
