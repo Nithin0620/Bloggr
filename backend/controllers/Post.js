@@ -2,17 +2,30 @@ const User = require("../modals/user");
 const Post = require("../modals/post");
 const Profile = require("../modals/profile")
 const Category = require("../modals/category");
-const cloudinary = require("../configuration/cloudinary");
+// const clo = require("../configuration/cloudinary");
+const {cloudinaryInstance } = require("../configuration/cloudinary"); // or correct relative path
+
 
 exports.createPost = async (req, res) => {
   try {
-    const author = req.user._id;
-    const { title, content, categories, image, readTime } = req.body;
+    const author = req.user.user._id;
+    const { title, content, readTime } = req.body;
+    const categories = req.body.categories;
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Image is required 2",
+      });
+    }
+
+    const imagePath = req.file.path;
+
+    // console.log("data",title,content,readTime,imagePath,categories);
 
     if (!title || !content || !categories || !readTime) {
       return res.status(400).json({
         success: false,
-        message: "All the Fields are required",
+        message: "All the Fields are required 1",
       });
     }
 
@@ -25,18 +38,21 @@ exports.createPost = async (req, res) => {
     }
 
     const categoryDocs = await Category.find({ name: { $in: categories } });
-    if (categoryDocs.length !== categories.length) {
-      return res.status(400).json({
-        success: false,
-        message: "One or more categories not found",
-      });
-    }
+    // if (categoryDocs.length !== categories.length) {
+    //   return res.status(402).json({
+    //     success: false,
+    //     message: "One or more categories not found",
+    //   });
+    // }
     const categoryIds = categoryDocs.map(cat => cat._id);
 
     var imageUpload;
 
-    if(image){
-      imageUpload = await cloudinary.uploader.upload(image);
+    if(imagePath){
+      // console.log("cloudinary: ", cloudinaryInstance );
+      // console.log("cloudinary.uploader:", cloudinaryInstance ?.uploader);
+
+      imageUpload = await cloudinaryInstance .uploader.upload(imagePath);
     }  
 
     const payload = {
@@ -88,7 +104,7 @@ exports.createPost = async (req, res) => {
 
 exports.updatePost = async (req, res) => {
   try {
-    const author = req.user._id;
+    const author = req.user.user._id;
     const { title, content, categories, image, readTime } = req.body;
     const postId = req.params.id;
 
@@ -160,7 +176,7 @@ exports.updatePost = async (req, res) => {
 exports.deletePost = async (req, res) => {
   try {
     const postId  = req.params.id;
-    const userId = req.user._id;
+    const userId = req.user.user._id;
 
     if (!postId) {
       return res.status(400).json({

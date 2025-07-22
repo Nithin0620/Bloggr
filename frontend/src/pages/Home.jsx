@@ -6,6 +6,7 @@ import HeroCard from "../components/HeroCard";
 import HomePostCards from "../components/HomePostCards";
 import { useAuthStore } from "../store/AuthStore";
 import { usePostStore } from "../store/PostStore";
+import{Loader} from "lucide-react"
 
 const Home = () => {
   const dummyPosts = [
@@ -35,11 +36,23 @@ const Home = () => {
     },
   ];
 
-  const { fetchCategories, categoriesList,posts } = usePostStore();
+  const { fetchCategories, categoriesList,posts,fetchPosts } = usePostStore();
+  const [categories,setCategories] = useState([]);
+  const [Post,setPost] = useState([]);
+  const[loading , setLoading] = useState(false);
 
   useEffect(() => {
-    fetchCategories(); // will update Zustand store
-  }, [fetchCategories]);
+    const fetchCategoryAndPostfromStore = async()=>{
+      setLoading(true);
+      const array = await fetchCategories();
+      const PostArray = await fetchPosts();
+      // console.log("postArray",PostArray)
+      setPost(PostArray);
+      setCategories(array);
+      setLoading(false);
+    }
+    fetchCategoryAndPostfromStore(); // will update Zustand store
+  }, [fetchCategories,categoriesList,fetchPosts,posts]);
 
 
   // useEffect(() => {
@@ -77,7 +90,7 @@ const Home = () => {
           <div className="w-full md:w-[25%] transition-colors duration-300 accent-bg-mode accent-text-mode">
             <select className="w-full text-sm px-4 py-2 border accent-border rounded-md shadow-sm transition-colors duration-300 accent-bg-mode accent-text-mode">
               <option value="">All Categories</option>
-              {categoriesList.map((category, index) => (
+              {categories.map((category, index) => (
                 <option key={index} value={category}>
                   {category}
                 </option>
@@ -87,14 +100,22 @@ const Home = () => {
         </div>
 
         {/* Post Section */}
-        <div
-          id="PostSection"
-          className="grid grid-cols-1 min-h-screen sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {posts.map((post, index) => (
-            <HomePostCards key={index} post={post} />
-          ))}
-        </div>
+        {
+          loading ? <div>
+            <div className="flex justify-center items-center animate-spin mt-5"><Loader/></div>
+          </div> :
+            <div
+            id="PostSection"
+            className="grid grid-cols-1 min-h-screen sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            
+            {Post.map((post, index) => (
+              <HomePostCards key={index} post={post} />
+            ))}
+          </div>
+
+        }
+       
       </div>
     </div>
   );

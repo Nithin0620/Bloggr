@@ -7,7 +7,7 @@ const Post = require("../modals/post")
 exports.createNotification = async (req, res) => {
    try {
       const receiver = req.params.id;
-      const sender = req.user._id;
+      const sender = req.user.user._id;
       const { type, post } = req.body;
 
       if (!sender) {
@@ -66,7 +66,7 @@ exports.clearAllNotification = async(req,res)=>{
 
 exports.getAllNotification = async (req, res) => {
    try {
-      const userId = req.user._id;
+      const userId = req.user.user._id;
 
       const user = await User.findById(userId);
       if (!user) {
@@ -95,7 +95,7 @@ exports.getAllNotification = async (req, res) => {
 
 exports.markAllAsRead = async(req,res)=>{
    try{
-      const userId = req.user._id;
+      const userId = req.user.user._id;
 
       const user = await User.findById(userId);
       if (!user) {
@@ -133,7 +133,7 @@ exports.markAllAsRead = async(req,res)=>{
 
 exports.deleteaNotification = async(req,res)=>{
    try{
-      const userId = req.user._id;
+      const userId = req.user.user._id;
       const notificationId = req.params.id;
 
       const user = await User.findById(userId);
@@ -159,7 +159,7 @@ exports.deleteaNotification = async(req,res)=>{
 
 exports.setNotificationAsRead = async(req,res)=>{
    try{
-      const userId = req.user._id;
+      const userId = req.user.user._id;
       const notificationId = req.params.id;
 
       const user = await User.findById(userId);

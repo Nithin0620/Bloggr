@@ -7,11 +7,12 @@ import { usePageStore } from "../store/PageStore";
 import { useNavigate } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
 import {toast} from "react-hot-toast"
+import {Loader} from "lucide-react"
 
 
 const CreatePostHandler = () => {
    const {isCreatePostOpen, setIsCreatePostOpen,setCurrentPage} = usePageStore();
-  const { categoriesList, createPost,fetchCategories } = usePostStore();
+  const { categoriesList, createPost,fetchCategories,createPostLoading ,fetchPosts} = usePostStore();
   const { authUser } = useAuthStore();
   const { register, handleSubmit, reset ,setValue} = useForm();
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -19,27 +20,48 @@ const CreatePostHandler = () => {
 
   const navigate = useNavigate();
 
-  useEffect(()=>{
-      fetchCategories();
-  },[])
+   const [categories,setCategories] = useState([]);
+   
+   useEffect(() => {
+      const fetchCategoryAndPostfromStore = async()=>{
+      const array = await fetchCategories();
+      setCategories(array);
+      }
+      fetchCategoryAndPostfromStore(); // will update Zustand store
+   }, [fetchCategories,categoriesList]);
+   
 
   const imageref = useRef()
+  const [loading,setLoading] = useState(false);
 
-   const onSubmit = (data) => {
-      if(selectedCategories.length ===0) {
-         toast.warning("Please select Atleast one Category!")
+   const onSubmit = async(data) => {
+      if (selectedCategories.length === 0) {
+         toast("Please select atleat one Category")
          return;
       }
-      const postData = {
-         ...data,
-         author: authUser._id,
-         categories: selectedCategories,
-      };
 
-      createPost(postData);
-      reset();
-      setSelectedCategories([]);
-      setIsCreatePostOpen(false);
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("content", data.content);
+      formData.append("readTime", data.readTime);
+      formData.append("image", data.image); // This is a File object
+      selectedCategories.forEach((cat) => {
+         formData.append("categories", cat); // Backend should accept it as array
+      });
+
+      for (let pair of formData.entries()) {
+         console.log(`${pair[0]}: ${pair[1]}`);
+      }
+
+      setLoading(true);
+      await createPost(formData);
+     if(!createPostLoading){
+         setLoading(false);
+         reset();
+         setSelectedCategories([]);
+         setIsCreatePostOpen(false);
+         fetchPosts();
+     }
    };
 
    const handleCategorySelect = (e) => {
@@ -78,7 +100,7 @@ const CreatePostHandler = () => {
    if (!isCreatePostOpen) return null;
 
    return (
-      <div className="fixed  inset-0 z-50 flex items-center justify-center backdrop-blur-[1px] bg-opacity-40">
+      <div className="fixed  inset-0 z-40 flex items-center justify-center backdrop-blur-[1px] bg-opacity-40">
          <div className="w-1/2 max-h-[75vh] overflow-y-auto rounded-lg p-6 accent-bg-mode shadow-accent-box relative">
          <button
             className="absolute hover:rotate-90 hover:scale-75 transition-all duration-500 top-4 right-4 text-2xl text-red-500"
@@ -154,11 +176,14 @@ const CreatePostHandler = () => {
             <div>
                <label className="accent-text block mb-1">Read Time</label>
                <input
-               type="text"
-               {...register("readTime",{ required: true })}
-               className="w-full accent-text-mode accent-bg-mode px-4 py-2 border rounded-lg accent-border"
-               placeholder="e.g. Time in mins. (5)"
+                  type="number"
+                  min="1"
+                  step="1"
+                  {...register("readTime", { required: true, min: 1 })}
+                  className="w-full accent-text-mode accent-bg-mode px-4 py-2 border rounded-lg accent-border no-spinner"
+                  placeholder="e.g. Time in mins. (5)"
                />
+
             </div>
 
             <div className="accent-text-mode accent-bg-mode">
@@ -169,22 +194,22 @@ const CreatePostHandler = () => {
                defaultValue=""
                >
                <option className="accent-text-mode accent-bg-mode" value="" disabled>Select a category</option>
-               {categoriesList?.map((cat,index) => (
+               {categories?.map((cat,index) => (
                   <option className="accent-text-mode accent-bg-mode" key={index} value={cat}>{cat}</option>
                ))}
                </select>
 
                <div className="flex accent-text-mode accent-bg-mode flex-wrap gap-2 mt-2">
                {selectedCategories.map((catId,index) => {
-                  const cat = categoriesList.find(c => c=== catId);
+                  // const cat = categoriesList.find(c => c=== catId);
                   return (
-                     <div key={index} className="flex items-center accent-text-mode accent-bg-mode px-3 py-1 rounded-full text-sm">
-                     {cat}
+                     <div key={index} className="flex items-center accent-bg-light accent-text-mode accent-bg-mode px-3 py-1 rounded-full text-sm">
+                     {catId}
                      <button
-                        className="ml-2 text-red-600 font-bold"
+                        className="hover:scale-105 transition-all duration-300 ml-2 text-red-600 font-extrabold"
                         onClick={() => handleRemoveCategory(catId)}
-                     >
-                        ×
+                     > 
+                     <IoMdClose/> 
                      </button>
                      </div>
                   );
@@ -194,12 +219,22 @@ const CreatePostHandler = () => {
 
             <button
                type="submit"
-               className="accent-bg accent-text-mode px-6 py-2 rounded-lg shadow-accent-box"
-            >
-               Submit Post
+               className="w-full flex justify-center items-center gap-2 accent-bg accent-text-mode px-6 py-2 rounded-lg shadow-accent-box"
+               disabled={loading}
+               >
+               {loading ? (
+                  <>
+                     <Loader className="animate-spin w-5 h-5" />
+                     <span>Creating...</span>
+                  </>
+               ) : (
+                  "Submit Post"
+               )}
             </button>
          </form>
          </div>
+
+         
       </div>
    );
 };

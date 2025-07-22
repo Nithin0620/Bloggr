@@ -5,57 +5,38 @@ import {usePageStore} from "../store/PageStore"
 import UpdatePostHandler from "../components/UpdatePostHandler"
 import {IoMdClose} from "react-icons/io"
 import { useParams } from 'react-router-dom';
+import { useProfileStore } from '../store/ProfileStore';
+import { Loader } from 'lucide-react';
 
 const Profile = () => {
   const authUser = useAuthStore();
   const {isUpdatePostOpen,updatePost} = usePageStore();
   const [isDeleteModalOpen,setIsDeleteModalOpen] = useState();
+  const [user,setUser] = useState(null);
   // console.log("isUpdatePostOpen",isUpdatePostOpen)
   // console.log("updatePost",updatePost)
+
+  const {fetchUserProfile} = useProfileStore();
   const {userId} = useParams();
+  const [loading,setLoading] = useState(false);
 
   useEffect(()=>{
-
-  },[userId])
-
-  const dummyProfilePosts = [
-    {
-      title: "The Future of AI in Software Development",
-      description:
-        "A deep dive into how artificial intelligence is reshaping the landscape of software engineering, from code generation to automated testing.",
-      image: "https://source.unsplash.com/80x80/?ai,software",
-      author: { _id: "user123", name: "Nithin KS" },
-      readTime: 4,
-      updatedTime: Date.now() - 6 * 60 * 1000,
-      likes: [1, 2, 3],
-      comments: [1],
-      categories: ["Tech"]
-    },
-    {
-      title: "React vs Vue: Choosing the Right Framework",
-      description:
-        "When starting a new project, picking the right JavaScript framework is critical. This article explores the pros and cons of React and Vue for beginners and pros alike.",
-      image: "https://source.unsplash.com/80x80/?javascript,react",
-      author: { _id: "user123", name: "Nithin KS" },
-      readTime: 6,
-      updatedTime: Date.now() - 15 * 60 * 1000,
-      likes: [1, 2],
-      comments: [],
-      categories: ["Frontend", "JS"]
-    },
-    {
-      title: "Mastering MongoDB Aggregations",
-      description:
-        "MongoDB’s aggregation pipeline is a powerful tool for data manipulation. This post explains how to use match, group, project, and sort stages effectively.",
-      image: "https://source.unsplash.com/80x80/?database,mongodb",
-      author: { _id: "user456", name: "Alex Morgan" },
-      readTime: 8,
-      updatedTime: Date.now() - 60 * 60 * 1000,
-      likes: [],
-      comments: [1, 2, 3, 4],
-      categories: ["Database", "Backend"]
+    const fetchProfileData = async()=>{
+      setLoading(true);
+      const response = await fetchUserProfile(userId);
+      console.log("response" , response)
+      setUser(response);
+      setPosts(response.profile.posts);
+      setLoading(false);
     }
-  ];
+    fetchProfileData();
+  },[])
+
+  const [posts,setPosts] = useState(null);
+  
+  if(loading) return(
+    <div className='flex items-center justify-center'><Loader className='animate-spin'/></div>
+  )
 
   return (
     <div className="flex justify-center mx-auto px-4 py-2 transition-colors duration-300 accent-bg-mode accent-text-mode">
@@ -65,19 +46,18 @@ const Profile = () => {
           {/* Left - Image and Basic Info */}
           <div className="flex items-start gap-6 w-full md:w-auto">
             <img
-              src={authUser.profilePic}
+              src={user.profilePic}
               alt="profile"
               className="rounded-full w-24 h-24 md:w-28 md:h-28 object-cover"
             />
             <div>
               <h1 className="text-xl font-semibold accent-text">
-                {authUser.firstName} {authUser.lastName}
+                {user.firstName + " " +user.lastName} 
               </h1>
-              <p className="text-sm">{authUser.profession}</p>
-              <p className="text-sm ">Joined in {authUser.createdAt}</p>
-              <p className="mt-2 text-sm ">{authUser.description}</p>
+              <p className="text-sm ">Joined in {user.createdAt}</p>
+              <p className="mt-2 text-sm ">{user.description}</p>
               <button className="mt-4 accent-bg hover:accent-bg-dark text-sm font-medium py-1.5 px-4 rounded-md transition-all duration-150">
-                Follow {authUser.firstName}
+                Follow {user.firstName}
               </button>
             </div>
           </div>
@@ -88,11 +68,11 @@ const Profile = () => {
           {/* Followers */}
           <div className="flex md:flex-col items-center gap-6 mt-6 md:mt-0 w-full md:w-auto justify-around">
             <div className="text-center">
-              <p className="text-xl font-bold">{authUser.profile}</p>
+              <p className="text-xl font-bold">{user.profile.followers.length}</p>
               <p className="text-sm font-medium ">Followers</p>
             </div>
             <div className="text-center">
-              <p className="text-xl font-bold">{authUser.profile}</p>
+              <p className="text-xl font-bold">{user.profile.following.length}</p>
               <p className="text-sm font-medium ">Following</p>
             </div>
           </div>
@@ -107,7 +87,7 @@ const Profile = () => {
           <div className='min-w-full h-[0.12rem] accent-bg-light rounded-full'></div>
 
           <div className="mt-6 space-y-6">
-            {dummyProfilePosts.map((post, index) => (
+            {posts.map((post, index) => (
               <ProfilePostCard key={index} post={post} setIsDeleteModalOpen={setIsDeleteModalOpen}/>
             ))}
           </div>

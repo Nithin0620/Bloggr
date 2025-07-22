@@ -1,6 +1,7 @@
 const express = require("express")
 const router  = express.Router();
 const {protectRoute} = require("../middlewares/auth.middleware")
+const upload = require("../middlewares/multer")
 
 const {
    createPost,
@@ -12,7 +13,7 @@ const {
    getPostByUser
 } = require("../controllers/Post")
 
-router.post("/createpost",protectRoute,createPost);
+router.post("/createpost",protectRoute,upload.single("image"),createPost);
 router.put("/updatepost/:id",protectRoute,updatePost);
 router.delete("/deletepost/:id",protectRoute,deletePost);
 router.get("/getallposts",getAllPosts)

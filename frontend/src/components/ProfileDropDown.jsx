@@ -20,7 +20,7 @@ const ProfileDropDown = ({ setOpenProfileDropDown }) => {
 
   const handleViewProfile = () => {
     setOpenProfileDropDown(false);
-    navigate("/profile");
+    navigate(`/profile/${authUser._id}`);
   };
 
   const handleShareProfile = () => {

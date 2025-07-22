@@ -5,6 +5,8 @@ const cookieParser = require("cookie-parser")
 const cors = require("cors");
 
 const {dbConnect}  = require("./configuration/dataBase")
+const{cloudinaryConnect} = require("./configuration/cloudinary")
+
 const {app,server} = require("./configuration/socket")
 
 const authRoutes = require("./routes/Auth.routes");
@@ -42,6 +44,7 @@ app.use("/api/settings",settingsRoutes);
 server.listen(PORT,()=>{
    console.log(`Server started at port No:- ${PORT} `);
    dbConnect();
+   cloudinaryConnect();
 })
 
 app.get("/",(req,res)=>{

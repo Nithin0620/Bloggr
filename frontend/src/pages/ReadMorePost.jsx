@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Comment from "../components/Comment";
 import { usePostStore } from '../store/PostStore';
 import RelatedBlogs from '../components/RelatedBlogs';
@@ -7,13 +7,30 @@ import { FaRegHeart } from "react-icons/fa6";
 import { FaRegCommentDots } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
 import { IoCaretBack } from "react-icons/io5";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { usePageStore } from '../store/PageStore';
 import { useShareModalStore } from '../store/ShareModal';
+import { Loader } from 'lucide-react';
 
 
 const ReadMorePost = () => {
-   const { currentPostForReadMore: post } = usePostStore();
+   const {getPostByID } = usePostStore();
+   const [loading,setLoading] = useState(false);
+
+   const {postId} = useParams();
+   const [post,setPost] =useState(null);
+
+   useEffect(()=>{
+      const fetchReadMorePost = async()=>{
+         setLoading(true);
+         // console.log("here")
+         const response = await getPostByID(postId);
+         setPost(response)
+         setLoading(false);
+      }
+      fetchReadMorePost();
+   },[]);
+
    const {setCurrentPage} = usePageStore();
    const {openShareModal} = useShareModalStore();
    const navigate=useNavigate();
@@ -21,6 +38,11 @@ const ReadMorePost = () => {
       navigate(-1);
       setCurrentPage("home")
    }
+
+   if(loading || !post) return (
+      <div className='flex justify-center items-center mt-2 animate-spin'><Loader/></div>
+   )
+
    return (
       <div className=" px-4 md:px-12 pb-20 lg:px-24 transition-colors duration-300 accent-bg-mode accent-text-mode">
          <div onClick={() => handleNavigate()} className='  pt-9 cursor-pointer flex accent-text left-0 items-center accent-shadow hover:scale-105 transition-all ease-in-out duration-500 font-sans gap-2'><IoCaretBack/> Back</div>
@@ -41,7 +63,7 @@ const ReadMorePost = () => {
                </div>
 
                <div className="text-sm text-gray-500 flex gap-4 flex-wrap">
-                  <span className="accent-text">{post.author}</span>
+                  <span className="accent-text">{post.author.firstName + " " + post.author.lastName}</span>
                   <span>• {Math.floor((Date.now() - post.updatedTime) / (1000 * 60))} mins ago</span>
                   <span>• estimated {Math.floor((Date.now() - post.readTime) / (1000 * 60))} min read</span>
                </div>
@@ -57,7 +79,7 @@ const ReadMorePost = () => {
                <div className="h-[0.12rem] rounded-full min-w-full accent-bg-dark"></div>
 
                <div className="leading-7 text-base text-justify whitespace-pre-wrap">
-                  {post.description}
+                  {post.content}
                </div>
 
                <div className="flex gap-10 transition-all duration-300 text-sm">
@@ -82,7 +104,7 @@ const ReadMorePost = () => {
 
             {/* RIGHT: Comment Section */}
             <div className="w-full lg:w-[25%] top-0">
-               <Comment />
+               {/* <Comment post={post._id} /> */}
             </div>
          </div>
       </div>

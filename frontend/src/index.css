@@ -109,3 +109,17 @@
 .accent-bg-mode{
   background-color: var(--acent-bg-mode);
 }
+
+
+
+/* Hide spinner arrows for number input (Chrome, Safari, Edge) */
+.no-spinner::-webkit-inner-spin-button,
+.no-spinner::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* For Firefox */
+.no-spinner {
+  -moz-appearance: textfield;
+}

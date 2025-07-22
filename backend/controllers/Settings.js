@@ -3,7 +3,7 @@ const User = require("../modals/user");
 
 exports.setSettings = async (req, res) => {
    try {
-      const userId = req.user._id;
+      const userId = req.user.user._id;
       const user = await User.findById(userId);
 
       if (!user) {
@@ -46,7 +46,7 @@ exports.setSettings = async (req, res) => {
 
 exports.getSettings = async (req, res) => {
    try {
-      const userId = req.user._id;
+      const userId = req.user.user._id;
 
       const settingsResponse = await Settings.findOne({ user: userId });
       if (!settingsResponse)
@@ -74,7 +74,7 @@ exports.getSettings = async (req, res) => {
 
 exports.resetSettings = async (req, res) => {
    try {
-      const userId = req.user._id;
+      const userId = req.user.user._id;
 
       const settingsResponse = await Settings.findOneAndDelete({ user: userId });
 

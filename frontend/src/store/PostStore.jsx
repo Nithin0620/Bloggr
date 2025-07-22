@@ -1,59 +1,15 @@
 import { create } from "zustand";
 import axios from "axios";
+import {toast} from "react-hot-toast"
 
 const BASE_URL = "http://localhost:4000/api"
 
 
 export const usePostStore = create((get,set)=>({
-  currentPostForReadMore : {
-            "title": "Mastering React in 2025: New Patterns and Best Practices",
-            "categories": ["React", "Frontend", "JavaScript"],
-            "author": "Nithin KS",
-            "updatedTime": 1721272800000,
-            "readTime": 1721271000000,
-            "image": "https://images.unsplash.com/photo-1603570418360-7b2cc4c6c179?auto=format&fit=crop&w=1000&q=80",
-            "description": "React in 2025 introduces powerful patterns like Server Components, Concurrent Rendering, and optimized bundling techniques. This article walks you through these innovations with code samples, real-world use cases, and a side-by-side comparison with legacy patterns.\n\n## Highlights\n- ✅ Server-side rendering with React Server Components\n- 🚀 Optimized lazy loading strategies\n- 🧠 Understanding Suspense boundaries and transition APIs\n\n> “React is not just a library anymore; it's a full ecosystem.”\n\n### Code Sample\n```jsx\nconst App = () => {\n  return (\n    <div className=\"p-4\">\n      <h1 className=\"text-2xl font-bold\">Welcome to React 2025</h1>\n    </div>\n  );\n};\n```\n\n### Tags\n#React #SSR #Frontend #JavaScript",
-            "likes": [
-              {
-                "userId": "user_01",
-                "userName": "Alice Dev"
-              },
-              {
-                "userId": "user_02",
-                "userName": "Bob Coder"
-              },
-              {
-                "userId": "user_03",
-                "userName": "Charlie UI"
-              }
-            ],
-            "comments": [
-              {
-                "user": {
-                  "name": "Alice Dev",
-                  "profilePic": "https://i.pravatar.cc/40?img=5"
-                },
-                "text": "This article is super insightful 🔥",
-                "updatedTime": 1721274600000
-              },
-              {
-                "user": {
-                  "name": "Bob UI",
-                  "profilePic": "https://i.pravatar.cc/40?img=8"
-                },
-                "text": "Loved the explanation of Server Components!",
-                "updatedTime": 1721275000000
-              },
-              {
-                "user": {
-                  "name": "Charlie UX",
-                  "profilePic": "https://i.pravatar.cc/40?img=12"
-                },
-                "text": "Thanks for breaking this down clearly. Helped a lot.",
-                "updatedTime": 1721276000000
-              }
-]
-  },
+  createPostLoading : false,
+
+  readMorePostData:null,
+  isReadMoreLoading:false,
   categoriesList: [],
 
   posts:[],
@@ -63,6 +19,7 @@ export const usePostStore = create((get,set)=>({
   },
 
   fetchCategories: async () => {
+    set({createPostLoading:true});
     try{
       const res = await axios.get(`${BASE_URL}/category/getallcategory`);
       
@@ -85,19 +42,85 @@ export const usePostStore = create((get,set)=>({
   // },
 
   fetchPosts : async()=>{
+    set({fetchPostLoading:true});
     try{
       const response =  await axios.get(`${BASE_URL}/post/getallposts`);
-      console.log("response",response.data.data);
-      set({posts:response.data.data.data})
+      // console.log("response",response.data.data);
+      set({posts:response.data.data})
+      return response.data.data;
       // console.log(get().posts);
     }
     catch(e){
       console.log(e);
+      return [];
+    }
+    finally{
+      set({fetchPostLoading:false});
+
     }
   },
 
-  createPost: async (postData) => {
-    await axios.post("/api/posts", postData);
+  getPostByID : async(postId)=>{
+    set({isReadMoreLoading:true});
+    try{
+      // console.log("in the store")
+      const response =  await axios.get(`${BASE_URL}/post/getpostbyid/${postId}`);
+      console.log("response in the from id:",response.data.data);
+      set({readMorePostData:response.data.data})
+      return response.data.data;
+      // console.log(get().posts);
+    }
+    catch(e){
+      console.log(e);
+      return [];
+    }
+    finally{
+      set({isReadMoreLoading:false});
+    }
+  },
+
+  getComments : async(id)=>{
+    try{
+      const response = await axios.get(`${BASE_URL}/interactions/getcomments/${id}`)
+      console.log("comments,:" , response.data);
+      return response.data;
+    }
+    catch(e){
+      console.log(e)
+      return [];
+    }
+  },
+
+  createPost: async (formData) => {
+    set({createPostLoading:true});
+    try{
+      const res = await axios.post(
+        `${BASE_URL}/post/createpost`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // Let Axios handle boundary
+          },
+          withCredentials: true, // if using cookies for auth
+        }
+      );
+      console.log(res)
+      if(res.data.success){
+        toast.success("New Blog posted successfully.")
+      }
+      else{
+        toast.error("Error occured in posting the Blog!")
+        toast("please Try again after sometime!")
+      }
+    }
+    catch(e){
+      console.log(e)
+      toast.error("Error occured in posting the Blog!",e.message)
+    }
+    finally{
+      set({createPostLoading:false});
+
+    }
   },
   setPost : async(postId)=>{
     const response = 

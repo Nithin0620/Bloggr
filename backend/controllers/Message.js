@@ -8,7 +8,7 @@ const {getReceiverSocketId , io} = require("../configuration/cloudinary");
 
 exports.getUsersForSidebar = async(req,res)=>{
    try{
-      const loggedInUserId = req.user._id;
+      const loggedInUserId = req.user.user._id;
       const filteredUsers = await User.find({_id:{$ne:loggedInUserId}}).select("-password");
 
       res.status(200).json({success:true,message:"Users fetched successfully" , data:filteredUsers});
@@ -22,7 +22,7 @@ exports.getUsersForSidebar = async(req,res)=>{
 exports.getMessages = async(req,res)=>{
    try{
       const {id:userToChatId} = req.params;
-      const myId = req.user._id;
+      const myId = req.user.user._id;
 
       const messages = await Message.find({
          $or:[
@@ -46,7 +46,7 @@ exports.sendMessage = async(req,res)=>{
    try{
       const {text,image} = req.body;
       const {id:receiverId}=req.params;
-      const senderId = req.user._id;
+      const senderId = req.user.user._id;
 
       let imageUrl;
       if(image){

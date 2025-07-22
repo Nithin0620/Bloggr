@@ -1,16 +1,39 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { IoSend } from "react-icons/io5";
 import { FaComments } from "react-icons/fa";
 import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
-
 import { usePostStore } from '../store/PostStore';
+import { Loader } from 'lucide-react';
 
-const Comment = () => {
-  const {currentPostForReadMore:post} = usePostStore();
+const Comment = ({ _id }) => {
   const [inputValue, setInputValue] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const inputRef = useRef(null);
+  const { getComments } = usePostStore();
+  const [loading, setLoading] = useState(false);
+  const [comments, setComments] = useState([]);
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      if (!_id) return;
+      
+      setLoading(true);
+      try {
+        const fetchedComments = await getComments(_id);
+        setComments(fetchedComments || []);
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+        setComments([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchComments();
+  }, [_id, getComments]); // Added dependency array
+
+  console.log("in the comment page", comments);
 
   const addEmoji = (emoji) => {
     const cursorPos = inputRef.current.selectionStart;
@@ -21,11 +44,36 @@ const Comment = () => {
     setShowEmojiPicker(false);
   };
 
+  // Helper function to calculate time difference
+  const getTimeAgo = (dateString) => {
+    const commentDate = new Date(dateString);
+    const now = new Date();
+    const diffInMinutes = Math.floor((now - commentDate) / (1000 * 60));
+    
+    if (diffInMinutes < 1) return "just now";
+    if (diffInMinutes === 1) return "1 min ago";
+    if (diffInMinutes < 60) return `${diffInMinutes} mins ago`;
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours === 1) return "1 hour ago";
+    if (diffInHours < 24) return `${diffInHours} hours ago`;
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays === 1) return "1 day ago";
+    return `${diffInDays} days ago`;
+  };
+
+  if (loading) return (
+    <div className='flex items-center justify-center p-4'>
+      <Loader className='animate-spin' />
+    </div>
+  );
+
   return (
     <div className="sticky top-16 transition-colors duration-300 accent-bg-mode accent-text-mode">
       <div className="w-full max-w-sm">
         <h2 className="text-xl font-semibold flex items-center gap-2 accent-text mb-3">
-          <FaComments /> Comments
+          <FaComments /> Comments ({comments.length})
         </h2>
 
         {/* Input box */}
@@ -45,7 +93,7 @@ const Comment = () => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
           />
-          
+
           <button className="accent-text text-xl">
             <IoSend />
           </button>
@@ -59,24 +107,35 @@ const Comment = () => {
 
         {/* Comments */}
         <div className="space-y-4 mt-4">
-          {post.comments.map((comment, index) => (
-            <div key={index} className="p-3 border border-gray-200 rounded-lg shadow-accent-box">
-              <div className="flex items-start gap-2">
-                <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100">
-                  <img src={comment.user.profilePic} alt="User" className="w-full h-full object-cover" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-semibold">
-                    {comment.user.name}
-                    <span className="ml-2 text-xs text-gray-500">
-                      • {Math.floor((Date.now() - comment.updatedTime) / (1000 * 60))} mins ago
-                    </span>
+          {comments.length > 0 ? (
+            comments.map((comment) => (
+              <div key={comment._id} className="p-3 border border-gray-200 rounded-lg shadow-accent-box">
+                <div className="flex items-start gap-2">
+                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100">
+                    <img
+                      src={comment.user.profilePic || '/default-avatar.png'}
+                      alt="User"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = '/default-avatar.png';
+                      }}
+                    />
                   </div>
-                  <div className="text-sm mt-1">{comment.text}</div>
+                  <div className="flex-1">
+                    <div className="text-sm font-semibold">
+                      {comment.user.firstName + " " + comment.user.lastName}
+                      <span className="ml-2 text-xs text-gray-500">
+                        • {getTimeAgo(comment.updatedAt)}
+                      </span>
+                    </div>
+                    <div className="text-sm mt-1">{comment.text}</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <div className="text-center text-sm text-gray-500">No comments to show</div>
+          )}
         </div>
       </div>
     </div>

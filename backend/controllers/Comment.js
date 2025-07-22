@@ -6,7 +6,7 @@ const Comment = require("../modals/comment")
 
 exports.addComment = async(req,res)=>{
    try{
-      const userId = req.user._id;
+      const userId = req.user.user._id;
       const postId = req.params.id;
 
       const {comment} = req.body;
@@ -44,7 +44,7 @@ exports.addComment = async(req,res)=>{
 
 exports.deleteComment = async(req,res)=>{
    try{
-      const userId = req.user._id;
+      const userId = req.user.user._id;
       const postId = req.params.postid;
 
       // console.log("post id ", postId);
@@ -97,7 +97,7 @@ exports.getComments = async(req,res)=>{
    try{
       const postId = req.params.id;
 
-      const post = await Post.findById(postId).populate({path:"comments",options:{sort:{createdAt:-1}} , populate:{path:"user",select:"firstName lastName profile"}});
+      const post = await Post.findById(postId).populate({path:"comments",options:{sort:{createdAt:-1}} , populate:{path:"user",select:"firstName lastName profilePic profile"}});
 
       if(!post) return res.status(404).json({
          success:false,

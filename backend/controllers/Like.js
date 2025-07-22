@@ -3,7 +3,7 @@ const Post = require("../modals/post");
 
 exports.likeUnlikeAPost = async (req, res) => {
   try {
-      const userId = req.user._id;
+      const userId = req.user.user._id;
       const postId = req.params.id;
 
       const user = await User.findById(userId);
@@ -48,7 +48,7 @@ exports.likeUnlikeAPost = async (req, res) => {
 
 exports.haveCurrentUserLiked = async(req,res)=>{
    try{
-      const userId = req.user._id;
+      const userId = req.user.user._id;
       const postId = req.params.id;
 
       const post = await Post.findById(postId);
