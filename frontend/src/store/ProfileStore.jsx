@@ -9,6 +9,7 @@ export const useProfileStore = create((get,set)=>({
    fetchUserProfile : async(userId)=>{
       try{
          const response = await axios(`${BASE_URL}/profile/viewuserprofile/${userId}`);
+         console.log("Reaspone",response)
          set({UserProfile:response.data})
          return response.data;
       }

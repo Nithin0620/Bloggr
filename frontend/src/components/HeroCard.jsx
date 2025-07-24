@@ -7,6 +7,7 @@ const HeroCard = () => {
   const { token } = useAuthStore();
   const navigate = useNavigate();
   const { openShareModal} = useShareModalStore();
+  const {authUser}  = useAuthStore();
 
   return (
     <div className="shadow-md accent-box-shadow accent-border border w-[98%] rounded-xl m-5 p-5 z-20 drop-shadow-md shadow-accent-box  space-y-4 transition-colors duration-300 accent-bg-mode accent-text-mode">
@@ -97,7 +98,7 @@ const HeroCard = () => {
           {/* Buttons */}
           <div className="flex justify-center flex-wrap gap-4 pt-2">
             <button
-              onClick={() => navigate("/profile")}
+              onClick={() => navigate(`/profile/${authUser._id}`)}
               className="px-4 py-2 border rounded-md font-medium hover:scale-105 transition accent-text accent-border"
             >
               View Profile

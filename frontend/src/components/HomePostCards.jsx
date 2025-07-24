@@ -1,14 +1,19 @@
 import React from 'react';
-import { FaRegHeart } from "react-icons/fa6";
 import { FaRegCommentDots } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
 import { usePageStore } from '../store/PageStore';
 import { useNavigate } from 'react-router-dom';
 import { usePostStore } from '../store/PostStore';
+import { useIntractionStore } from '../store/IntractionStore';
+import { FaRegHeart } from "react-icons/fa6";
+import { FaHeart } from "react-icons/fa";
 
-const HomePostCards = ({ post }) => {
+
+const HomePostCards = ({ post ,setLiked}) => {
   const navigate = useNavigate();
   const {setCurrentPage} = usePageStore();
+  const {LikeUnlikePost,postsLikedByUser} = useIntractionStore();
+  
 
   const handleReadmoreClick = ()=>{
 
@@ -33,6 +38,18 @@ const HomePostCards = ({ post }) => {
     const diffInDays = Math.floor(diffInHours / 24);
     return `${diffInDays} day${diffInDays === 1 ? "" : "s"} ago`;
   };
+
+
+  const handleLike = async () => {
+    const response = await LikeUnlikePost(post._id);
+   
+    setLiked(true);
+    // setTimeout(()=>{
+    //   setLiked(false)
+    // },4000)
+  };
+
+
 
 
   return (
@@ -93,12 +110,12 @@ const HomePostCards = ({ post }) => {
         </button>
 
         <div className="flex gap-4 items-center text-sm text-gray-700">
-          <button className="flex items-center gap-1 hover:text-red-500 transition duration-200">
-            {post.likes.length}
-            <FaRegHeart />
+          <button onClick={()=>handleLike()} className="flex items-center gap-1 hover:text-red-500 transition duration-200">
+            {post.likes.length }
+            {postsLikedByUser.includes(post._id) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> }
           </button>
 
-          <button className="flex items-center gap-1 hover:text-blue-500 transition duration-200">
+          <button onClick={()=>handleReadmoreClick()} className="flex items-center gap-1 hover:text-blue-500 transition duration-200">
             {post.comments.length}
             <FaRegCommentDots />
           </button>

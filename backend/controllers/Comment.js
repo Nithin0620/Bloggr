@@ -51,10 +51,10 @@ exports.deleteComment = async(req,res)=>{
       // console.log("user id currently",userId)
 
       const user= await User.findById(userId);
-      if(!user) return res.status(404).json({success:false,message:"user not found"})
+      if(!user) return res.status(401).json({success:false,message:"user not found"})
 
       const post = await Post.findById(postId);
-      if(!post) return res.status(404).json({success:false,message:"Post not found"})
+      if(!post) return res.status(402).json({success:false,message:"Post not found"})
 
       const commentId = req.params.commentid;
       // console.log("Comment id",commentId)

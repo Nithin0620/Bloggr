@@ -3,28 +3,42 @@ import { useForm } from "react-hook-form";
 import { IoMdClose } from "react-icons/io";
 import { usePostStore } from "../store/PostStore";
 import { useAuthStore } from "../store/AuthStore";
+import { usePageStore } from "../store/PageStore";
 import { useNavigate } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
-import {toast} from "react-hot-toast"
+import { toast } from "react-hot-toast";
+import { Loader } from "lucide-react";
 
-const UpdatePostHandler = ({ post }) => {
-   const { isUpdatePostOpen, setIsUpdatePostOpen, categoriesList, updatePost } = usePostStore();
+const UpdatePostHandler = ({ post,setPostUpdated }) => {
+   const { isUpdatePostOpen, setIsUpdatePostOpen } = usePageStore();
+   const { updatePost, categoriesList, fetchCategories, fetchPosts } = usePostStore();
    const { authUser } = useAuthStore();
    const { register, handleSubmit, setValue, reset } = useForm();
    const [selectedCategories, setSelectedCategories] = useState([]);
    const [previewURL, setPreviewUrl] = useState(null);
-   const navigate = useNavigate();
+   const [loading, setLoading] = useState(false);
    const imageref = useRef();
-   // console.log("post",post)
+   const navigate = useNavigate();
+   const [categories, setCategories] = useState([]);
+
+      
+   useEffect(() => {
+      const fetchCategoryAndPostfromStore = async()=>{
+      const array = await fetchCategories();
+      setCategories(array);
+      }
+      fetchCategoryAndPostfromStore();
+      console.log(categories)
+   }, [fetchCategories,categoriesList]);
 
    useEffect(() => {
       if (post) {
          setValue("title", post.title);
          setValue("content", post.content);
          setValue("readTime", post.readTime);
-         setValue("image", post.image); // initial value
+         setValue("image", post.image);
          setSelectedCategories(post.categories || []);
-         setPreviewUrl(post.image); // for initial image preview
+         setPreviewUrl(post.image);
       }
    }, [post, setValue]);
 
@@ -33,22 +47,35 @@ const UpdatePostHandler = ({ post }) => {
       navigate("/profile");
    };
 
-   const onSubmit = (data) => {
-      if(selectedCategories.length ===0) {
-         toast.warning("Please select Atleast one Category!")
+   const onSubmit = async (data) => {
+      if (selectedCategories.length === 0) {
+         toast.error("Please select at least one category!");
          return;
       }
-      const updatedPost = {
-         ...data,
-         author: authUser._id,
-         categories: selectedCategories,
-         _id: post._id,
-      };
 
-      updatePost(updatedPost);
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("content", data.content);
+      formData.append("readTime", data.readTime);
+      formData.append("author", authUser._id);
+      formData.append("_id", post._id);
+
+      if (data.image instanceof File) {
+         formData.append("image", data.image);
+      }
+
+      selectedCategories.forEach((cat) => {
+         formData.append("categories", cat);
+      });
+
+      setLoading(true);
+      await updatePost(formData);
+      setLoading(false);
       reset();
       setSelectedCategories([]);
       setIsUpdatePostOpen(false);
+      fetchPosts();
+      setPostUpdated(true);
    };
 
    const handleCategorySelect = (e) => {
@@ -63,7 +90,7 @@ const UpdatePostHandler = ({ post }) => {
    };
 
    const handleImageClick = () => {
-      if (imageref.current) imageref.current.click();
+      imageref.current?.click();
    };
 
    const handleFileChange = (e) => {
@@ -130,19 +157,19 @@ const UpdatePostHandler = ({ post }) => {
                <input
                   type="file"
                   accept="image/*"
-                  {...register("image",{required:true})}
+                  {...register("image")}
                   ref={imageref}
                   onChange={handleFileChange}
                   className="hidden"
                />
                <div
-                  className="w-full flex items-center gap-2 px-4 py-1 border-b rounded-lg accent-border accent-bg-mode accent-text-mode"
+                  className="w-full cursor-pointer flex items-center gap-2 px-4 py-1 border-b rounded-lg accent-border accent-bg-mode accent-text-mode"
                   onClick={handleImageClick}
                >
                   <span className="text-red-500 text-base">
                      <FiUpload />
                   </span>
-                  select image <span className="opacity-40">(only 1 image allowed)</span>
+                  Select image <span className="opacity-40">(only 1 image allowed)</span>
                </div>
 
                {previewURL && (
@@ -166,10 +193,10 @@ const UpdatePostHandler = ({ post }) => {
             <div>
                <label className="accent-text block mb-1">Read Time</label>
                <input
-               type="text"
-               {...register("readTime", { required: true })}
+               type="number"
+               {...register("readTime", { required: true, min: 1 })}
                className="w-full px-4 py-2 border rounded-lg accent-border"
-               placeholder="e.g. 5 min read"
+               placeholder="e.g. 5"
                />
             </div>
 
@@ -177,45 +204,47 @@ const UpdatePostHandler = ({ post }) => {
                <label className="accent-text block mb-1">Categories</label>
                <select
                onChange={handleCategorySelect}
-               className="w-full px-4 py-2 border rounded-lg accent-border"
+               className="w-full px-4 py-2 border accent-text-mode accent-bg-mode rounded-lg accent-border"
                defaultValue=""
                >
-               <option value="" disabled>
-                  Select a category
-               </option>
-               {categoriesList?.map((cat) => (
-                  <option key={cat._id} value={cat._id}>
-                     {cat.name}
-                  </option>
+               <option className="accent-text-mode accent-bg-mode" value="" disabled>Select a category</option>
+               {categories?.map((cat,index) => (
+                  <option className="accent-text-mode accent-bg-mode" key={index} value={cat}>{cat}</option>
                ))}
                </select>
 
                <div className="flex flex-wrap gap-2 mt-2">
-               {selectedCategories.map((catId) => {
-                  const cat = categoriesList.find((c) => c._id === catId);
-                  return (
-                     <div
-                     key={catId}
+               {selectedCategories.map((catId, index) => (
+                  <div
+                     key={index}
                      className="flex items-center bg-gray-200 px-3 py-1 rounded-full text-sm"
-                     >
-                     {cat?.name}
+                  >
+                     {catId}
                      <button
-                        className="ml-2 text-red-600 font-bold"
-                        onClick={() => handleRemoveCategory(catId)}
+                     className="ml-2 text-red-600 font-bold"
+                     onClick={() => handleRemoveCategory(catId)}
+                     type="button"
                      >
-                        ×
+                     ×
                      </button>
-                     </div>
-                  );
-               })}
+                  </div>
+               ))}
                </div>
             </div>
 
             <button
                type="submit"
-               className="accent-bg text-white px-6 py-2 rounded-lg shadow-accent-box"
+               disabled={loading}
+               className="w-full flex justify-center items-center gap-2 accent-bg text-white px-6 py-2 rounded-lg shadow-accent-box"
             >
-               Update Post
+               {loading ? (
+               <>
+                  <Loader className="animate-spin w-5 h-5" />
+                  <span>Updating...</span>
+               </>
+               ) : (
+               "Update Post"
+               )}
             </button>
          </form>
          </div>

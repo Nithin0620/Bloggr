@@ -27,7 +27,7 @@ const CreatePostHandler = () => {
       const array = await fetchCategories();
       setCategories(array);
       }
-      fetchCategoryAndPostfromStore(); // will update Zustand store
+      fetchCategoryAndPostfromStore(); // will updaate Zustand store
    }, [fetchCategories,categoriesList]);
    
 

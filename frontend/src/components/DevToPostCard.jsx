@@ -52,8 +52,7 @@ const DevToPostCard = ({ post }) => {
   return (
     <div className="w-full max-w-3xl mx-auto my-4 accent-bg-mode accent-text-mode border rounded-2xl overflow-hidden hover:scale-[1.01] transition-all duration-300">
       <div className="flex flex-col md:flex-row w-full">
-        {/* Cover Image */}
-        <div className="w-full md:w-1/3 h-48 md:h-auto">
+        <div className="w-full md:w-1/3 h-44 md:h-auto">
           <img
             src={
               post.cover_image ||
@@ -65,9 +64,9 @@ const DevToPostCard = ({ post }) => {
         </div>
 
         {/* Content */}
-        <div className="w-full md:w-2/3 p-4 flex flex-col justify-between">
+        <div className="w-full md:w-2/3 p-3 flex flex-col justify-between">
           {/* User Info */}
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-1">
             <img
               src={post.user.profile_image}
               alt={post.user.name}
@@ -106,7 +105,7 @@ const DevToPostCard = ({ post }) => {
           </p>
 
           {/* Bottom Section */}
-          <div className="mt-3 flex items-center justify-between">
+          <div className="mt-1 flex items-center justify-between">
             <button
               onClick={() => window.open(post.url)}
               className="text-sm text-blue-500 hover:underline font-medium"

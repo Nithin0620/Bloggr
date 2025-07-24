@@ -3,23 +3,25 @@ import { axiosInstance } from "../lib/axios"
 import toast from "react-hot-toast";
 import {io} from "socket.io-client"
 import axios from 'axios';
+import { usePageStore } from "./PageStore";
 axios.defaults.withCredentials = true;
 
 
 const BASE_URL = "http://localhost:4000/api"
 
 export const useAuthStore = create((set,get)=>({
+   
    navigate:null,
    token: localStorage.getItem("token") || null,
    authUser : null,
    onlineUsers: [],
    socket: null,
-
+   
    isLogoutModalOpen:false,
    setIsLogoutModalOpen: (val)=>{
       set({isLogoutModalOpen:val})
    },
-
+   
    isSigningup:false,
    isLoggingin:false,
    isSendingotp :false,
@@ -35,20 +37,22 @@ export const useAuthStore = create((set,get)=>({
       // console.log("navigate",navigate)
       set({navigate:navigatefn});
    },
-
+   
    login : async(data)=>{
       set({isLoggingin:true});
       try{
          const response = await axios.post(`${BASE_URL}/auth/login`,data);
-
+         
          if(response.data.success){
             toast.success("User logged in successfully");
             console.log("response.data:",response.data.data);
             console.log("response.data.token:",response.data.data.token);
             set({authUser:response.data.data})
             set({token:response.data.data.token});
+            // localStorage.setItem("token",response.data.data.token);
             get().connectSocket();
             const navigatefn = get().navigate;
+            
             if(navigatefn) navigatefn("/");
          }
          else{
@@ -142,10 +146,12 @@ export const useAuthStore = create((set,get)=>({
    checkAuth:async()=>{
       try{
          const response = await axios.get(`${BASE_URL}/auth/checkauth`);
+         console.log("check",response)
          // console.log("checkauth:",response.data.success)
          if(response.data.success){
             set({authUser:response.data.data.user});
             set({token:response.data.data.token});
+            // localStorage.setItem("token",response.data.data.token);
          }
 
          if (!response.data.success && response.data.code === "JWT_EXPIRED") {

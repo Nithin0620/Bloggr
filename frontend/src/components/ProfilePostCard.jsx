@@ -9,13 +9,18 @@ import { useNavigate } from "react-router-dom";
 import { usePostStore } from "../store/PostStore";
 import { usePageStore } from "../store/PageStore";
 
-const ProfilePostCard = ({ post,setIsDeleteModalOpen}) => {
+const ProfilePostCard = ({ post,setIsDeleteModalOpen,setDeletePostid}) => {
   const {setIsUpdatePostOpen,setUpdatePost} = usePageStore();
   const {setPost} = usePostStore();
   const handleUpdatePost = ()=>{
     setIsUpdatePostOpen(true);
     setUpdatePost(post);
     // console.log(post)
+  }
+
+  const handleDelete = ()=>{
+    setIsDeleteModalOpen(true);
+    setDeletePostid(post._id);
   }
 
   const navigate = useNavigate();
@@ -45,7 +50,7 @@ const ProfilePostCard = ({ post,setIsDeleteModalOpen}) => {
         <div className="flex items-center gap-2 text-[0.7rem]  font-medium flex-wrap ">
           {post.categories.map((category, index) => (
             <span key={index} className="uppercase tracking-wide border accent-border rounded-lg p-[0.15rem]">
-              {category}
+              {category.name}
             </span>
           ))}
         </div>
@@ -59,9 +64,9 @@ const ProfilePostCard = ({ post,setIsDeleteModalOpen}) => {
 
         {/* Description */}
         <p className="text-sm mt-1 line-clamp-2">
-          {post.description.length <= 100
-            ? post.description
-            : post.description.substring(0, 100) + "..."}
+          {post.content.length <= 100
+            ? post.content
+            : post.content.substring(0, 100) + "..."}
         </p>
 
         {/* Bottom Section */}
@@ -89,7 +94,7 @@ const ProfilePostCard = ({ post,setIsDeleteModalOpen}) => {
                 <button onClick={()=>handleUpdatePost()} className="accent-text transition">
                   <GoPencil />
                 </button>
-                <button onClick={()=>setIsDeleteModalOpen(true)} className="hover:text-red-600 transition duration-200">
+                <button onClick={()=>handleDelete()} className="hover:text-red-600 transition duration-200">
                   <RiDeleteBin6Line />
                 </button>
               </div>

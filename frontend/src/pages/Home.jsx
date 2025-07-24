@@ -7,52 +7,48 @@ import HomePostCards from "../components/HomePostCards";
 import { useAuthStore } from "../store/AuthStore";
 import { usePostStore } from "../store/PostStore";
 import{Loader} from "lucide-react"
+import { useIntractionStore } from "../store/IntractionStore";
+import { useSettingsStore } from "../store/SettingsStore";
 
 const Home = () => {
-  const dummyPosts = [
-    {
-      title: "Exploring AI in Modern Education",
-      description:
-        "Artificial Intelligence is transforming classrooms, from personalized tutoring to smart grading. Here's how educators can adapt to the evolving tech landscape.",
-      image: "https://source.unsplash.com/featured/?ai,education",
-      author: "John Doe",
-      readTime: 5,
-      updatedTime: Date.now() - 5 * 60 * 1000,
-      likes: [1, 2, 3],
-      comments: [1, 2],
-      categories: ["AI", "Education", "Future", "Reccession", "Scope"],
-    },
-    {
-      title: "Mastering the MERN Stack: A Beginner’s Guide",
-      description:
-        "The MERN stack (MongoDB, Express, React, Node.js) is one of the most popular web development stacks. This post helps you get started from scratch.",
-      image: "https://source.unsplash.com/featured/?mern,code",
-      author: "Jane Smith",
-      readTime: 7,
-      updatedTime: Date.now() - 20 * 60 * 1000,
-      likes: [1],
-      comments: [],
-      categories: ["WebDev", "MERN"],
-    },
-  ];
 
+  const [liked,setLiked] = useState(false);
+
+  const {getSettings} = useSettingsStore();
+
+
+  
+  const {authUser} = useAuthStore();
+  const {getAllPostLikedByCurrentUser} = useIntractionStore();
+  
   const { fetchCategories, categoriesList,posts,fetchPosts } = usePostStore();
   const [categories,setCategories] = useState([]);
   const [Post,setPost] = useState([]);
   const[loading , setLoading] = useState(false);
 
   useEffect(() => {
+
+    const getSettingsOnRender = async()=>{
+      // if(!token) return;
+      // console.log("here in app")
+      await getSettings();
+      // console.log("response in app",response)
+    }
+    getSettingsOnRender();
+
+    getAllPostLikedByCurrentUser();
     const fetchCategoryAndPostfromStore = async()=>{
       setLoading(true);
       const array = await fetchCategories();
       const PostArray = await fetchPosts();
-      // console.log("postArray",PostArray)
       setPost(PostArray);
       setCategories(array);
       setLoading(false);
+      setLiked(false);
+      
     }
-    fetchCategoryAndPostfromStore(); // will update Zustand store
-  }, [fetchCategories,categoriesList,fetchPosts,posts]);
+    fetchCategoryAndPostfromStore(); 
+  }, [fetchCategories,categoriesList,fetchPosts,posts,liked]);
 
 
   // useEffect(() => {
@@ -100,21 +96,24 @@ const Home = () => {
         </div>
 
         {/* Post Section */}
-        {
-          loading ? <div>
-            <div className="flex justify-center items-center animate-spin mt-5"><Loader/></div>
-          </div> :
-            <div
-            id="PostSection"
-            className="grid grid-cols-1 min-h-screen sm:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            
-            {Post.map((post, index) => (
-              <HomePostCards key={index} post={post} />
-            ))}
+       <div className="relative min-h-screen">
+        {loading && (
+          <div className="absolute inset-0 flex justify-center items-cente z-10">
+            <div >
+              <Loader className="animate-spin" />
+            </div>
           </div>
+        )}
 
-        }
+        <div
+          id="PostSection"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {Post.map((post, index) => (
+            <HomePostCards key={index} post={post} setLiked={setLiked} />
+          ))}
+        </div>
+      </div>
        
       </div>
     </div>

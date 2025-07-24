@@ -176,6 +176,7 @@ exports.updatePost = async (req, res) => {
 exports.deletePost = async (req, res) => {
   try {
     const postId  = req.params.id;
+    console.log("postId",postId)
     const userId = req.user.user._id;
 
     if (!postId) {
@@ -193,6 +194,7 @@ exports.deletePost = async (req, res) => {
     });
 
     const post = await Post.findById(postId);
+    console.log(post);
     const categories = post.categories;
 
     await Promise.all(

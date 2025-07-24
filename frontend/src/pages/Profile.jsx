@@ -7,35 +7,64 @@ import {IoMdClose} from "react-icons/io"
 import { useParams } from 'react-router-dom';
 import { useProfileStore } from '../store/ProfileStore';
 import { Loader } from 'lucide-react';
+import {toast} from "react-hot-toast"
+import { usePostStore } from '../store/PostStore';
 
 const Profile = () => {
   const authUser = useAuthStore();
   const {isUpdatePostOpen,updatePost} = usePageStore();
   const [isDeleteModalOpen,setIsDeleteModalOpen] = useState();
   const [user,setUser] = useState(null);
+  const {deletePost} = usePostStore();
   // console.log("isUpdatePostOpen",isUpdatePostOpen)
   // console.log("updatePost",updatePost)
+  const [deletePostid,setDeletePostid] = useState(null);
+  const [deleted,setDeleted] = useState(false);
 
+  const [postUpdated,setPostUpdated] =  useState(false);
+
+  const deletePostHandler = async()=>{
+    console.log(deletePostid)
+
+    const success = await deletePost(deletePostid);
+    if(!success) toast.error("error occured in deleting the post!");
+    else{
+      setDeletePostid(null);
+      setIsDeleteModalOpen(false);
+      setDeleted(true);
+      setTimeout(()=>{
+        setDeleted(false);
+
+      },3000)
+    }
+  }
+
+  
   const {fetchUserProfile} = useProfileStore();
   const {userId} = useParams();
   const [loading,setLoading] = useState(false);
-
+  
   useEffect(()=>{
     const fetchProfileData = async()=>{
       setLoading(true);
       const response = await fetchUserProfile(userId);
       console.log("response" , response)
-      setUser(response);
-      setPosts(response.profile.posts);
+      setUser(response.data || []);
+      setPosts(response.data.profile.posts);
       setLoading(false);
     }
     fetchProfileData();
-  },[])
+    setTimeout(()=>{
+      setPostUpdated(false);
+    },2000)
+  },[deleted,postUpdated])
 
   const [posts,setPosts] = useState(null);
   
-  if(loading) return(
-    <div className='flex items-center justify-center'><Loader className='animate-spin'/></div>
+  // console.log(loading)
+
+  if(loading || !user) return(
+    <div className='flex items-center mt-40 justify-center'><Loader className='animate-spin'/></div>
   )
 
   return (
@@ -54,7 +83,13 @@ const Profile = () => {
               <h1 className="text-xl font-semibold accent-text">
                 {user.firstName + " " +user.lastName} 
               </h1>
-              <p className="text-sm ">Joined in {user.createdAt}</p>
+              <p className="text-sm">
+                Joined on {new Date(user.createdAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </p>
               <p className="mt-2 text-sm ">{user.description}</p>
               <button className="mt-4 accent-bg hover:accent-bg-dark text-sm font-medium py-1.5 px-4 rounded-md transition-all duration-150">
                 Follow {user.firstName}
@@ -88,7 +123,7 @@ const Profile = () => {
 
           <div className="mt-6 space-y-6">
             {posts.map((post, index) => (
-              <ProfilePostCard key={index} post={post} setIsDeleteModalOpen={setIsDeleteModalOpen}/>
+              <ProfilePostCard key={index} post={post} setDeletePostid={setDeletePostid} setIsDeleteModalOpen={setIsDeleteModalOpen}/>
             ))}
           </div>
         </div>
@@ -125,9 +160,7 @@ const Profile = () => {
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  // your delete function here
-                }}
+                onClick={() => deletePostHandler()}
                 className="px-4 py-2 rounded-lg accent-bg   transition-all duration-200 hover:opacity-80 text-white shadow-accent-box"
               >
                 Delete
@@ -138,7 +171,7 @@ const Profile = () => {
       )},
       {
         isUpdatePostOpen && 
-        <UpdatePostHandler post={updatePost}/>
+        <UpdatePostHandler post={updatePost} setPostUpdated={setPostUpdated}/>
       }
     </div>
   );

@@ -1,74 +1,90 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { usePostStore } from '../store/PostStore'
 import { FaRegHeart } from "react-icons/fa6";
+import {FaHeart} from "react-icons/fa"
 import { FaRegCommentDots } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
+import { useIntractionStore } from '../store/IntractionStore';
+import {Loader} from "lucide-react"
+import { usePageStore } from '../store/PageStore';
 
 const Trending = () => {
-  const {posts,setPost} = usePostStore();
+  const {posts,fetchPosts} = usePostStore();
+  const {LikeUnlikePost,postsLikedByUser} = useIntractionStore();
+  const {setCurrentPage} = usePageStore();
+
+
+  const [Post,setPost] = useState([]);
+
+  const [liked,setLiked] = useState(false);
+
+
+  const [loading,setLoading] = useState(false);
+
+  useEffect(()=>{
+    if(liked === false) window.scrollTo({top:0,behavior:'smooth'});
+
+    console.log(postsLikedByUser)
+
+    setLoading(true);
+    const getposts = async()=>{
+      
+      const PostArray = await fetchPosts();
+      setPost(PostArray);
+      setLoading(false);
+    }
+    
+    getposts();
+    setLiked(false);
+  },[liked])
   const navigate = useNavigate();
 
   const handleReadmoreClick = (postId)=>{
+    setCurrentPage("ReadMore");
     setPost(postId)
     navigate(`/readmore/${postId}`)
   }
 
-  const dummyProfilePosts = [
-    {
-      title: "The Future of AI in Software Development",
-      description:
-        "A deep dive into how artificial intelligence is reshaping the landscape of software engineering, from code generation to automated testing.",
-      image: "https://source.unsplash.com/80x80/?ai,software",
-      author: { _id: "user123", name: "Nithin KS" },
-      readTime: 4,
-      updatedTime: Date.now() - 6 * 60 * 1000,
-      likes: [1, 2, 3],
-      comments: [1],
-      categories: ["Tech"]
-    },
-    {
-      title: "React vs Vue: Choosing the Right Framework",
-      description:
-        "When starting a new project, picking the right JavaScript framework is critical. This article explores the pros and cons of React and Vue for beginners and pros alike.",
-      image: "https://source.unsplash.com/80x80/?javascript,react",
-      author: { _id: "user123", name: "Nithin KS" },
-      readTime: 6,
-      updatedTime: Date.now() - 15 * 60 * 1000,
-      likes: [1, 2],
-      comments: [],
-      categories: ["Frontend", "JS"]
-    },
-    {
-      title: "Mastering MongoDB Aggregations",
-      description:
-        "MongoDB’s aggregation pipeline is a powerful tool for data manipulation. This post explains how to use match, group, project, and sort stages effectively.",
-      image: "https://source.unsplash.com/80x80/?database,mongodb",
-      author: { _id: "user456", name: "Alex Morgan" },
-      readTime: 8,
-      updatedTime: Date.now() - 60 * 60 * 1000,
-      likes: [],
-      comments: [1, 2, 3, 4],
-      categories: ["Database", "Backend"]
-    }
-  ];
+  
 
-  const TrendingPosts = posts.sort(
+  const TrendingPostsWhole = Post.sort(
     (a, b) => (b.likes.length + b.views + b.comments.length) - (a.likes.length + a.views + a.comments.length)
   );
+
+  const TrendingPostsFinal = TrendingPostsWhole.slice(0,5);
+
+
+    const handleLike = async(postId)=>{
+      const response = await LikeUnlikePost(postId);
+      setLiked(true);
+    }
+
+  if(loading) return(
+    <div className='min-h-screen flex justify-center mt-40'><Loader className='animate-spin h-9'/></div>
+  )
+  
   
   return (
-    <div>
+    <div className="relative min-h-screen">        
       {
-        dummyProfilePosts.map((post)=> (
-          <div>
+        TrendingPostsFinal.map((post,index)=> (
+          <div key={index} className='relative'>
+            {loading && (
+              <div className="absolute inset-0 flex justify-center items-cente z-10">
+                <div >
+                  <Loader className="animate-spin" />
+                </div>
+              </div>
+            )}
+
             <div className="flex rounded-2xl shadow-md border accent-border overflow-hidden w-full h-36 my-4 hover:scale-[1.01] transition-all duration-200 accent-bg-mode accent-text-mode">
               {/* Image Section */}
-              <div className="w-1/3 min-w-[100px] flex items-center justify-center p-4 ">
+              <div className="flex items-center m-1 justify-center p-0 ">
                 <img
                   src={post.image}
                   alt="Post"
-                  className="rounded-lg object-cover w-20 h-20 shadow-sm"
+                  className="rounded-lg object-cover w-24 h-24 shadow-sm"
                 />
               </div>
         
@@ -78,7 +94,7 @@ const Trending = () => {
                 <div className="flex items-center gap-2 text-[0.55rem]  font-medium overflow-x-hidden ">
                   {post.categories.map((category, index) => (
                     <span key={index} className="uppercase tracking-wide border accent-border rounded-lg p-[0.15rem]">
-                      {category}
+                      {category.name}
                     </span>
                   ))}
                 </div>
@@ -92,9 +108,9 @@ const Trending = () => {
         
                 {/* Description */}
                 <p className="text-sm mt-1 line-clamp-2">
-                  {post.description.length <= 60
-                    ? post.description
-                    : post.description.substring(0, 60) + "..."}
+                  {post.content.length <= 60
+                    ? post.content
+                    : post.content.substring(0, 50) + "..."}
                 </p>
         
                 {/* Bottom Section */}
@@ -103,12 +119,12 @@ const Trending = () => {
                     Read More →
                   </button>
         
-                  <div className="flex items-center gap-2  text-[0.820rem]">
-                    <span className="flex items-center gap-1 transition-all duration-300 hover:text-red-500">
-                      {post.likes.length}
-                      <FaRegHeart />
-                    </span>
-                    <span className="flex items-center gap-1 transition-all duration-300 hover:text-green-500">
+                  <div className="flex items-center gap-[0.6rem]  text-[0.820rem]">
+                    <button onClick={()=>handleLike(post._id)} className="flex items-center gap-1 hover:text-red-500 transition duration-200">
+                      {post.likes.length }
+                      {postsLikedByUser.includes(post._id) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> }
+                    </button>
+                    <span onClick={()=>handleReadmoreClick(post._id)} className="flex items-center gap-1 transition-all duration-300 hover:text-green-500">
                       {post.comments.length}
                       <FaRegCommentDots />
                     </span>

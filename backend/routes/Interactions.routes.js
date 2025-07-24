@@ -10,7 +10,8 @@ const {
 
 const {
    likeUnlikeAPost,
-   haveCurrentUserLiked
+   haveCurrentUserLiked,
+   getAllLikedPostsByCurrentUser
 } = require("../controllers/Like")
 
 const {
@@ -31,6 +32,7 @@ router.get("/getcomments/:id",getComments)
 //Like
 router.put("/like-unlikepost/:id",protectRoute,likeUnlikeAPost);
 router.get("/havecurruserliked/:id",protectRoute,haveCurrentUserLiked);
+router.get("/getalllikedpostbycurrentuser",protectRoute,getAllLikedPostsByCurrentUser);
 
 //Notification
 router.post("/createnotification/:id",protectRoute,createNotification)

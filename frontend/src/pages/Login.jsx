@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuthStore } from '../store/AuthStore';
 import { ImSpinner3 } from "react-icons/im";
+import { usePageStore } from '../store/PageStore';
 
 
 const Login = () => {
+  const {setCurrentPage} = usePageStore();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,6 +24,7 @@ const Login = () => {
     }
     setnavigate(navigate);
     login({email,password});
+    setCurrentPage("home");
     // Add your login logic here
   };
 

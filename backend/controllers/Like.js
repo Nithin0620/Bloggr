@@ -8,12 +8,12 @@ exports.likeUnlikeAPost = async (req, res) => {
 
       const user = await User.findById(userId);
       if (!user) {
-         return res.status(404).json({ success: false, message: "User not found" });
+         return res.status(401).json({ success: false, message: "User not found" });
       }
 
       const post = await Post.findById(postId);
       if (!post) {
-         return res.status(404).json({ success: false, message: "Post not found" });
+         return res.status(402).json({ success: false, message: "Post not found" });
       }
 
       let action = "";
@@ -63,3 +63,24 @@ exports.haveCurrentUserLiked = async(req,res)=>{
       return res.status(500).json({success:false,message:"Error occured in isCurrentUserLiked controller"});
    }
 }
+
+
+exports.getAllLikedPostsByCurrentUser = async (req, res) => {
+   try {
+      const userId = req.user.user._id;
+
+      const likedPosts = await Post.find({ likes: userId }).select("_id"); 
+
+      return res.status(200).json({
+         success: true,
+         message: "Fetched all liked posts by the user",
+         data: likedPosts,
+      });
+   } catch (error) {
+      console.error("Error fetching liked posts:", error);
+      return res.status(500).json({
+         success: false,
+         message: "Internal server error while fetching liked posts",
+      });
+   }
+};

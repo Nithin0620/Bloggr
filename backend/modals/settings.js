@@ -12,7 +12,7 @@ const settingsSchema = new mongoose.Schema({
    },
    theme:{
       type:String,
-      default:"Green",
+      default:"Beige",
    },
    pushNotification:{
       type:Boolean,
@@ -23,7 +23,7 @@ const settingsSchema = new mongoose.Schema({
       default:false,
    },
    homeFeedType:{
-      type:String,
+      type:Array,
       default:"All",
    }
 },{

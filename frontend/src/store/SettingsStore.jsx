@@ -1,8 +1,9 @@
 import {create } from "zustand"
-import { axiosInstance } from "../lib/axios"
 import toast from "react-hot-toast";
+import axios from "axios";
+import { applyMode, applyTheme } from "../lib/SetColours";
 
-const BASE_URL = process.env.REACT_APP_MODE === "development" ? process.env.BACKEND_API_BASE_URL : "/"
+const BASE_URL = "http://localhost:4000/api"
 
 
 export const useSettingsStore = create((get,set)=>({
@@ -10,10 +11,64 @@ export const useSettingsStore = create((get,set)=>({
    mode:"Light",
    
 
-   setSettings:async()=>{
+   setSettings:async(data)=>{
+      try{
+         const response = await axios.post(`${BASE_URL}/settings/setsettings`,data);
 
+         if(response.data.success){
+            toast.success("Settings saved Successfully");
+            return true;
+         }
+         else{
+            toast.error("Error in saving the settings, please try again after some time");
+            return false;
+         }
+      }
+
+      catch(e){
+         console.log(e);
+         toast.error("Error in saving the settings, please try again after some time");
+         return false;
+      }
    },
    getSettings : async()=>{
+      try{
+         const response = await axios.get(`${BASE_URL}/settings/getsettings`)
 
+         if(response.data.success){
+            set({theme:response.data.data.theme});
+            set({mode:response.data.data.mode});
+            localStorage.setItem("accent-theme",response.data.data.theme);
+            localStorage.setItem("accent-mode",response.data.data.mode);
+            console.log(response.data.data.theme)
+            applyMode(response.data.data.mode);
+            applyTheme(response.data.data.theme);
+            return response.data.data;
+         }
+         else return null;
+      }
+      catch(e){
+         console.log("Error occure in the getSettings function",e);
+      }
+   },
+
+   resetSettings: async()=>{
+      try{
+
+         const response = await axios.get(`${BASE_URL}/settings/resetsettings`);
+         if(response.data.success){
+            toast.success("Settings reset Completed!")
+            return true;
+         }
+         else{
+            toast.error("Error occured in resetting the settings!")
+            return false;
+         }
+      }
+      catch(e){
+         console.log("error occured in reset settings function:",e);
+         toast.error("Error occured in resetting the settings!")
+         return false;
+      }
    }
 }))

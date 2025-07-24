@@ -5,23 +5,32 @@ import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import { usePostStore } from '../store/PostStore';
 import { Loader } from 'lucide-react';
+import { MdOutlineAutoDelete } from "react-icons/md";
+import {toast} from "react-hot-toast"
 
-const Comment = ({ _id }) => {
+const Comment = ({ post:id}) => {
   const [inputValue, setInputValue] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const inputRef = useRef(null);
-  const { getComments } = usePostStore();
+  const { getComments,sendComment ,deleteComment} = usePostStore();
   const [loading, setLoading] = useState(false);
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState(null);
+
+  const [newComment,setNewComment] = useState(false);
 
   useEffect(() => {
+    // console.log("herhe2")
     const fetchComments = async () => {
-      if (!_id) return;
+      // console.log("herhe1",id)
+
+      if (!id) return;
       
       setLoading(true);
       try {
-        const fetchedComments = await getComments(_id);
-        setComments(fetchedComments || []);
+        console.log("here")
+        const fetchedComments = await getComments(id);
+        console.log("fetched comments :",fetchedComments)
+        setComments(fetchedComments.data || []);
       } catch (error) {
         console.error('Error fetching comments:', error);
         setComments([]);
@@ -29,14 +38,39 @@ const Comment = ({ _id }) => {
         setLoading(false);
       }
     };
+
+    setNewComment(false);
     
     fetchComments();
-  }, [_id, getComments]); // Added dependency array
+  }, [id, getComments,newComment]); 
 
-  console.log("in the comment page", comments);
+
+  const handleSendComment = async()=>{
+    await sendComment({comment:inputValue},id);
+    setInputValue("");
+    setNewComment(true);
+  }
+
+  const handleDeleteComment = async(comment)=>{
+    const commentDate = new Date(comment.updatedAt);
+    const now = new Date();
+    const diffInMinutes = Math.floor((now - commentDate) / (1000 * 60));
+    if(diffInMinutes>3){
+      toast.error("you can't delete Comment After 3 mins!")
+      return;
+    }
+    await deleteComment(id,comment._id);
+    setNewComment(true);
+  }
+  // console.log("in the comment page", comments);
 
   const addEmoji = (emoji) => {
-    const cursorPos = inputRef.current.selectionStart;
+    if (!emoji?.native) {
+      console.error("Emoji object is missing `.native`:", emoji);
+      return;
+    }
+
+    const cursorPos = inputRef.current?.selectionStart || 0;
     const textBefore = inputValue.substring(0, cursorPos);
     const textAfter = inputValue.substring(cursorPos);
     const updated = textBefore + emoji.native + textAfter;
@@ -63,7 +97,7 @@ const Comment = ({ _id }) => {
     return `${diffInDays} days ago`;
   };
 
-  if (loading) return (
+  if (loading || !comments) return (
     <div className='flex items-center justify-center p-4'>
       <Loader className='animate-spin' />
     </div>
@@ -80,7 +114,7 @@ const Comment = ({ _id }) => {
         <div className="flex items-center gap-2 mb-2">
           <button
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className="text-xl transition-colors duration-300 accent-bg-mode accent-text-mode"
+            className="text-xl transition-colors -ml-3 duration-300 accent-bg-mode accent-text-mode"
           >
             😊
           </button>
@@ -94,16 +128,23 @@ const Comment = ({ _id }) => {
             onChange={(e) => setInputValue(e.target.value)}
           />
 
-          <button className="accent-text text-xl">
+          <button onClick={()=>handleSendComment()} className="accent-text text-xl">
             <IoSend />
           </button>
         </div>
 
         {showEmojiPicker && (
-          <div className="absolute z-10 mt-2">
-            <Picker data={data} onEmojiSelect={addEmoji} theme="light" />
+          <div className="absolute z-10 mt-2 right-0 transform -translate-x-5 shadow-md">
+            <div className="scale-75 origin-top-right">
+              <Picker
+                data={data}
+                onEmojiSelect={addEmoji}
+                theme="light"
+              />
+            </div>
           </div>
         )}
+
 
         {/* Comments */}
         <div className="space-y-4 mt-4">
@@ -111,25 +152,32 @@ const Comment = ({ _id }) => {
             comments.map((comment) => (
               <div key={comment._id} className="p-3 border border-gray-200 rounded-lg shadow-accent-box">
                 <div className="flex items-start gap-2">
-                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100">
-                    <img
-                      src={comment.user.profilePic || '/default-avatar.png'}
-                      alt="User"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.src = '/default-avatar.png';
-                      }}
-                    />
+                  <div className='flex flex-col items-center gap-2'>
+                    <div className="w-8 h-8 rounded-full overflow-hidden accent-bg-mode">
+                      <img
+                        src={comment.user.profilePic || '/default-avatar.png'}
+                        alt="User"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = '/default-avatar.png';
+                        }}
+                      />
+                    </div>
+                    <div onClick={()=>handleDeleteComment(comment)} className='text-red-400 transition-all duration-150 ml-[0.3rem] mt-1 my-auto hover:text-red-600'><MdOutlineAutoDelete/></div>
                   </div>
+                  
                   <div className="flex-1">
-                    <div className="text-sm font-semibold">
+                    <div className="text-sm flex items-center font-semibold">
                       {comment.user.firstName + " " + comment.user.lastName}
-                      <span className="ml-2 text-xs text-gray-500">
+                      <span className="ml-2 text-xs accent-text-mode">
                         • {getTimeAgo(comment.updatedAt)}
                       </span>
+                      
+                      
                     </div>
                     <div className="text-sm mt-1">{comment.text}</div>
                   </div>
+                  
                 </div>
               </div>
             ))

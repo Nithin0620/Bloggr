@@ -6,7 +6,7 @@ const gravatar = require('gravatar');
 const otpGenerator = require("otp-generator");
 const Profile = require("../modals/profile")
 const jwt = require("jsonwebtoken");
-// const Settings = require("../modals/settings");
+const Settings = require("../modals/settings");
 
 exports.signup = async(req,res)=>{
    try{
@@ -61,6 +61,8 @@ exports.signup = async(req,res)=>{
 
       // const settingsResponse = await Settings.create({user:response._id});
 
+      
+
       if(!response) {
          throw new Error("Error occured in creating new User")
       }
@@ -99,6 +101,10 @@ exports.login = async(req,res)=>{
             message:"unable to find the user with this email",
          })
       }
+
+      const responseForSettings = await Settings.findOne({user:user._id});
+
+      if(!responseForSettings) await Settings.create({user:user._id});
 
       const compared = bcrypt.compare(password,user.password);
       if(compared){

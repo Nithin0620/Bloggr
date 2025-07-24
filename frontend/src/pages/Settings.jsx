@@ -4,6 +4,8 @@ import { BiLogOut } from "react-icons/bi";
 import { CiSaveUp1 } from "react-icons/ci";
 import { applyMode, applyTheme } from '../lib/SetColours';
 import { useAuthStore } from '../store/AuthStore';
+import { useSettingsStore } from '../store/SettingsStore';
+import {Loader} from "lucide-react"
 
 const Settings = () => {
    const colorMap = {
@@ -17,6 +19,8 @@ const Settings = () => {
 
    const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
+   const {getSettings,setSettings,resetSettings} = useSettingsStore();
+
    const [mode, setMode] = useState("");
    const [theme, setTheme] = useState("");
    const [categories, setCategories] = useState(["Tect","Health","AI","Latest News"]);
@@ -27,9 +31,33 @@ const Settings = () => {
       email: false
    });
 
+   const [loading,setLoading] = useState(false);
+   const [resetLoading,setResetLoading] = useState(false);
+
    const {logout ,setIsLogoutModalOpen} = useAuthStore();
 
+    const getSettingsOnRender = async()=>{
+      setLoading(true);
+      const response = await getSettings();
+      // console.log("response",response)
+
+      if(response){
+         setTheme(response.theme);
+         setMode(response.mode);
+         if(response.homeFeedType[0] === "All") setFeed("All");
+         else if(response.homeFeedType[0] === "Followed" ) setFeed("Followed");
+         else {
+            setSelectedCategories(response.homeFeedType)
+         }
+         setNotifications({email:response.emailNotification,push:response.pushNotification});
+         setLoading(false);
+      }
+   }
+
    useEffect(()=>{
+
+     
+      getSettingsOnRender();
       const theme = localStorage.getItem("accent-theme");
       if(theme) setTheme(theme);
    },[])
@@ -61,19 +89,31 @@ const Settings = () => {
    };
 
    useEffect(() => {
-      if(selectedCategories.length > 0) setFeed("");
+      if(selectedCategories.length > 0) setFeed(null);
       else if(selectedCategories.length=== 0 ) setFeed("All")
    }, [selectedCategories]);
 
    useEffect(() => {
-      if (feed !== "") setSelectedCategories([]);
+      if (feed) setSelectedCategories([]);
    }, [feed]);
 
-   const resetButtonHandler = () => {};
+   const resetButtonHandler = async() => {
+      setResetLoading(true);
+      const response = await resetSettings();
+      getSettingsOnRender();
+      setResetLoading(false);
+
+   };
    const logoutHandler = () => {
       setIsLogoutModalOpen(true)
    };
-   const setSettingsHandler = () => {};
+   const setSettingsHandler = async() => {
+      setLoading(true);
+      const response  = await setSettings({mode:mode,theme:theme,pushNotification:notifications.push , emailNotification:notifications.email , homeFeedType:feed || selectedCategories});
+
+      setLoading(false);
+
+   };
 
    return (
    <div className="min-h-screen pb-14  flex items-center top-0 justify-center bg-transparent px-4 transition-colors duration-300 accent-bg-mode accent-text-mode pt-[4.75rem]">
@@ -173,7 +213,7 @@ const Settings = () => {
                   <input
                      type="checkbox"
                      checked={feed === "All"}
-                     onChange={() => setFeed("All")}
+                     onClick={() => setFeed("All")}
                   />
                   All
                </label>
@@ -182,7 +222,7 @@ const Settings = () => {
                   <input
                      type="checkbox"
                      checked={feed === "Followed"}
-                     onChange={() => setFeed("Followed")}
+                     onClick={() => setFeed("Followed")}
                   />
                   Followed
                </label>
@@ -228,7 +268,7 @@ const Settings = () => {
                onClick={setSettingsHandler}
                className="px-4 py-2 border rounded w-full flex items-center justify-center accent-border hover:accent-bg-light hover:shadow-md"
             >
-               <CiSaveUp1 className='mr-1'/>Save Settings
+               {loading ? <div><Loader className='animate-spin'/></div> : <div className='flex items-center gap-2'><CiSaveUp1 className='mr-1'/>Save Settings</div>}
             </button>
          </div>
 
@@ -238,7 +278,7 @@ const Settings = () => {
                onClick={resetButtonHandler}
                className="px-4 py-2 border rounded w-full accent-border hover:accent-bg-light hover:shadow-md"
             >
-               Reset Settings
+               {resetLoading ? <div className='flex justify-center items-center'><Loader className='animate-spin'/></div> : <div className='flex justify-center items-center gap-2'>Reset Settings</div>}
             </button>
          </div>
 
