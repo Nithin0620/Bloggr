@@ -1,27 +1,28 @@
 import { X } from "lucide-react";
 import { useAuthStore } from "../store/AuthStore";
 import { useChatStore } from "../store/ChatStore";
+import { IoMdClose } from "react-icons/io";
 
 const ChatHeader = () => {
   const { selectedUser, setSelectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
 
   return (
-    <div className="p-2.5 border-b border-base-300 accent-bg-light shadow-accent-box rounded-t-md transition-colors duration-300 accent-bg-mode accent-text-mode">
+    <div className="p-2.5 border-base-300 accent-bg-mode accent-text-mode shadow-accent-box rounded-t-md transition-colors duration-300 accent-bg-mode accent-text-mode">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="avatar">
-            <div className="size-10 rounded-full relative shadow-accent-box">
+            <div className=" h-9 w-9 rounded-full relative shadow-accent-box">
               <img
-                src={selectedUser.profilePic || "/avatar.png"}
-                alt={selectedUser.fullName}
+                src={selectedUser.profilePic || "./avatar.png"}
+                alt={selectedUser.firstName + " " + selectedUser.lastName}
                 className="rounded-full"
               />
             </div>
           </div>
 
           <div>
-            <h3 className="font-medium">{selectedUser.fullName}</h3>
+            <h3 className="font-medium">{selectedUser.firstName + " " + selectedUser.lastName}</h3>
             <p className="text-sm text-base-content/70">
               {onlineUsers.includes(selectedUser._id) ? "Online" : "Offline"}
             </p>
@@ -29,10 +30,10 @@ const ChatHeader = () => {
         </div>
 
         <button
+          className="absolute hover:rotate-90 hover:scale-75 transition-all duration-500 right-10 text-2xl text-red-500"
           onClick={() => setSelectedUser(null)}
-          className="p-1 rounded-full hover:accent-bg-dark transition"
         >
-          <X className="w-5 h-5" />
+          <IoMdClose />
         </button>
       </div>
     </div>

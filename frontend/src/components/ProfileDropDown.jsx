@@ -24,6 +24,7 @@ const ProfileDropDown = ({ setOpenProfileDropDown }) => {
   };
 
   const handleShareProfile = () => {
+    // console.log(authUser._id)
     openShareModal("profile" , {userId:authUser._id});
     // navigator.clipboard.writeText(`https://yourapp.com/user/${authUser.username}`);
   };

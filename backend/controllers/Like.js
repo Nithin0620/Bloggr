@@ -1,6 +1,8 @@
 const User = require("../modals/user");
 const Post = require("../modals/post");
-
+const Notification = require("../modals/notification")
+const {io,getReceiverSocketId} = require("../configuration/socket")
+// const {io} = require("socket.io")
 exports.likeUnlikeAPost = async (req, res) => {
   try {
       const userId = req.user.user._id;
@@ -23,7 +25,20 @@ exports.likeUnlikeAPost = async (req, res) => {
          post.likes.pull(userId);
          action = "unliked";
       } else {
+         const responseNotification = await Notification.create({
+            sender:userId,
+            type:"like",
+            post:postId,
+            receiver:post.author
+         })
 
+         if(responseNotification){
+            const receiverSocketId = getReceiverSocketId(post.author);
+            if (receiverSocketId) {
+               io.to(receiverSocketId).emit("newNotification", { responseNotification, user });
+            }
+         }
+         
          post.likes.push(userId);
          action = "liked";
       }
@@ -52,6 +67,7 @@ exports.haveCurrentUserLiked = async(req,res)=>{
       const postId = req.params.id;
 
       const post = await Post.findById(postId);
+
       if(!post) return res.status(400).json({success:false,message:"Post not found with this id"});
 
       const likes = post.likes;

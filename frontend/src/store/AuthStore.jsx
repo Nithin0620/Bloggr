@@ -45,8 +45,8 @@ export const useAuthStore = create((set,get)=>({
          
          if(response.data.success){
             toast.success("User logged in successfully");
-            console.log("response.data:",response.data.data);
-            console.log("response.data.token:",response.data.data.token);
+            // console.log("response.data:",response.data.data);
+            // console.log("response.data.token:",response.data.data.token);
             set({authUser:response.data.data})
             set({token:response.data.data.token});
             // localStorage.setItem("token",response.data.data.token);
@@ -145,12 +145,14 @@ export const useAuthStore = create((set,get)=>({
 
    checkAuth:async()=>{
       try{
+         get().disconnectSocket();
          const response = await axios.get(`${BASE_URL}/auth/checkauth`);
-         console.log("check",response)
+         // console.log("check",response)
          // console.log("checkauth:",response.data.success)
          if(response.data.success){
             set({authUser:response.data.data.user});
             set({token:response.data.data.token});
+            get().connectSocket();
             // localStorage.setItem("token",response.data.data.token);
          }
 
@@ -158,6 +160,7 @@ export const useAuthStore = create((set,get)=>({
             console.log("Session expired. Showing nothing...");
             return; 
          }
+         // console.log("hello",get().authUser)
       }
       catch(e){
          if(e.message === "JWT_EXPIRED") {
@@ -171,19 +174,26 @@ export const useAuthStore = create((set,get)=>({
    connectSocket: ()=>{
       const {authUser} = get();
       if(!authUser || get().socket?.connected) return;
+      console.log("Connecting with userId:", authUser._id); 
 
-      const socket = io(BASE_URL,{
+      const socket = io("http://localhost:4000",{
          query:{
             userId:authUser._id,
          },
+         withCredentials:true
       })
-      socket.connect();
+      // socket.connect();
 
       set({socket:socket});
 
       socket.on("getOnlineUsers",(userIds)=>{
+         // console.log("online users",userIds)
          set({onlineUsers:userIds});
       })
+      socket.on("newNotification",()=>{
+         toast.success("You have a new notification")
+      })
+      // console.log("socket connected")
    },
 
    disconnectSocket: ()=>{

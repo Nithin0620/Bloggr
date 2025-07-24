@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaRegHeart } from "react-icons/fa6";
-import { FaRegCommentDots } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";import { FaRegCommentDots } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
 import { GoPencil } from "react-icons/go";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -8,9 +8,11 @@ import { useAuthStore } from "../store/AuthStore";
 import { useNavigate } from "react-router-dom";
 import { usePostStore } from "../store/PostStore";
 import { usePageStore } from "../store/PageStore";
+import {useIntractionStore} from "../store/IntractionStore";
 
-const ProfilePostCard = ({ post,setIsDeleteModalOpen,setDeletePostid}) => {
+const ProfilePostCard = ({ post,setLiked,setIsDeleteModalOpen,setDeletePostid}) => {
   const {setIsUpdatePostOpen,setUpdatePost} = usePageStore();
+  const {LikeUnlikePost,postsLikedByUser} = useIntractionStore();
   const {setPost} = usePostStore();
   const handleUpdatePost = ()=>{
     setIsUpdatePostOpen(true);
@@ -23,6 +25,8 @@ const ProfilePostCard = ({ post,setIsDeleteModalOpen,setDeletePostid}) => {
     setDeletePostid(post._id);
   }
 
+  
+
   const navigate = useNavigate();
   
   const { authUser } = useAuthStore();
@@ -31,6 +35,13 @@ const ProfilePostCard = ({ post,setIsDeleteModalOpen,setDeletePostid}) => {
     setPost(postId)
     navigate("/readmore")
   }
+
+  const handleLike = async () => {
+    const response = await LikeUnlikePost(post._id);
+   
+    setLiked(true);
+   
+  };
 
   return (
     <div>
@@ -76,16 +87,16 @@ const ProfilePostCard = ({ post,setIsDeleteModalOpen,setDeletePostid}) => {
           </button>
 
           <div className="flex items-center gap-4  text-sm">
-            <span className="flex items-center gap-1 transition-all duration-300 hover:text-red-500">
-              {post.likes.length}
-              <FaRegHeart />
+            <span onClick={()=>handleLike()} className="flex items-center gap-1 transition-all duration-300 hover:text-red-500">
+              {post.likes.length }
+            {postsLikedByUser.includes(post._id) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> }
             </span>
             <span className="flex items-center gap-1 transition-all duration-300 hover:text-green-500">
               {post.comments.length}
               <FaRegCommentDots />
             </span>
             <span className="flex items-center gap-1 hover:text-blue-500 transition-all duration-300">
-              {Math.floor(Math.random() * 10)}
+              {post.views}
               <IoIosStats />
             </span>
 

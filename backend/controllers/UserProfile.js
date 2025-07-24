@@ -2,6 +2,8 @@ const cloudinary = require("../configuration/cloudinary")
 const bcrypt = require("bcrypt")
 const User = require("../modals/user")
 const Profile = require("../modals/profile")
+const Notification = require("../modals/notification")
+const {io,getReceiverSocketId} = require("../configuration/socket")
 
 
 exports.viewUserProfile = async(req,res)=>{
@@ -196,6 +198,20 @@ exports.followUser = async (req, res) => {
 
       targetProfile.followers.push(currentUserId);
       currentProfile.following.push(targetUserId);
+
+      const responseNotification = await Notification.create({
+         sender:currentProfile,
+         type:"follow",
+         // post:postId,
+         receiver:targetProfile
+      })
+
+      if(responseNotification){
+         const receiverSocketId = getReceiverSocketId(targetUserId);
+         if (receiverSocketId) {
+            io.to(receiverSocketId).emit("newNotification", { responseNotification, currentUser });
+         }
+      }
 
       await targetProfile.save();
       await currentProfile.save();

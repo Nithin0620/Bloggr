@@ -1,7 +1,8 @@
 const User = require("../modals/user")
 const Post = require("../modals/post")
 const Comment = require("../modals/comment")
-
+const Notification = require("../modals/notification")
+const {io,getReceiverSocketId} = require("../configuration/socket")
 
 
 exports.addComment = async(req,res)=>{
@@ -20,6 +21,19 @@ exports.addComment = async(req,res)=>{
       if(!post) return res.status(404).json({success:false,message:"Post not found"})
 
       const newComment = await Comment.create({post:postId ,user:userId, text:comment});
+       const responseNotification = await Notification.create({
+         sender:userId,
+         type:"comment",
+         post:postId,
+         receiver:post.author
+      })
+
+      if(responseNotification){
+         const receiverSocketId = getReceiverSocketId(post.author);
+         if (receiverSocketId) {
+            io.to(receiverSocketId).emit("newNotification", { responseNotification, user });
+         }
+      }
 
       if(!newComment) return res.status(403).json({success:false,message:"failed to create new Comment"})
 

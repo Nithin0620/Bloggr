@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useChatStore } from "../store/ChatStore";
 import { Image, Send, X } from "lucide-react";
 import toast from "react-hot-toast";
+import { IoMdClose } from "react-icons/io";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
@@ -47,7 +48,7 @@ const MessageInput = () => {
   };
 
   return (
-    <div className="p-4 w-full accent-bg-light shadow-accent-box rounded-t-md transition-colors duration-300 accent-bg-mode accent-text-mode">
+    <div className="p-4 w-full accent-bg-mode shadow-accent-box rounded-t-md transition-colors duration-300 accent-bg-mode accent-text-mode">
       {imagePreview && (
         <div className="mb-3 flex items-center gap-2">
           <div className="relative shadow-accent-box rounded-md">
@@ -59,10 +60,10 @@ const MessageInput = () => {
             <button
               onClick={removeImage}
               className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-base-300
-              flex items-center justify-center shadow-accent-box"
+              flex items-center accent-bg-mode  hover:scale-105 transition-all duration-300 justify-center shadow-accent-box"
               type="button"
             >
-              <X className="size-3" />
+              <IoMdClose className="m-1 hover:text-red-500 transition-all duration-150 hover:scale-105 accent-bg-mode"/>
             </button>
           </div>
         </div>
@@ -72,7 +73,7 @@ const MessageInput = () => {
         <div className="flex-1 flex gap-2">
           <input
             type="text"
-            className="w-full input input-bordered rounded-lg input-sm sm:input-md shadow-accent-box"
+            className="w-full focus:outline-none border-none rounded accent-bg-mode input-sm sm:input-md shadow-accent-box"
             placeholder="Type a message..."
             value={text}
             onChange={(e) => setText(e.target.value)}

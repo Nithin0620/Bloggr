@@ -1,6 +1,6 @@
 const Notification = require("../modals/notification")
 const User = require("../modals/user")
-const getReceiverSocketId = require("../configuration/socket")
+const {getReceiverSocketId} = require("../configuration/socket")
 const Post = require("../modals/post")
 
 
@@ -55,15 +55,34 @@ exports.createNotification = async (req, res) => {
 };
 
 
-exports.clearAllNotification = async(req,res)=>{
-   try{
+exports.clearAllNotification = async (req, res) => {
+   try {
+      const userId = req.user.user._id;
 
-   }
-   catch(e){
-      
-   }
-}
+      const user = await User.findById(userId);
+      if (!user) {
+         return res.status(404).json({
+            success: false,
+            message: "User not found",
+         });
+      }
 
+      const deletedNotifications = await Notification.deleteMany({ receiver: userId });
+
+      return res.status(200).json({
+         success: true,
+         message: "All notifications cleared successfully",
+         data: deletedNotifications,
+      });
+
+   } catch (e) {
+      console.error("Error clearing notifications:", e);
+      return res.status(500).json({
+         success: false,
+         message: "Error occurred while clearing notifications",
+      });
+   }
+};
 exports.getAllNotification = async (req, res) => {
    try {
       const userId = req.user.user._id;

@@ -17,6 +17,7 @@ const SideBar = () => {
     ? users.filter((user) => onlineUsers.includes(user._id))
     : users;
 
+    console.log("filtered user",filteredUsers)
   if (isUsersLoading) return <SideBarSkeleton />;
 
   return (
@@ -43,7 +44,7 @@ const SideBar = () => {
         </div>
       </div>
 
-      <div className="overflow-y-auto w-full py-3">
+      <div className="overflow-y-auto w-full ">
         {filteredUsers.map((user) => (
           <button
             key={user._id}
@@ -51,14 +52,14 @@ const SideBar = () => {
             className={`
               w-full p-3 flex items-center gap-3
               hover:bg-base-300 transition-colors
-              ${selectedUser?._id === user._id ? "bg-base-300 ring-1 ring-base-300 accent-box-shadow" : ""}
+              ${selectedUser?._id === user._id ? "accent-bg-light bg-opacity-0" : ""}
             `}
           >
             <div className="relative mx-auto lg:mx-0">
               <img
                 src={user.profilePic || "/avatar.png"}
                 alt={user.name}
-                className="size-12 object-cover rounded-full shadow-accent-box"
+                className="size-12 w-8 h-8 object-cover rounded-full shadow-accent-box"
               />
               {onlineUsers.includes(user._id) && (
                 <span className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
@@ -66,7 +67,7 @@ const SideBar = () => {
             </div>
 
             <div className="hidden lg:block text-left min-w-0">
-              <div className="font-medium truncate">{user.fullName}</div>
+              <div className="font-medium truncate">{user.firstName + " " + user.lastName}</div>
               <div className="text-sm text-zinc-400">
                 {onlineUsers.includes(user._id) ? "Online" : "Offline"}
               </div>

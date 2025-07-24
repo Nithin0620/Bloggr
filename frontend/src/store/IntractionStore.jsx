@@ -1,5 +1,6 @@
 import axios from "axios";
 import { create } from "zustand";
+import {toast} from "react-hot-toast"
 
 const BASE_URL = "http://localhost:4000/api";
 
@@ -34,7 +35,7 @@ export const useIntractionStore = create((set, get) => ({
     }
   },
 
-  getAllPostLikedByCurrentUser: async (req, res) => {
+  getAllPostLikedByCurrentUser: async () => {
     try {
       const response = await axios.get(`${BASE_URL}/interactions/getalllikedpostbycurrentuser`);
       console.log("response2", response);
@@ -47,6 +48,79 @@ export const useIntractionStore = create((set, get) => ({
     } catch (e) {
       console.log(e);
       console.log("Error in getAllPostLikedByCurrentUser");
+    }
+  },
+
+
+  getAllNotifications : async()=>{
+    try{
+      const response  = await axios.get(`${BASE_URL}/interactions/getallnotification`)
+
+      if(response.data.success){
+        return response.data.data;
+      }
+      else return [];
+    }
+    catch(e){
+      console.log(e);
+      return [];
+    }
+  },
+
+  MarkAllAsRead : async()=>{
+    try{
+      const response  = await axios.put(`${BASE_URL}/interactions/markallasread`)
+
+      if(response.data.success){
+        toast.success("All notification marked as read")
+      }
+      else toast.error("Error occured in marking all as read, please try again after sometime")
+    }
+    catch(e){
+      console.log(e);
+      toast.error("Error occured in marking all as read, please try again after sometime")
+    }
+  },
+  MarkNotificationAsRead : async(notificationId)=>{
+    try{
+      const response  = await axios.put(`${BASE_URL}/interactions/setnotificationasread/${notificationId}`)
+
+      if(response.data.success){
+        toast.success("Notification marked as read")
+      }
+      else toast.error("Error occured in marking Notification as read, please try again after sometime")
+    }
+    catch(e){
+      console.log(e);
+      toast.error("Error occured in marking Notification as read, please try again after sometime")
+    }
+  },
+  DeleteNotification : async(notificationId)=>{
+    try{
+      const response  = await axios.delete(`${BASE_URL}/interactions/deletenotification/${notificationId}`)
+
+      if(response.data.success){
+        toast.success("Notification Deleted Successfully")
+      }
+      else toast.error("Error occured in Deleting Notification, please try again after sometime")
+    }
+    catch(e){
+      console.log(e);
+      toast.error("Error occured in Deleting Notification, please try again after sometime")
+    }
+  },
+  ClearAllNotification : async()=>{
+    try{
+      const response  = await axios.delete(`${BASE_URL}/interactions/clearallnotification`)
+
+      if(response.data.success){
+        toast.success("All Notification's Cleared Successfully")
+      }
+      else toast.error("Error occured in clearing All Notification's, please try again after sometime")
+    }
+    catch(e){
+      console.log(e);
+      toast.error("Error occured in Clearing All Notification, please try again after sometime")
     }
   }
 }));

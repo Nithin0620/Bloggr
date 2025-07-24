@@ -19,7 +19,8 @@ const {
    getAllNotification,
    markAllAsRead,
    deleteaNotification,
-   setNotificationAsRead
+   setNotificationAsRead,
+   clearAllNotification
 } = require("../controllers/Notification")
 
 
@@ -39,6 +40,7 @@ router.post("/createnotification/:id",protectRoute,createNotification)
 router.get("/getallnotification",protectRoute,getAllNotification);
 router.put("/markallasread",protectRoute,markAllAsRead);
 router.delete("/deletenotification/:id",protectRoute,deleteaNotification);
+router.delete("/clearallnotification",protectRoute,clearAllNotification);
 router.put("/setnotificationasread/:id",protectRoute,setNotificationAsRead);
 
 

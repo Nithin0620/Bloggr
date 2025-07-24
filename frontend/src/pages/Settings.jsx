@@ -6,7 +6,7 @@ import { applyMode, applyTheme } from '../lib/SetColours';
 import { useAuthStore } from '../store/AuthStore';
 import { useSettingsStore } from '../store/SettingsStore';
 import {Loader} from "lucide-react"
-
+import {toast} from "react-hot-toast"
 const Settings = () => {
    const colorMap = {
       Green: 'ring-green-300',
@@ -67,11 +67,45 @@ const Settings = () => {
    },[mode])
 
    const handleModeSelect = (value) => {
+      toast("Please do save the settings. so that we can remember your choice.✨", {
+         duration: 4000,
+         icon: "📖",
+         style: {
+            background: "#fff3cd",
+            color: "#856404",
+         //   border: "1px solid #ffeeba",
+            border: "1px solid #334155",
+            padding: "12px 18px",
+            fontWeight: "500",
+            fontSize: "0.9rem",
+         },
+         ariaProps: {
+            role: "status",
+            "aria-live": "polite",
+         },
+      });
       if (value === "default") setMode(isDarkMode ? "Dark" : "Light");
       else setMode(value);
    };
 
    const handleThemeSelect = (Theme) => {
+      toast("Please do save the settings. so that we can remember your choice.✨", {
+         duration: 4000,
+         icon: "📖",
+         style: {
+            background: "#fff3cd",
+            color: "#856404",
+         //   border: "1px solid #ffeeba",
+            border: "1px solid #334155",
+            padding: "12px 18px",
+            fontWeight: "500",
+            fontSize: "0.9rem",
+         },
+         ariaProps: {
+            role: "status",
+            "aria-live": "polite",
+         },
+      });
       setTheme(Theme);
       applyTheme(Theme);
    };

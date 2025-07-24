@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import {toast} from "react-hot-toast"
 import { useNavigate } from "react-router-dom";
+import { useIntractionStore } from "../store/IntractionStore";
+import {Loader} from "lucide-react"
+import { usePageStore } from "../store/PageStore";
+import Ripples from 'react-ripples';
+
 
 const dummyNotifications = [
   {
@@ -9,14 +14,15 @@ const dummyNotifications = [
     type: "like",
     sender: {
       _id: "user1",
-      name: "John Doe",
+      firstName: "John",
+      LastName: "John Doe",
       profilePic: "https://via.placeholder.com/40",
     },
     post: {
       _id: "post1",
       title: "My Awesome Post",
       image: "https://via.placeholder.com/100",
-      description: "This is a sample post description.",
+      content: "This is a sample post description.",
     },
     updatedTime: Date.now() - 5 * 60000,
   },
@@ -38,34 +44,108 @@ const dummyNotifications = [
   },
 ];
 
+
+const getTimeAgo = (timestamp) => {
+  const now = Date.now();
+  const updated = new Date(timestamp).getTime();
+  const diffInMinutes = Math.floor((now - updated) / (1000 * 60));
+
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes} min${diffInMinutes === 1 ? "" : "s"} ago`;
+  }
+
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return `${diffInHours} hr${diffInHours === 1 ? "" : "s"} ago`;
+  }
+
+  const diffInDays = Math.floor(diffInHours / 24);
+  return `${diffInDays} day${diffInDays === 1 ? "" : "s"} ago`;
+};
+    
+
 const Notification = () => {
-  const [NotificationArray, setNotificationArray] = useState(dummyNotifications);
+
+  const [isUpdated,setIsUpdated] = useState(false);
+
+  const {setCurrentPage} = usePageStore();
+  const [NotificationArray, setNotificationArray] = useState([]);
+  const [allNotification, setAllNotification] = useState([]);
   const [selected, setSelected] = useState("All");
+
+  const {getAllNotifications,MarkAllAsRead,MarkNotificationAsRead,DeleteNotification,ClearAllNotification} = useIntractionStore();
 
   const navigate = useNavigate()
 
+  const [loading , setLoading] = useState(false);
+
+
+  useEffect(()=>{
+    
+    setIsUpdated(false);
+    const array = getAllNotificationFunction();
+  },[isUpdated])
+
   const handleSelected = (selector) => {
     setSelected(selector);
-    if (selector === "All") setNotificationArray(dummyNotifications);
+    if (selector === "All") setNotificationArray(allNotification);
     else {
-      const filteredNotification = dummyNotifications.filter(
+
+      const filteredNotification = allNotification.filter(
         (notification) => notification.type === selector.toLowerCase()
       );
       setNotificationArray(filteredNotification);
     }
   };
 
-  const handlenotificationmarkasread = (notificationId) => {};
-  const handleMarkAllasRead = () => {};
-  const handleClearAll = () => {};
-  const handleDeleteNotification = (notificationId) => {};
-  const handleViewPost = (postId) => {
-    
+  const getAllNotificationFunction = async()=>{
+    setLoading(true);
+    const response = await getAllNotifications();
+    // console.log("notification",response);
+    setAllNotification(response);
+    setNotificationArray(response);
+    setLoading(false);
+  
+  }
+
+  const handlenotificationmarkasread = async(notificationId) => {
+    await MarkNotificationAsRead(notificationId)
+    setIsUpdated(true);
   };
-  const handleChatClick = () => {};
+
+
+
+  const handleMarkAllasRead = async() => {
+    await MarkAllAsRead();
+    setIsUpdated(true);
+  };
+  const handleClearAll = async() => {
+
+    await ClearAllNotification();
+    setIsUpdated(true);
+  };
+  const handleDeleteNotification = async(notificationId) => {
+
+    await DeleteNotification(notificationId);
+    setIsUpdated(true);
+  };
+
+
+  const handleViewPost = (notificationId,postId) => {
+
+    setCurrentPage("Read-more")
+    // handlenotificationmarkasread(notificationId);
+    navigate(`/readmore/${postId}`)
+  };
+
+  const handleChatClick = () => {
+    navigate("/message")
+  };
   const handleSenderProfileClick = (userId) => {
+    setCurrentPage("profile")
     navigate(`/profile/${userId}`)
   };
+
 
   return (
     <div className="p-6 min-h-screen flex justify-around transition-colors duration-300 accent-bg-mode accent-text-mode">
@@ -92,43 +172,63 @@ const Notification = () => {
 
         {/* Controls */}
         <div className="flex gap-4 mb-6">
+           <Ripples className="rounded-3xl" color="rgba(182, 240, 199)">
+            <button
+              onClick={handleMarkAllasRead}
+              className="px-3 py-1 rounded-3xl border accent-border hover:accent-bg-light accent-text transition"
+            >
+              🟢 Mark All as Read
+            </button>
+          </Ripples>
+          <Ripples className="rounded-3xl" color="rgba(247, 143, 143)">
           <button
-            onClick={handleMarkAllasRead}
-            className="px-3 py-1 rounded-3xl border accent-border hover:accent-bg-light accent-text transition"
-          >
-            🟢 Mark All as Read
-          </button>
-          <button
-            onClick={handleClearAll}
+            onClick={()=>handleClearAll()}
             className="px-3 py-1 rounded-3xl border accent-border hover:accent-bg-light accent-text transition"
           >
             ❌ Clear All
           </button>
+          </Ripples>
         </div>
 
         <hr className="mb-6" />
 
         {/* Notifications List */}
-        <div className="space-y-4">
+        <div className="space-y-4 relative flex flex-col ">
+            <div className="absolute z-50 mx-auto ml-60 mt-2 flex items-center justify-center">
+              {loading && (
+                <div>
+                  <Loader className="animate-spin"/>
+                </div>
+              )}
+            </div>
+
+              <div>
+                {
+                  NotificationArray.length === 0 && (
+                    <div className="flex items-center justify-center mt-16 ml-60 accent-text-mode"> No Don't have any Notifiction</div>
+                  )
+                }
+              </div>
+
           {NotificationArray.map((notification) => (
             <div
               key={notification._id}
-              onClick={() => handleViewPost(notification.post._id)}
-              className="border accent-border rounded  p px-4 cursor-pointer py-2 40 flex flex-col gap-0 "
+              
+              className={`border accent-border transition-all duration-300 hover:bg-black hover:bg-opacity-5 hover:scale-[1.02] hover:shadow-accent-box  rounded-3xl  p px-4 cursor-pointer py-2  flex flex-col gap-0 ${notification.isRead ? "":"accent-bg-light opacity-[0.85]"}`}
             >
               {/* Header */}
               <div className="flex items-center gap-3">
                 <img
                   src={notification.sender.profilePic}
                   alt="avatar"
-                  className="w-10 h-10 rounded-full"
+                  className="w-6 h-6 rounded-full"
                 />
                 <div className="text-sm">
                   <span
                     className="hover:underline font-medium cursor-pointer accent-text"
                     onClick={() => handleSenderProfileClick(notification.sender._id)}
                   >
-                    {notification.sender.name}
+                    {notification.sender.firstName + " " + notification.sender.lastName}
                   </span>{" "}
                   {notification.type === "like" && "liked your post"}
                   {notification.type === "comment" && "commented on your post"}
@@ -136,7 +236,7 @@ const Notification = () => {
                   {notification.post?.title && (
                     <>
                       {" "}
-                      "<span className="italic accent-text">
+                      "<span onClick={()=>handleViewPost(notification._id,notification.post._id)} className="italic hover:underline accent-text">
                         {notification.post.title.length > 40
                           ? notification.post.title.substring(0, 40) + "..."
                           : notification.post.title}
@@ -144,26 +244,31 @@ const Notification = () => {
                       "
                     </>
                   )}{" "}
-                  <span className="font-bold ml-8">•</span>{" "}
-                  <span className="accent-text">
-                    {Math.floor((Date.now() - notification.updatedTime) / (1000 * 60))} mins ago
-                  </span>
+                  
                 </div>
               </div>
 
+              <span className="text-xs accent-text-mode flex justify-end">
+                <span className=" ml-8">•</span>{" "}
+                {getTimeAgo(notification.createdAt)}
+              </span>
+                  
+
               {/* Post Image & Description */}
               {notification.post?.image && (
-                <div className="flex items-center gap-4">
+                <div onClick={() => handleViewPost(notification._id,notification.post._id)} className="flex items-center -mt-3 gap-4">
                   <img
                     src={notification.post.image}
                     alt="post"
-                    className="w-20 h-20 rounded object-cover"
+                    className="w-24 h-24 rounded object-cover"
                   />
+                  <div>
                   <p className="text-sm">
-                    {notification.post.description.length > 50
-                      ? notification.post.description.substring(0, 50) + "..."
-                      : notification.post.description}
+                    {notification.post.content.length > 150
+                      ? notification.post.content.substring(0, 150) + "..."
+                      : notification.post.content}
                   </p>
+                  </div>
                 </div>
               )}
 
@@ -178,7 +283,7 @@ const Notification = () => {
               )}
 
               {/* Footer Actions */}
-              <div className="flex gap-4 text-sm accent-text ">
+              <div className="flex gap-4 mt-1 text-sm accent-text ">
                 <button
                   onClick={() => handlenotificationmarkasread(notification._id)}
                   className="accent-underline"
