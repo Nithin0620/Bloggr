@@ -55,9 +55,9 @@ exports.sendMessage = async(req,res)=>{
          const uploadResponse = await cloudinaryInstance.uploader.upload(image);
          imageUrl = uploadResponse.secure_url;
       }
-      else if(imagePath){  
-       imageUpload = await cloudinaryInstance.uploader.upload(imagePath);
-      } 
+      // else if(imagePath){  
+      //  imageUpload = await cloudinaryInstance.uploader.upload(imagePath);
+      // } 
 
       const payload = {
          senderId,

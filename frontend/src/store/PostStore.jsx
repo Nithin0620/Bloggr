@@ -36,6 +36,50 @@ export const usePostStore = create((get,set)=>({
       console.log(e);
       return [];
     }
+    set({createPostLoading:false});
+
+  },
+
+  fetchPostsByCategories: async (e) => {
+    set({createPostLoading:true});
+    try{
+      // console.log("in store",e);
+      const res = await axios.get(`${BASE_URL}/category/getpostsbycategory/${e}`);
+      // console.log("response in fetch post by category",res);
+     if (res.data.success) {
+        const categoryPostArray = res.data.data;
+        return categoryPostArray;
+      }
+
+      // console.log(get().categoryList)
+    }
+    catch(e){
+      console.log(e);
+      toast.error("Unable to fetch post by category!")
+      return [];
+    }
+    set({createPostLoading:false});
+  },
+  createCategory : async(data)=>{
+    try{
+      console.log(data)
+      const response = await axios.post(`${BASE_URL}/category/createcategory`,{categoryName:data});
+      console.log("respone for create category",response);
+
+      if(response.data.success){
+        toast.success("New Category Created Successfully!")
+        return true;
+      }
+      else {
+        toast.error("Unable to create New category. pls try again after some time.");
+        return false;
+      }
+    }
+    catch(e){
+      console.log(e);
+      toast.error("Unable to create New category. pls try again after some time.");
+      return false;
+    }
   },
 
   // getCategories : ()=>{
@@ -60,6 +104,8 @@ export const usePostStore = create((get,set)=>({
 
     }
   },
+
+
 
   getPostByID : async(postId)=>{
     set({isReadMoreLoading:true});

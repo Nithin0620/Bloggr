@@ -10,6 +10,7 @@ import { FaHeart } from "react-icons/fa";
 
 
 const HomePostCards = ({ post ,setLiked}) => {
+  // console.log("in home postcard component",post)
   const navigate = useNavigate();
   const {setCurrentPage} = usePageStore();
   const {LikeUnlikePost,postsLikedByUser} = useIntractionStore();
@@ -64,7 +65,7 @@ const HomePostCards = ({ post ,setLiked}) => {
               key={index}
               className="px-2 py-[2px] text-xs font-sans border accent-border rounded-md accent-text"
             >
-              {category.name || category} {/* fallback if category is a string */}
+              {category.name} {/* fallback if category is a string */}
             </span>
           ))}
           <span className="font-extrabold opacity-60">•</span>

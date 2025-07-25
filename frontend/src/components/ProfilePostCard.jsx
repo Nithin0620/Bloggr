@@ -47,13 +47,13 @@ const ProfilePostCard = ({ post,setLiked,setIsDeleteModalOpen,setDeletePostid}) 
 
   return (
     <div>
-    <div className="flex rounded-2xl shadow-md border accent-border overflow-hidden w-full max-w-[55rem] h-44 mx-auto my-4 hover:scale-[1.01] transition-all duration-200 accent-bg-mode accent-text-mode">
+    <div className="flex justify-between pr-2 rounded-2xl shadow-md border accent-border overflow-hidden w-full max-w-[55rem] h-44 mx-auto my-4 hover:scale-[1.01] transition-all duration-200 accent-bg-mode accent-text-mode">
       {/* Image Section */}
-      <div className="w-1/3 min-w-[100px] flex items-center justify-center p-4 ">
+      <div className=" min-w-[100px]  flex items-center justify-center left-0 ">
         <img
           src={post.image}
           alt="Post"
-          className="rounded-lg object-cover w-20 h-20 shadow-sm"
+          className=" object-cover w-48 h-full accent-border shadow-sm"
         />
       </div>
 

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useChatStore } from "../store/ChatStore";
-import { Image, Send, X } from "lucide-react";
+import { Image, Loader, Send, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { IoMdClose } from "react-icons/io";
 
@@ -9,6 +9,7 @@ const MessageInput = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
   const { sendMessage } = useChatStore();
+  const [loading,setLoading] = useState(false);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -34,11 +35,13 @@ const MessageInput = () => {
     if (!text.trim() && !imagePreview) return;
 
     try {
+      setLoading(true);
       console.log(text);
       await sendMessage({
         text: text.trim() || null,
         image: imagePreview || null,
       });
+      setLoading(false);
 
       setText("");
       setImagePreview(null);
@@ -78,14 +81,15 @@ const MessageInput = () => {
             placeholder="Type a message..."
             value={text}
             onChange={(e) => setText(e.target.value)}
-          />
+            />
           <input
             type="file"
             accept="image/*"
             className="hidden"
             ref={fileInputRef}
             onChange={handleImageChange}
-          />
+            />
+            {loading && <Loader className="mr-20 right-0 animate-spin"/>}
 
           <button
             type="button"
@@ -100,8 +104,8 @@ const MessageInput = () => {
 
         <button
           type="submit"
-          className="btn btn-sm btn-circle shadow-accent-box"
-          disabled={!text.trim() && !imagePreview}
+          className={`btn ${(!text.trim() && !imagePreview) || loading ? "from-neutral-400":"" }cursor-pointer hover:scale-110 transition-all duration-150 btn-sm btn-circle shadow-accent-box`}
+          disabled={(!text.trim() && !imagePreview) || loading}
         >
           <Send size={22} />
         </button>

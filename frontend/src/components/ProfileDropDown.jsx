@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {useAuthStore} from "../store/AuthStore";
 import { useShareModalStore } from "../store/ShareModal";
+import { usePageStore } from "../store/PageStore";
 
 const ProfileDropDown = ({ setOpenProfileDropDown }) => {
   const {openShareModal } = useShareModalStore();
+  const {setCurrentPage} = usePageStore();
   const { authUser, logout,isLogoutModalOpen,setIsLogoutModalOpen  } =useAuthStore();
   const navigate = useNavigate();
 
@@ -19,6 +21,7 @@ const ProfileDropDown = ({ setOpenProfileDropDown }) => {
   };
 
   const handleViewProfile = () => {
+    setCurrentPage("ProfilePage")
     setOpenProfileDropDown(false);
     navigate(`/profile/${authUser._id}`);
   };
