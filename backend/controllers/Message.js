@@ -1,9 +1,9 @@
 const Message  = require("../modals/message")
 const User = require("../modals/user");
 
-const cloudinary = require("../configuration/cloudinary");
+const {cloudinaryInstance } = require("../configuration/cloudinary"); // or correct relative path
 
-const {getReceiverSocketId , io} = require("../configuration/cloudinary");
+const {getReceiverSocketId , io} = require("../configuration/socket");
 
 
 exports.getUsersForSidebar = async(req,res)=>{
@@ -45,14 +45,19 @@ exports.getMessages = async(req,res)=>{
 exports.sendMessage = async(req,res)=>{
    try{
       const {text,image} = req.body;
+      // const imagePath = req.file.path;
+
       const {id:receiverId}=req.params;
       const senderId = req.user.user._id;
 
       let imageUrl;
-      if(image){
-         const uploadResponse = await cloudinary.uploader.upload(image);
+      if(image ){
+         const uploadResponse = await cloudinaryInstance.uploader.upload(image);
          imageUrl = uploadResponse.secure_url;
       }
+      else if(imagePath){  
+       imageUpload = await cloudinaryInstance.uploader.upload(imagePath);
+      } 
 
       const payload = {
          senderId,
@@ -69,7 +74,7 @@ exports.sendMessage = async(req,res)=>{
          io.to(receiverSocketId).emit("newMessage",newMessage);
       }
 
-      return res.status(200).json({success:true,message:"Message sent successfully"});
+      return res.status(200).json({success:true,message:"Message sent successfully",data:newMessage});
    }
    catch(e){
       console.log(e);

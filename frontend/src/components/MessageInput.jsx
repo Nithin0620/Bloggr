@@ -34,9 +34,10 @@ const MessageInput = () => {
     if (!text.trim() && !imagePreview) return;
 
     try {
+      console.log(text);
       await sendMessage({
-        text: text.trim(),
-        image: imagePreview,
+        text: text.trim() || null,
+        image: imagePreview || null,
       });
 
       setText("");

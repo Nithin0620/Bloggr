@@ -56,7 +56,7 @@ const ChatSelected = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col accent-border border min-h-[77vh] rounded-2xl mx-5 mt-5 overflow-auto">
+    <div className="flex-1 flex flex-col accent-border border max-h-[79vh] rounded-2xl mx-5 mt-5 overflow-auto">
       <ChatHeader />
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -69,41 +69,57 @@ const ChatSelected = () => {
         
 
          
-        {messages.map((message) => (
-          <div
-            key={message._id}
-            className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
-            ref={messageEndRef}
-          >
-            <div className=" chat-image avatar">
-              <div className="size-10 rounded-full border">
-                <img
-                  src={
-                    message.senderId === authUser._id
-                      ? authUser.profilePic || "/avatar.png"
-                      : selectedUser.profilePic || "/avatar.png"
-                  }
-                  alt="profile pic"
-                />
+        {messages.map((message) => {
+          const isSentByMe = message.senderId === authUser._id;
+          return (
+            <div
+              key={message._id}
+              className={`w-full flex ${isSentByMe ? "justify-end" : "justify-start"} mb-4`}
+              ref={messageEndRef}
+            >
+              <div className={`flex items-end space-x-2 ${isSentByMe ? "flex-row-reverse space-x-reverse" : ""}`}>
+                <div className="w-8 h-8 rounded-full border overflow-hidden">
+                  <img
+                    src={
+                      isSentByMe
+                        ? authUser.profilePic || "/avatar.png"
+                        : selectedUser.profilePic || "/avatar.png"
+                    }
+                    alt="profile pic"
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+
+                <div className="flex flex-col max-w-xs sm:max-w-sm md:max-w-md">
+                  <div className={`text-[10px] accent-text-mode mb-1 ${isSentByMe ? "text-right pr-1" : "text-left pl-1"}`}>
+                    {formatMessageTime(message.createdAt)}
+                  </div>
+
+                  <div
+                    className={`chat-bubble  p-2 text-sm break-words shadow-sm
+                    ${isSentByMe
+                      ? "accent-bg bg-opacity-70 text-white self-end rounded-t-2xl rounded-bl-2xl "
+                      : "accent-bg-mode accent-border border accent-text-mode self-start rounded-bl-none"
+                    }`}
+                  >
+                    {/* Image if present */}
+                    {message.image && (
+                      <img
+                        src={message.image}
+                        alt="Attachment"
+                        className="rounded-md mb-2 max-w-[200px] sm:max-w-[250px] shadow"
+                      />
+                    )}
+
+                    {/* Text if present */}
+                    {message.text && <p>{message.text}</p>}
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="chat-header mb-1">
-              <time className="text-xs opacity-50 ml-1">
-                {formatMessageTime(message.createdAt)}
-              </time>
-            </div>
-            <div className="chat-bubble flex flex-col">
-              {message.image && (
-                <img
-                  src={message.image}
-                  alt="Attachment"
-                  className="sm:max-w-[200px] rounded-md mb-2"
-                />
-              )}
-              {message.text && <p>{message.text}</p>}
-            </div>
-          </div>
-        ))}
+          );
+        })}
+
       </div>
 
       <MessageInput />

@@ -4,11 +4,14 @@ import { IoIosSearch, IoIosNotificationsOutline } from "react-icons/io"
 import { IoMdNotifications } from "react-icons/io"
 import { RiGlobeLine } from "react-icons/ri";
 import { RiGlobeFill } from "react-icons/ri";
-
+import toast from 'react-hot-toast';
 import { usePageStore } from '../store/PageStore'
 import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../store/AuthStore';
+
 const Footbar = () => {
   const { currentPage, setCurrentPage } = usePageStore();
+  const {token,authUser}  = useAuthStore();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,9 +19,21 @@ const Footbar = () => {
   }, [currentPage]);
 
   const handleClickInBar = (page) => {
-    setCurrentPage(`${page}`);
-    if (page === "home") navigate("/");
-    else navigate(`/${page}`);
+    
+    if (page === "home") {
+      setCurrentPage(`${page}`);
+      navigate("/");
+    }
+    else {
+      if(!token && !authUser){
+        toast.error("Please first login yourself!")
+        return;
+      }
+      else {
+        setCurrentPage(`${page}`);
+        navigate(`/${page}`);
+      }
+    }
   };
 
   const tabClass = (page) =>
