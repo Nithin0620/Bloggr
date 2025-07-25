@@ -9,19 +9,22 @@ import { usePostStore } from "../store/PostStore";
 import{Loader} from "lucide-react"
 import { useIntractionStore } from "../store/IntractionStore";
 import { useSettingsStore } from "../store/SettingsStore";
+import { usePageStore } from "../store/PageStore";
 
 const Home = () => {
+    // const {createPostLoading} = usePostStore();
+
 
   const [liked,setLiked] = useState(false);
 
   const {getSettings} = useSettingsStore();
 
-
+  const {isCreatePostOpen} = usePageStore();
   
   const {authUser} = useAuthStore();
   const {getAllPostLikedByCurrentUser} = useIntractionStore();
   
-  const { fetchCategories, categoriesList,posts,fetchPosts } = usePostStore();
+  const { fetchCategories, categoriesList,posts,fetchPosts ,createPostLoading} = usePostStore();
   const [categories,setCategories] = useState([]);
   const [Post,setPost] = useState([]);
   const[loading , setLoading] = useState(false);
@@ -48,7 +51,7 @@ const Home = () => {
       
     }
     fetchCategoryAndPostfromStore(); 
-  }, [fetchCategories,categoriesList,fetchPosts,posts,liked]);
+  }, [fetchCategories,categoriesList,fetchPosts,posts,liked,createPostLoading,isCreatePostOpen]);
 
 
   // useEffect(() => {

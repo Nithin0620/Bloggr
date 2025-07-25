@@ -54,12 +54,12 @@ export const router = createBrowserRouter([
             element:<ReadMorePost/>
          },
          {
-            path:"editprofile",
-            element:<EditProfile/>
-         },
-         {
             path:"explore",
             element:<Explore/>
+         },
+         {
+            path:"editmyprofile",
+            element:<EditProfile/>
          }
       ]
    },

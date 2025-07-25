@@ -29,13 +29,11 @@ const Profile = () => {
     const success = await deletePost(deletePostid);
     if(!success) toast.error("error occured in deleting the post!");
     else{
+      toast.success("Blog Deleted Successfully");
       setDeletePostid(null);
       setIsDeleteModalOpen(false);
       setDeleted(true);
-      setTimeout(()=>{
-        setDeleted(false);
-
-      },3000)
+      
     }
   }
 
@@ -46,6 +44,7 @@ const Profile = () => {
   
   const [liked,setLiked] = useState(false);
   useEffect(()=>{
+    setDeleted(false)
     setLiked(false);
     const fetchProfileData = async()=>{
       setLoading(true);
@@ -64,9 +63,15 @@ const Profile = () => {
   const [posts,setPosts] = useState(null);
 
   const handlefollowedit = ()=>{
+
+    console.log("here in function")
+    console.log("here in function",authUser && user._id === authUser._id)
     
     if(authUser && user._id === authUser._id){
-       
+      navigate("/editmyprofile")
+    } 
+    else{
+      
     }
                         
   }
@@ -114,7 +119,7 @@ const Profile = () => {
                     <p className="mt-2 text-sm">{user.profile.bio}</p>
                     <button onClick={()=>handlefollowedit()} className="mt-4 accent-bg hover:accent-bg-dark text-sm font-medium py-1.5 px-4 rounded-md transition-all duration-150">
                       {authUser && user._id === authUser._id ? (
-                        <div onClick={()=>navigate("/editprofile")} className=''>Edit Profile</div>
+                        <div className=''>Edit Profile</div>
                       ) : (
                         <div>Follow {user.firstName}</div>
                       )}

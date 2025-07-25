@@ -166,7 +166,7 @@ const ReadMorePost = () => {
 
                <div className="flex gap-10 transition-all duration-300 text-sm">
                   <span onClick={()=>handleLike()} className=" cursor-pointer hover:text-red-500">{postsLikedByUser.includes(post._id) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> } Like {post.likes.length}</span>
-                  <span className=" cursor-pointer hover:text-blue-500"> <FaRegCommentDots /> Comment {post.comments.length}</span>
+                  <span onClick={()=>window.scrollTo({top:0,behavior:'smooth'})} className=" cursor-pointer hover:text-blue-500"> <FaRegCommentDots /> Comment {post.comments.length}</span>
                   <span className=" cursor-pointer hover:text-green-500"> <IoIosStats /> Views {post.views}</span>
                   <span onClick={()=>openShareModal("post",{postId:post._id})} className=" cursor-pointer hover:text-yellow-500"><IoMdShare/> Share</span>
                </div>

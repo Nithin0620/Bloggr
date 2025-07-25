@@ -105,7 +105,9 @@ exports.createPost = async (req, res) => {
 exports.updatePost = async (req, res) => {
   try {
     const author = req.user.user._id;
-    const { title, content, categories, image, readTime } = req.body;
+    console.log(req.body)
+    const { title, content, readTime } = req.body;
+    const categories = req.body.categories;
     const postId = req.params.id;
 
     if (!title || !content || !categories || !readTime) {
@@ -123,55 +125,61 @@ exports.updatePost = async (req, res) => {
       });
     }
 
-    const categoryDocs = await Category.find({ name: { $in: categories } });
-    if (categoryDocs.length !== categories.length) {
-      return res.status(400).json({
-        success: false,
-        message: "One or more categories not found",
-      });
-    }
-    const categoryIds = categoryDocs.map(cat => cat._id);
-
     const post = await Post.findById(postId);
     if (!post) {
-      return res.status(402).json({
+      return res.status(404).json({
         success: false,
         message: "No post found",
       });
     }
 
-    var imageUpload;
+    const categoryDocs = await Category.find({ name: { $in: categories } });
+    const categoryIds = categoryDocs.map(cat => cat._id);
 
-    if(image){
-      imageUpload = await cloudinary.uploader.upload(image);
+    // OPTIONAL: Remove post ID from old categories if categories changed
+    await Category.updateMany(
+      { _id: { $in: post.categories } },
+      { $pull: { posts: post._id } }
+    );
+
+    await Category.updateMany(
+      { _id: { $in: categoryIds } },
+      { $addToSet: { posts: post._id } }
+    );
+
+    // Handle optional image update
+    let imageUpload;
+    if (req.file && req.file.path) {
+      imageUpload = await cloudinaryInstance.uploader.upload(req.file.path);
     }
 
-    const payload = {
-      author: author,
-      title: title,
-      content: content,
-      readTime: readTime,
+    // Prepare updated payload
+    const updatedPayload = {
+      title,
+      content,
+      readTime,
       categories: categoryIds,
-      image: imageUpload ? imageUpload.secure_url : undefined,
+      image: imageUpload ? imageUpload.secure_url : post.image, // keep old image if new not uploaded
     };
 
-    const response = await Post.findByIdAndUpdate(postId, payload, {
+    const updatedPost = await Post.findByIdAndUpdate(postId, updatedPayload, {
       new: true,
     });
 
     return res.status(200).json({
       success: true,
-      message: "Post created Successfully",
-      data:response
+      message: "Post updated successfully",
+      data: updatedPost,
     });
   } catch (e) {
     console.log(e);
     return res.status(500).json({
       success: false,
-      message: "Error in creating the post on db",
+      message: "Error updating the post in the database",
     });
   }
 };
+
 
 exports.deletePost = async (req, res) => {
   try {

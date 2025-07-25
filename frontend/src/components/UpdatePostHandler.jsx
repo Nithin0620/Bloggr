@@ -24,27 +24,33 @@ const UpdatePostHandler = ({ post,setPostUpdated }) => {
       
    useEffect(() => {
       const fetchCategoryAndPostfromStore = async()=>{
-      const array = await fetchCategories();
-      setCategories(array);
+         const array = await fetchCategories();
+         setCategories(array);
+         // console.log(array)
       }
-      fetchCategoryAndPostfromStore();
-      console.log(categories)
+      fetchCategoryAndPostfromStore(); // will updaate Zustand store
    }, [fetchCategories,categoriesList]);
 
+  const initialized = useRef(false);
+
    useEffect(() => {
-      if (post) {
+      if (post && !initialized.current) {
+         initialized.current = true;
+
+         const categoryNames = post.categories?.map((cat) => cat?.name).filter(Boolean) || [];
+         setSelectedCategories(categoryNames);
+
          setValue("title", post.title);
          setValue("content", post.content);
          setValue("readTime", post.readTime);
          setValue("image", post.image);
-         setSelectedCategories(post.categories || []);
          setPreviewUrl(post.image);
       }
    }, [post, setValue]);
 
    const handleClose = () => {
       setIsUpdatePostOpen(false);
-      navigate("/profile");
+      // navigate(/profile/);
    };
 
    const onSubmit = async (data) => {
@@ -52,6 +58,7 @@ const UpdatePostHandler = ({ post,setPostUpdated }) => {
          toast.error("Please select at least one category!");
          return;
       }
+      console.log(data)
 
       const formData = new FormData();
       formData.append("title", data.title);
@@ -67,9 +74,13 @@ const UpdatePostHandler = ({ post,setPostUpdated }) => {
       selectedCategories.forEach((cat) => {
          formData.append("categories", cat);
       });
-
+      
       setLoading(true);
-      await updatePost(formData);
+      // console.log("FormData in update:");
+      // for (let pair of formData.entries()) {
+      // console.log(pair[0] + ": " + pair[1]);
+      // }
+      await updatePost(formData,post._id);
       setLoading(false);
       reset();
       setSelectedCategories([]);
@@ -85,8 +96,9 @@ const UpdatePostHandler = ({ post,setPostUpdated }) => {
       }
    };
 
-   const handleRemoveCategory = (id) => {
-      setSelectedCategories((prev) => prev.filter((catId) => catId !== id));
+   const handleRemoveCategory = (cat) => {
+      console.log("here")
+      setSelectedCategories((prev) => prev.filter((catId) => catId !== cat));
    };
 
    const handleImageClick = () => {
@@ -214,21 +226,19 @@ const UpdatePostHandler = ({ post,setPostUpdated }) => {
                </select>
 
                <div className="flex flex-wrap gap-2 mt-2">
-               {selectedCategories.map((catId, index) => (
-                  <div
-                     key={index}
-                     className="flex items-center bg-gray-200 px-3 py-1 rounded-full text-sm"
-                  >
-                     {catId}
+               {selectedCategories.map((cat,index) => (
+                  <div key={index} className="flex items-center accent-bg-light accent-text-mode accent-bg-mode px-3 py-1 rounded-full text-sm">
+                     {cat}
                      <button
-                     className="ml-2 text-red-600 font-bold"
-                     onClick={() => handleRemoveCategory(catId)}
-                     type="button"
+                        type="button"
+                        onClick={() => handleRemoveCategory(cat)}
+                        className="hover:scale-105 transition-all duration-300 ml-2 text-red-600 font-extrabold"
                      >
-                     ×
+                        <IoMdClose />
                      </button>
-                  </div>
-               ))}
+                     </div>
+                  )
+               )}
                </div>
             </div>
 

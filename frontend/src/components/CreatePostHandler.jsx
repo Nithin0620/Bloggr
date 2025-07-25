@@ -24,8 +24,9 @@ const CreatePostHandler = () => {
    
    useEffect(() => {
       const fetchCategoryAndPostfromStore = async()=>{
-      const array = await fetchCategories();
-      setCategories(array);
+         const array = await fetchCategories();
+         setCategories(array);
+         
       }
       fetchCategoryAndPostfromStore(); // will updaate Zustand store
    }, [fetchCategories,categoriesList]);
@@ -44,9 +45,9 @@ const CreatePostHandler = () => {
       formData.append("title", data.title);
       formData.append("content", data.content);
       formData.append("readTime", data.readTime);
-      formData.append("image", data.image); // This is a File object
+      formData.append("image", data.image); 
       selectedCategories.forEach((cat) => {
-         formData.append("categories", cat); // Backend should accept it as array
+         formData.append("categories", cat); 
       });
 
       for (let pair of formData.entries()) {

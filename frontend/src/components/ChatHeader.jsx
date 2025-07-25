@@ -2,11 +2,12 @@ import { X } from "lucide-react";
 import { useAuthStore } from "../store/AuthStore";
 import { useChatStore } from "../store/ChatStore";
 import { IoMdClose } from "react-icons/io";
+import {useNavigate} from "react-router-dom"
 
 const ChatHeader = () => {
   const { selectedUser, setSelectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
-
+  const navigate = useNavigate();
   return (
     <div className="p-2.5 border-base-300 accent-bg-mode accent-text-mode shadow-accent-box rounded-t-md transition-colors duration-300 accent-bg-mode accent-text-mode">
       <div className="flex items-center justify-between">
@@ -22,7 +23,7 @@ const ChatHeader = () => {
           </div>
 
           <div>
-            <h3 className="font-medium">{selectedUser.firstName + " " + selectedUser.lastName}</h3>
+            <h3 onClick={()=>navigate(`/profile/${selectedUser._id}`)} className="hover:underline cursor-pointer font-medium">{selectedUser.firstName + " " + selectedUser.lastName}</h3>
             <p className="text-sm text-base-content/70">
               {onlineUsers.includes(selectedUser._id) ? "Online" : "Offline"}
             </p>

@@ -16,6 +16,10 @@ const Comment = ({ post:id}) => {
   const [loading, setLoading] = useState(false);
   const [comments, setComments] = useState(null);
 
+  useEffect(()=>{
+    console.log(showEmojiPicker)
+  },showEmojiPicker)
+
   const [newComment,setNewComment] = useState(false);
 
   useEffect(() => {

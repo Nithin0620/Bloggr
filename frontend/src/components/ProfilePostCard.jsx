@@ -13,12 +13,15 @@ import {useIntractionStore} from "../store/IntractionStore";
 const ProfilePostCard = ({ post,setLiked,setIsDeleteModalOpen,setDeletePostid}) => {
   const {setIsUpdatePostOpen,setUpdatePost} = usePageStore();
   const {LikeUnlikePost,postsLikedByUser} = useIntractionStore();
-  const {setPost} = usePostStore();
   const handleUpdatePost = ()=>{
+    console.log("in handle updatepist,1",post)
+    console.log(post);
     setIsUpdatePostOpen(true);
     setUpdatePost(post);
-    // console.log(post)
+    console.log("in handle updatepist,2",post)
   }
+
+
 
   const handleDelete = ()=>{
     setIsDeleteModalOpen(true);
@@ -32,8 +35,7 @@ const ProfilePostCard = ({ post,setLiked,setIsDeleteModalOpen,setDeletePostid}) 
   const { authUser } = useAuthStore();
 
   const handleReadmoreClick = (postId)=>{
-    setPost(postId)
-    navigate("/readmore")
+    navigate(`/readmor/${postId}`)
   }
 
   const handleLike = async () => {

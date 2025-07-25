@@ -141,32 +141,39 @@ export const usePostStore = create((get,set)=>({
       console.log(res)
       if(res.data.success){
         toast.success("New Blog posted successfully.")
+        return true;
       }
       else{
         toast.error("Error occured in posting the Blog!")
         toast("please Try again after sometime!")
+        return false;
       }
     }
     catch(e){
       console.log(e)
       toast.error("Error occured in posting the Blog!",e.message)
+      return false;
     }
     finally{
       set({createPostLoading:false});
 
     }
   },
-  updatePost: async (formData) => {
+  updatePost: async (formData,postId) => {
+    // console.log("formData");
+    // for (let pair of formData.entries()) {
+    //   console.log(pair[0] + ": " + pair[1]);
+    //   }
     set({updatePostLoading:true});
     try{
-      const res = await axios.post(
-        `${BASE_URL}/post/updatepost/${formData._id}`,
+      const res = await axios.put(
+        `${BASE_URL}/post/updatepost/${postId}`,
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data", // Let Axios handle boundary
+            "Content-Type": "multipart/form-data", 
           },
-          withCredentials: true, // if using cookies for auth
+          withCredentials: true,
         }
       );
       console.log(res)
