@@ -1,7 +1,6 @@
 import { React, useState } from "react";
 import { useForm } from "react-hook-form";
-import { PiEyeSlash } from "react-icons/pi";
-import { IoEyeSharp } from "react-icons/io5";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/AuthStore";
 import { ImSpinner3 } from "react-icons/im";
@@ -98,7 +97,7 @@ const Signup = () => {
               className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? <PiEyeSlash /> : <IoEyeSharp />}
+              {showPassword ? <FiEyeOff /> : <FiEye />}
             </div>
             {errors.password && (
               <p className="absolute text-xs text-red-500 -mt-1 left-1">
@@ -119,7 +118,7 @@ const Signup = () => {
               className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             >
-              {showConfirmPassword ? <PiEyeSlash /> : <IoEyeSharp />}
+              {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
             </div>
             {errors.confirmPassword && (
               <p className="absolute text-xs text-red-500 -mt-1 left-1">
