@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IoSend } from "react-icons/io5";
 import { FaComments } from "react-icons/fa";
-import Picker from '@emoji-mart/react';
-import data from '@emoji-mart/data';
+// import Picker from '@emoji-mart/react';
+// import data from '@emoji-mart/data';
 import { usePostStore } from '../store/PostStore';
 import { Loader } from 'lucide-react';
 import { MdOutlineAutoDelete } from "react-icons/md";
 import {toast} from "react-hot-toast"
+import EmojiPicker from 'emoji-picker-react';
 
 const Comment = ({ post:id}) => {
   const [inputValue, setInputValue] = useState("");
@@ -68,19 +69,16 @@ const Comment = ({ post:id}) => {
   }
   // console.log("in the comment page", comments);
 
-  const addEmoji = (emoji) => {
-    if (!emoji?.native) {
-      console.error("Emoji object is missing `.native`:", emoji);
-      return;
-    }
-
+  const addEmoji = (emojiData) => {
+    const emoji = emojiData.emoji;
     const cursorPos = inputRef.current?.selectionStart || 0;
     const textBefore = inputValue.substring(0, cursorPos);
     const textAfter = inputValue.substring(cursorPos);
-    const updated = textBefore + emoji.native + textAfter;
+    const updated = textBefore + emoji + textAfter;
     setInputValue(updated);
     setShowEmojiPicker(false);
   };
+
 
   // Helper function to calculate time difference
   const getTimeAgo = (dateString) => {
@@ -138,16 +136,15 @@ const Comment = ({ post:id}) => {
         </div>
 
         {showEmojiPicker && (
-          <div className="absolute z-10 mt-2 right-0 transform -translate-x-5 shadow-md">
-            <div className="scale-75 origin-top-right">
-              <Picker
-                data={data}
-                onEmojiSelect={addEmoji}
-                theme="light"
-              />
-            </div>
+          <div className="absolute z-10 mt-2 right-0 transform -translate-x-5 shadow-md bg-white dark:bg-black rounded-md">
+            <EmojiPicker
+              onEmojiClick={(emojiData) => addEmoji(emojiData)}
+              theme="auto" // 'light', 'dark', or 'auto'
+              width={300}
+            />
           </div>
         )}
+
 
 
         {/* Comments */}
