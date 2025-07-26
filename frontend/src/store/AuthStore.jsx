@@ -7,7 +7,7 @@ import { usePageStore } from "./PageStore";
 axios.defaults.withCredentials = true;
 
 
-const BASE_URL = "http://localhost:4000/api"
+const BASE_URL = process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api" : "/api";
 
 export const useAuthStore = create((set,get)=>({
    

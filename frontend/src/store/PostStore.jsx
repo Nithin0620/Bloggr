@@ -2,7 +2,7 @@ import { create } from "zustand";
 import axios from "axios";
 import {toast} from "react-hot-toast"
 
-const BASE_URL = "http://localhost:4000/api"
+const BASE_URL = process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api" : "/api";
 
 
 export const usePostStore = create((get,set)=>({

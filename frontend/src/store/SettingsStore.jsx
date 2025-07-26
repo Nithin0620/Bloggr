@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { applyMode, applyTheme } from "../lib/SetColours";
 
-const BASE_URL = "http://localhost:4000/api"
+const BASE_URL = process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api" : "/api";
 
 
 export const useSettingsStore = create((get,set)=>({
