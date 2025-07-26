@@ -93,7 +93,7 @@ const ProfilePhoto = ({setLiked, user, setProfilePicOpen }) => {
 
             <button
                onClick={handleProfileUpload}
-               className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md shadow transition-all"
+               className="accent-bg hover:scale-95 transition-all duration-300 text-white px-4 py-2 rounded-md shadow"
             >
                {
                   loading ? <Loader  className='h-4 w-4 animate-spin'/> : "Upload"

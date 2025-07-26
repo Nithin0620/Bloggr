@@ -60,7 +60,7 @@ exports.addComment = async (req, res) => {
                      actorName: user.firstName,     
                      postTitle: post.title,
                      commentContent: comment,   
-                     link:`   /readmore/${postId}`
+                     link:`   https://bloggr-y7gx.onrender.com/readmore/${postId}`
          
                   })
                );

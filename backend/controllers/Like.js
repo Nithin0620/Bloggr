@@ -29,7 +29,8 @@ exports.likeUnlikeAPost = async (req, res) => {
          
          post.likes.pull(userId);
          action = "unliked";
-      } else {
+      } 
+      else {
          const responseNotification = await Notification.create({
             sender: userId,
             type: "like",
@@ -50,7 +51,7 @@ exports.likeUnlikeAPost = async (req, res) => {
                   actionType: "like",                     
                   actorName: user.firstName,              
                   postTitle: post.title,
-                  link:`   /readmore/${postId}`
+                  link:`  https://bloggr-y7gx.onrender.com/readmore/${postId}`
                   })
                );
               })

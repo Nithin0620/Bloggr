@@ -1,8 +1,8 @@
 const express = require("express")
 const http = require("http");
 const {Server} = require("socket.io")
-
-console.log("in the socket page ");
+require("dotenv").config();
+// console.log("in the socket page ");
 
 const app = express();
 const server =http.createServer(app);
@@ -10,7 +10,7 @@ const server =http.createServer(app);
 
 const io = new Server(server,{
    cors : {
-      origin:"http://localhost:3000",
+      origin:`${process.env.ENVIRONMENT === "development"? "http://localhost:3000" : "https://bloggr-y7gx.onrender.com/"}`,
       credentials:true,
    }
 });
@@ -23,7 +23,7 @@ function getReceiverSocketId(userId){
 
 
 io.on("connection",(Socket)=>{
-   console.log("A user Connected :-" ,Socket.id);
+   // console.log("A user Connected :-" ,Socket.id);
 
    const userId = Socket.handshake.query.userId;
    if(userId) userSocketMap[userId] = Socket.id;
@@ -31,7 +31,7 @@ io.on("connection",(Socket)=>{
    io.emit("getOnlineUsers",Object.keys(userSocketMap));
 
    Socket.on("disconnect",()=>{
-      console.log("A user disconnected:-",Socket.id);
+      // console.log("A user disconnected:-",Socket.id);
       
       delete userSocketMap[userId];
 

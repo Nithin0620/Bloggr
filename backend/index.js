@@ -25,7 +25,7 @@ app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' ,parameterLimit: 10000 }));
 app.use(cookieParser());
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin:`${process.env.ENVIRONMENT === "development"? "http://localhost:3000" : "https://bloggr-y7gx.onrender.com/"}`,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"]
