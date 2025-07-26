@@ -169,6 +169,8 @@ const ReadMorePost = () => {
                   <span onClick={()=>window.scrollTo({top:0,behavior:'smooth'})} className=" cursor-pointer hover:text-blue-500"> <FaRegCommentDots /> Comment {post.comments.length}</span>
                   <span className=" cursor-pointer hover:text-green-500"> <IoIosStats /> Views {post.views}</span>
                   <span onClick={()=>openShareModal("post",{postId:post._id})} className=" cursor-pointer hover:text-yellow-500"><IoMdShare/> Share</span>
+             
+             
                </div>
 
                <div className='flex justify-center pt-14 pb-14 font-semibold'>
