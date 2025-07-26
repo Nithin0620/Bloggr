@@ -176,7 +176,7 @@ export const useAuthStore = create((set,get)=>({
       if(!authUser || get().socket?.connected) return;
       console.log("Connecting with userId:", authUser._id); 
 
-      const socket = io("http://localhost:4000",{
+      const socket = io(`${process.env.REACT_APP_MODE === "development" ? "http://localhost:4000" : "https://bloggr-y7gx.onrender.com"}`,{
          query:{
             userId:authUser._id,
          },

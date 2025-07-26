@@ -106,7 +106,7 @@ exports.notificationMailTemplate = ({ username, actionType, actorName, postTitle
         <p class="message">
           ${actionMessage}
         </p>
-        <a href="https://yourapp.com/notifications" class="cta-button"> ${actionType === "follow" ? "View user profile":  "View Post on Bloggr"}</a>
+        <a href=${link} class="cta-button"> ${actionType === "follow" ? "View user profile":  "View Post on Bloggr"}</a>
       </div>
       <div class="footer">
         &copy; ${new Date().getFullYear()} Bloggr. All rights reserved.

@@ -10,7 +10,7 @@ const server =http.createServer(app);
 
 const io = new Server(server,{
    cors : {
-      origin:`${process.env.ENVIRONMENT === "development"? "http://localhost:3000" : "https://bloggr-y7gx.onrender.com/"}`,
+      origin:`${process.env.ENVIRONMENT === "development"? "http://localhost:3000" : "https://bloggr-y7gx.onrender.com"}`,
       credentials:true,
    }
 });
