@@ -16,6 +16,7 @@ const messageRoutes = require("./routes/Message.routes")
 const postRoutes = require("./routes/Post.routes");
 const profileRoutes = require("./routes/Profile.routes");
 const settingsRoutes = require("./routes/Settings.routes")
+const path = require("path")
 
 const PORT  = process.env.PORT || 5000;
 
@@ -29,6 +30,9 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
+
+app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 
 //Mounting API's
@@ -47,6 +51,10 @@ server.listen(PORT,()=>{
    cloudinaryConnect();
 })
 
-app.get("/",(req,res)=>{
-   res.send(`<h1>The server is Up and running perfectly<h1/>`)
+app.get("/" , (req,res)=>{
+  res.send(`<h1> This is homepage, response from server hance the server is up and running <h1/>`)
 })
+
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend", "build", "index.html"));
+});
