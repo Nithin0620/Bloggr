@@ -56,7 +56,7 @@ const ChatSelected = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col accent-border border max-h-[79vh] rounded-2xl mx-5 mt-5 overflow-auto">
+    <div className="flex-1 flex flex-col custom-scroll accent-border border max-h-[79vh] rounded-2xl mx-5 mt-5 overflow-auto">
       <ChatHeader />
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">

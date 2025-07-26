@@ -214,7 +214,7 @@ const Notification = () => {
             <div
               key={notification._id}
               
-              className={`border accent-border transition-all duration-300 hover:bg-black hover:bg-opacity-5 hover:scale-[1.02] hover:shadow-accent-box  rounded-3xl  p px-4 cursor-pointer py-2  flex flex-col gap-0 ${notification.isRead ? "":"accent-bg-light opacity-[0.85]"}`}
+              className={`border accent-border transition-all duration-300 hover:bg-black hover:bg-opacity-5 hover:scale-[1.02] hover:shadow-accent-box  rounded-3xl   px-4 cursor-pointer py-2  flex flex-col gap-0 ${notification.isRead ? "":" accent-highlight"}`}
             >
               {/* Header */}
               <div className="flex items-center gap-3">

@@ -124,7 +124,7 @@ const Home = () => {
   
 
   return (
-    <div className="flex justify-center p-2 transition-colors duration-300 accent-bg-mode accent-text-mode">
+    <div className="flex justify-center custom-scroll p-2 transition-colors duration-300 accent-bg-mode accent-text-mode">
       <div className="w-[85%] rounded-3xl flex flex-col items-center px-12 py-2 min-h-screen shadow-accent-box border accent-border transition-colors duration-300 accent-bg-mode accent-text-mode">
         
         <HeroCard />

@@ -3,58 +3,107 @@ const Post = require("../modals/post")
 const Comment = require("../modals/comment")
 const Notification = require("../modals/notification")
 const {io,getReceiverSocketId} = require("../configuration/socket")
+const {notificationMailTemplate} = require("../tamplets/EmailNotificationTamplet");
+const {sendEmail} = require("../utility/mailSender.js")
+const Settings = require("../modals/settings.js")
 
-
-exports.addComment = async(req,res)=>{
-   try{
+exports.addComment = async (req, res) => {
+   try {
       const userId = req.user.user._id;
       const postId = req.params.id;
+      const { comment } = req.body;
 
-      const {comment} = req.body;
+      if (!comment)
+         return res.status(400).json({
+         success: false,
+         message: "Comment data is required",
+         });
 
-      if(!comment) return res.status(400).json({success:false,message:"Comment data is required"});
+      const user = await User.findById(userId);
+      if (!user)
+         return res.status(404).json({
+         success: false,
+         message: "User not found",
+         });
 
-      const user= await User.findById(userId);
-      if(!user) return res.status(404).json({success:false,message:"user not found"})
+      const post = await Post.findById(postId).populate("author").exec();
+      if (!post)
+         return res.status(404).json({
+         success: false,
+         message: "Post not found",
+         });
 
-      const post = await Post.findById(postId);
-      if(!post) return res.status(404).json({success:false,message:"Post not found"})
+      const newComment = await Comment.create({
+         post: postId,
+         user: userId,
+         text: comment,
+      });
 
-      const newComment = await Comment.create({post:postId ,user:userId, text:comment});
-       const responseNotification = await Notification.create({
-         sender:userId,
-         type:"comment",
-         post:postId,
-         receiver:post.author
-      })
+      const responseNotification = await Notification.create({
+         sender: userId,
+         type: "comment",
+         post: postId,
+         receiver: post.author._id,
+      });
 
-      if(responseNotification){
-         const receiverSocketId = getReceiverSocketId(post.author);
-         if (receiverSocketId) {
-            io.to(receiverSocketId).emit("newNotification", { responseNotification, user });
+      const settings = await Settings.findOne({ user: post.author._id });
+
+      if (settings?.emailNotification === true && responseNotification) {
+         try {
+            setImmediate(async()=>{
+               await sendEmail(
+                  post.author.email,
+                  "Someone commented on your post!",
+                  notificationMailTemplate({
+                     username: post.author.firstName, 
+                     actionType: "comment",
+                     actorName: user.firstName,     
+                     postTitle: post.title,
+                     commentContent: comment,   
+                     link:`   /readmore/${postId}`
+         
+                  })
+               );
+            })
+         } catch (e) {
+         console.log("Error sending notification email:", e);
          }
       }
 
-      if(!newComment) return res.status(403).json({success:false,message:"failed to create new Comment"})
+      if (responseNotification && settings?.pushNotification === true) {
+         const receiverSocketId = getReceiverSocketId(post.author._id);
+         if (receiverSocketId) {
+         io.to(receiverSocketId).emit("newNotification", {
+            responseNotification,
+            user,
+         });
+         }
+      }
 
-      await Post.findByIdAndUpdate(postId,{
-         $push:{comments:newComment._id},
-      })
+      if (!newComment)
+         return res.status(403).json({
+         success: false,
+         message: "Failed to create new comment",
+         });
+
+      await Post.findByIdAndUpdate(postId, {
+         $push: { comments: newComment._id },
+      });
 
       return res.status(200).json({
-         success:true,
-         message:"Comment created and added in the respective post successfully",
-         data:newComment
-      })
-   }  
-   catch(e){
-      console.log(e)
+         success: true,
+         message: "Comment added successfully",
+         data: newComment,
+      });
+   } catch (e) {
+      console.log(e);
       return res.status(500).json({
-         success:false,
-         message:"Error occured in creating and adding new comment into the post"
-      })
+         success: false,
+         message: "Error occurred while creating comment",
+      });
    }
-}
+};
+
 
 exports.deleteComment = async(req,res)=>{
    try{

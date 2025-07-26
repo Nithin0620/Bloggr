@@ -9,8 +9,8 @@ import Settings from "./pages/Settings"
 import VerifyOtp from "./pages/VerifyOtp"
 import Message from "./pages/Message"
 import ReadMorePost from "./pages/ReadMorePost"
-import EditProfile from "./pages/EditProfile"
 import Explore from "./pages/Explore"
+import ProtectRoute from "./components/ProtectRoute"
 
 
 export const router = createBrowserRouter([
@@ -32,35 +32,31 @@ export const router = createBrowserRouter([
          },
          {
             path:"profile/:userId",
-            element:<Profile/>
+            element:<ProtectRoute><Profile/></ProtectRoute>
          },
          {
             path:"notification",
-            element:<Notification/>
+            element:<ProtectRoute><Notification/></ProtectRoute>
          },
          {
             path:"settings",
-            element:<Settings/>
+            element:<ProtectRoute><Settings/></ProtectRoute>
          },{
             path:"verifyemail",
             element:<VerifyOtp/>
          },
          {
             path:"message",
-            element:<Message/>
+            element:<ProtectRoute><Message/></ProtectRoute>
          },
          {
             path:"/readmore/:postId",
-            element:<ReadMorePost/>
+            element:<ProtectRoute><ReadMorePost/></ProtectRoute>
          },
          {
             path:"explore",
-            element:<Explore/>
+            element:<ProtectRoute><Explore/></ProtectRoute>
          },
-         {
-            path:"editmyprofile",
-            element:<EditProfile/>
-         }
       ]
    },
 ])

@@ -4,6 +4,9 @@ const User = require("../modals/user")
 const Profile = require("../modals/profile")
 const Notification = require("../modals/notification")
 const {io,getReceiverSocketId} = require("../configuration/socket")
+const {notificationMailTemplate} = require("../tamplets/EmailNotificationTamplet");
+const {sendEmail} = require("../utility/mailSender.js")
+const Settings = require("../modals/settings.js")
 
 
 exports.viewUserProfile = async(req,res)=>{
@@ -59,15 +62,12 @@ exports.updateProfileInfo = async (req, res) => {
          return res.status(404).json({ success: false, message: "User not found" });
       }
 
-      const { firstName, lastName, password, confirmPassword,email, image, bio } = req.body;
+      const { firstName, lastName, password, confirmPassword,email, bio } = req.body;
 
       if (firstName) user.firstName = firstName;
       if (lastName) user.lastName = lastName;
 
-      if(image) {
-         const uploadResponse = await cloudinary.uploader.upload(image);
-         user.profilePic = uploadResponse.secure_url
-      }
+      
 
       if (password || confirmPassword) {
          if (password !== confirmPassword) {
@@ -165,7 +165,7 @@ exports.deleteProfilePic = async(req,res)=>{
 };
 
 exports.followUser = async (req, res) => {
-  try {
+   try {
       const currentUserId = req.user.user._id;
       const targetUserId = req.params.id;
 
@@ -200,16 +200,39 @@ exports.followUser = async (req, res) => {
       currentProfile.following.push(targetUserId);
 
       const responseNotification = await Notification.create({
-         sender:currentProfile,
-         type:"follow",
-         // post:postId,
-         receiver:targetProfile
-      })
+         sender: currentProfile._id,
+         type: "follow",
+         receiver: targetProfile._id,
+      });
 
-      if(responseNotification){
+      const settings = await Settings.findOne({ user: targetUser._id });
+
+      if (settings?.emailNotification === true && responseNotification) {
+         try {
+            setImmediate(async()=>{
+               await sendEmail(
+                  targetUser.email,
+                  "Someone started following you on Bloggr!",
+                  notificationMailTemplate({
+                     username: targetUser.firstName,
+                     actionType: "follow",
+                     actorName: currentUser.firstName,
+                     link: `/profile/${currentUser._id}`,
+                  })
+                );
+            })
+         } catch (e) {
+         console.log("Error sending notification email:", e);
+         }
+      }
+
+      if (settings?.pushNotification === true && responseNotification) {
          const receiverSocketId = getReceiverSocketId(targetUserId);
          if (receiverSocketId) {
-            io.to(receiverSocketId).emit("newNotification", { responseNotification, currentUser });
+         io.to(receiverSocketId).emit("newNotification", {
+            notification: responseNotification,
+            currentUser,
+         });
          }
       }
 
@@ -220,9 +243,9 @@ exports.followUser = async (req, res) => {
          success: true,
          message: "User followed successfully",
       });
-   } 
-   catch (e) {
-      console.log(e);
+
+   } catch (e) {
+      console.error("Follow user error:", e);
       return res.status(500).json({
          success: false,
          message: "An error occurred while following the user",

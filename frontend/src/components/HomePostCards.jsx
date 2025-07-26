@@ -7,16 +7,23 @@ import { usePostStore } from '../store/PostStore';
 import { useIntractionStore } from '../store/IntractionStore';
 import { FaRegHeart } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
+import { useAuthStore } from '../store/AuthStore';
+import toast from 'react-hot-toast';
 
 
 const HomePostCards = ({ post ,setLiked}) => {
   // console.log("in home postcard component",post)
   const navigate = useNavigate();
   const {setCurrentPage} = usePageStore();
+  const {token , authUser} = useAuthStore();
   const {LikeUnlikePost,postsLikedByUser} = useIntractionStore();
   
 
   const handleReadmoreClick = ()=>{
+    if(!token && !authUser){
+      toast.error("Please login first to intract with the post");
+      return ;
+    }
 
     // setPost(postId)
     setCurrentPage("ReadMore");
@@ -42,6 +49,10 @@ const HomePostCards = ({ post ,setLiked}) => {
 
 
   const handleLike = async () => {
+    if(!token && !authUser){
+      toast.error("Please login first to intract with the post");
+      return ;
+    }
     const response = await LikeUnlikePost(post._id);
    
     setLiked(true);
@@ -110,7 +121,7 @@ const HomePostCards = ({ post ,setLiked}) => {
           Read More...
         </button>
 
-        <div className="flex gap-4 items-center text-sm text-gray-700">
+        <div className="flex gap-4 items-center text-sm text-gray-500">
           <button onClick={()=>handleLike()} className="flex items-center gap-1 hover:text-red-500 transition duration-200">
             {post.likes.length }
             {postsLikedByUser.includes(post._id) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> }

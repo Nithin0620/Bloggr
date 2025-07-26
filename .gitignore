@@ -28,7 +28,7 @@ dist-ssr
 /frontend/node_modules
 node_modules
 
-/backend/.env
-/frontend/.env
+./backend/.env
+./frontend/.env
 .env
-/backend/uploads
+./backend/uploads

@@ -50,9 +50,9 @@ const SideBar = () => {
             key={user._id}
             onClick={() => setSelectedUser(user)}
             className={`
-              w-full p-3 flex items-center gap-3
+              w-full p-3 flex items-center gap-3 
               hover:bg-base-300 transition-colors
-              ${selectedUser?._id === user._id ? "accent-bg-light bg-opacity-0" : ""}
+              ${selectedUser?._id === user._id ? "accent-highlight bg-opacity-0" : ""}
             `}
           >
             <div className="relative mx-auto lg:mx-0">
@@ -67,7 +67,7 @@ const SideBar = () => {
             </div>
 
             <div className="hidden lg:block text-left min-w-0">
-              <div className="font-medium truncate">{user.firstName + " " + user.lastName}</div>
+              <div className="font-medium accent-text-mode truncate">{user.firstName + " " + user.lastName}</div>
               <div className="text-sm text-zinc-400">
                 {onlineUsers.includes(user._id) ? "Online" : "Offline"}
               </div>

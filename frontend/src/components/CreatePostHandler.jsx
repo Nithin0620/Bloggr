@@ -101,7 +101,7 @@ const CreatePostHandler = () => {
    if (!isCreatePostOpen) return null;
 
    return (
-      <div className="fixed  inset-0 z-40 flex items-center justify-center backdrop-blur-[1px] bg-opacity-40">
+      <div className="fixed  inset-0 z-40 flex custom-scroll items-center justify-center backdrop-blur-[1px] bg-opacity-40">
          <div className="w-1/2 max-h-[75vh] overflow-y-auto rounded-lg p-6 accent-bg-mode shadow-accent-box relative">
          <button
             className="absolute hover:rotate-90 hover:scale-75 transition-all duration-500 top-4 right-4 text-2xl text-red-500"

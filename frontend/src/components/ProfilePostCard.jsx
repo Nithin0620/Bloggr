@@ -35,7 +35,7 @@ const ProfilePostCard = ({ post,setLiked,setIsDeleteModalOpen,setDeletePostid}) 
   const { authUser } = useAuthStore();
 
   const handleReadmoreClick = (postId)=>{
-    navigate(`/readmor/${postId}`)
+    navigate(`/readmore/${postId}`)
   }
 
   const handleLike = async () => {

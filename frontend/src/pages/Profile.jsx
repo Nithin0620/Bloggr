@@ -9,6 +9,9 @@ import { useProfileStore } from '../store/ProfileStore';
 import { Loader } from 'lucide-react';
 import {toast} from "react-hot-toast"
 import { usePostStore } from '../store/PostStore';
+import EditProfile from '../components/EditProfile';
+import FollowListModal from "../components/FollowListModal"
+import { IoCameraOutline } from "react-icons/io5";
 
 const Profile = () => {
   const {authUser} = useAuthStore();
@@ -38,9 +41,16 @@ const Profile = () => {
   }
 
   const navigate = useNavigate();
-  const {fetchUserProfile} = useProfileStore();
+  const {fetchUserProfile,editProfileInfo,FollowUser,unFollowUser,getFollowers,getFollowings} = useProfileStore();
   const {userId} = useParams();
   const [loading,setLoading] = useState(false);
+
+  const [Followers,setFollowers] = useState([]);
+  const [Followings,setFollowings] = useState([]);
+
+  // const [followersfollowingsModal , setFollworrsFollowingsModal] = useState(false);
+  const [followerModal,setFollowerModal] = useState(false);
+  const [followingModal,setFollowingModal] = useState(false);
   
   const [liked,setLiked] = useState(false);
   useEffect(()=>{
@@ -49,7 +59,10 @@ const Profile = () => {
     const fetchProfileData = async()=>{
       setLoading(true);
       const response = await fetchUserProfile(userId);
-      console.log("response" , response)
+      const followers = await getFollowers(userId);
+      const followings = await getFollowings(userId);
+      setFollowers(followers);
+      setFollowings(followings);
       setUser(response.data || []);
       setPosts(response.data.profile.posts);
       setLoading(false);
@@ -62,26 +75,44 @@ const Profile = () => {
 
   const [posts,setPosts] = useState(null);
 
-  const handlefollowedit = ()=>{
+  const [editProfile,setEditProfile] = useState(false);
 
-    console.log("here in function")
+  const followUnfollowUser = async()=>{
+    const isFollowing = Followers.includes(userId) ? true : false 
+    setLoading(true);
+    if(!isFollowing){
+      const success = await FollowUser(userId);
+    }
+    else {
+      const success = await unFollowUser(userId);
+    }
+    
+    setLiked(true);
+    setLoading(false);
+  }
+
+
+  const handlefollowedit = async()=>{
+
+    // console.log("here in function")
     console.log("here in function",authUser && user._id === authUser._id)
     
     if(authUser && user._id === authUser._id){
-      navigate("/editmyprofile")
+      setEditProfile(true);
     } 
     else{
-      
+      followUnfollowUser();
     }
                         
   }
 
-  
-  // console.log(loading)
+  const handleProfileUpdate = async(data)=>{
+    setLoading(true);
+    const success = await editProfileInfo(data);
+    setLiked(true);
+    setLoading(false);
+  }
 
-  // if(loading || !user) return(
-  //   <div className='flex items-center mt-40 justify-center'><Loader className='animate-spin'/></div>
-  // )
 
   return (
   <div className="relative min-h-screen accent-bg-mode accent-text-mode">
@@ -99,11 +130,14 @@ const Profile = () => {
             <>
               <div className="rounded-xl p-6 flex flex-col md:flex-row items-start justify-between shadow-accent-box accent-border border">
                 <div className="flex w-[80%] items-start gap-6 md:w-auto">
-                  <img
-                    src={user.profilePic}
-                    alt="profile"
-                    className="rounded-full w-24 h-24 md:w-28 md:h-28 object-cover"
-                  />
+                   <div className="relative w-25 h-25 md:w-28 md:h-28">
+                    <img
+                      src={user.profilePic}
+                      alt="profile"
+                      className="rounded-full object-cover w-full h-full"
+                    />
+                    <IoCameraOutline className="absolute m-1 h-7 w-7 bottom-[0.15rem] right-[0.20rem] backdrop-blur-xl text-white p-[0.15rem] rounded-full text-xl cursor-pointer shadow-md" />
+                  </div>
                   <div>
                     <h1 className="text-xl font-semibold accent-text">
                       {user.firstName + " " + user.lastName}
@@ -121,20 +155,20 @@ const Profile = () => {
                       {authUser && user._id === authUser._id ? (
                         <div className=''>Edit Profile</div>
                       ) : (
-                        <div>Follow {user.firstName}</div>
+                        <div>{Followers.includes(userId)? "UnFollow" : "Follow" }</div>
                       )}
                     </button>
                   </div>
                 </div>
 
                 <div className="flex md:flex-col pl-12 w-[20%] items-center gap-6 border-l-2 mt-6 md:mt-0 md:w-auto justify-around">
-                  <div className="text-center">
+                  <div onClick={()=>setFollowerModal(true)} className="text-center cursor-pointer">
                     <p className="text-xl font-bold">
                       {user.profile.followers.length}
                     </p>
                     <p className="text-sm font-medium">Followers</p>
                   </div>
-                  <div className="text-center">
+                  <div onClick={()=>setFollowingModal(true)} className="text-center cursor-pointer">
                     <p className="text-xl font-bold">
                       {user.profile.following.length}
                     </p>
@@ -144,9 +178,9 @@ const Profile = () => {
               </div>
 
               <div className="mt-10">
-                <h2 className="text-lg font-semibold accent-underline accent-text pb-3">
-                  Posts
-                </h2>
+                <h2 className="text-lg font-semibold  accent-text pb-3">
+                  <span className='accent-underline'>Posts</span> - {posts.length}
+                </h2> 
 
                 <div className="min-w-full h-[0.12rem] accent-bg-light rounded-full"></div>
 
@@ -210,6 +244,37 @@ const Profile = () => {
       {isUpdatePostOpen && (
         <UpdatePostHandler post={updatePost} setPostUpdated={setPostUpdated} />
       )}
+      { authUser && <EditProfile
+        editProfile={editProfile}
+        setEditProfile={setEditProfile}
+        onSubmit={handleProfileUpdate}
+        initialValues={{
+          firstName: `${authUser.firstName}`,
+          lastName:  `${authUser.lastName}`,
+          email:  `${authUser.email}`,
+          bio:  `${authUser?.profile.bio}`,
+        }}
+      />}
+      {
+        followerModal && 
+
+        <FollowListModal
+          isOpen={followerModal}
+          onClose={() => setFollowerModal(false)}
+          title="Followers"
+          users={Followers}
+        />
+      }
+      {
+        followingModal && 
+
+        <FollowListModal
+          isOpen={followingModal}
+          onClose={() => setFollowingModal(false)}
+          title="Following's"
+          users={Followings}
+        />
+      }
     </div>
   );
 

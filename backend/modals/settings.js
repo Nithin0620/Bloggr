@@ -12,7 +12,7 @@ const settingsSchema = new mongoose.Schema({
    },
    theme:{
       type:String,
-      default:"Beige",
+      default:"Blue",
    },
    pushNotification:{
       type:Boolean,
@@ -20,7 +20,7 @@ const settingsSchema = new mongoose.Schema({
    },
    emailNotification:{
       type:Boolean,
-      default:false,
+      default:true,
    },
    homeFeedType:{
       type:Array,

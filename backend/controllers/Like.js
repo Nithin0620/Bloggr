@@ -2,6 +2,10 @@ const User = require("../modals/user");
 const Post = require("../modals/post");
 const Notification = require("../modals/notification")
 const {io,getReceiverSocketId} = require("../configuration/socket")
+const Settings = require("../modals/settings")
+const {notificationMailTemplate} = require("../tamplets/EmailNotificationTamplet");
+const {sendEmail} = require("../utility/mailSender.js")
+
 // const {io} = require("socket.io")
 exports.likeUnlikeAPost = async (req, res) => {
   try {
@@ -13,27 +17,50 @@ exports.likeUnlikeAPost = async (req, res) => {
          return res.status(401).json({ success: false, message: "User not found" });
       }
 
-      const post = await Post.findById(postId);
+      const post = await Post.findById(postId).populate("author").exec();
       if (!post) {
          return res.status(402).json({ success: false, message: "Post not found" });
       }
 
       let action = "";
 
+      
       if (post.likes.includes(userId)) {
-
+         
          post.likes.pull(userId);
          action = "unliked";
       } else {
          const responseNotification = await Notification.create({
-            sender:userId,
-            type:"like",
-            post:postId,
-            receiver:post.author
-         })
+            sender: userId,
+            type: "like",
+            post: postId,
+            receiver: post.author._id
+         });
 
-         if(responseNotification){
-            const receiverSocketId = getReceiverSocketId(post.author);
+         const settings = await Settings.findOne({ user: post.author._id });
+
+         if (settings?.emailNotification === true && responseNotification) {
+            try {
+              setImmediate(async()=>{
+                await sendEmail(
+                  post.author.email,  
+                  "Someone liked your post!",
+                  notificationMailTemplate({
+                  username: post.author.firstName,        
+                  actionType: "like",                     
+                  actorName: user.firstName,              
+                  postTitle: post.title,
+                  link:`   /readmore/${postId}`
+                  })
+               );
+              })
+            } catch (e) {
+               console.log("Error sending notification email:", e);
+            }
+         }
+
+         if(responseNotification && settings.pushNotification === true){
+            const receiverSocketId = getReceiverSocketId(post.author._id);
             if (receiverSocketId) {
                io.to(receiverSocketId).emit("newNotification", { responseNotification, user });
             }

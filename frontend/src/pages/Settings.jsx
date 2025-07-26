@@ -7,6 +7,7 @@ import { useAuthStore } from '../store/AuthStore';
 import { useSettingsStore } from '../store/SettingsStore';
 import {Loader} from "lucide-react"
 import {toast} from "react-hot-toast"
+import { usePostStore } from '../store/PostStore';
 const Settings = () => {
    const colorMap = {
       Green: 'ring-green-300',
@@ -20,10 +21,20 @@ const Settings = () => {
    const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
    const {getSettings,setSettings,resetSettings} = useSettingsStore();
+   const {fetchCategories, categoriesList} = usePostStore();
+
+
+   const [categories, setCategories] = useState([]);
+
+   const fetchCategoryAndPostfromStore = async()=>{
+      setLoading(true);
+      const array = await fetchCategories();
+      setCategories(array);
+      setLoading(false);      
+   }
 
    const [mode, setMode] = useState("");
    const [theme, setTheme] = useState("");
-   const [categories, setCategories] = useState(["Tect","Health","AI","Latest News"]);
    const [feed, setFeed] = useState("All");
    const [selectedCategories, setSelectedCategories] = useState([]);
    const [notifications, setNotifications] = useState({
@@ -58,6 +69,7 @@ const Settings = () => {
 
      
       getSettingsOnRender();
+      fetchCategoryAndPostfromStore();
       const theme = localStorage.getItem("accent-theme");
       if(theme) setTheme(theme);
    },[])
