@@ -89,9 +89,46 @@ export const useProfileStore = create((get,set)=>({
          else return [];
       }
       catch(e){
-         console.log(e);
+         // console.log(e);
          return [];
       }
-   }
+   },
+   updateProfilePic : async(formData)=>{
+      try{
+         const response = await axios.post(`${BASE_URL}/profile/uploadprofilepic`,formData,
+         {
+            headers: {
+               "Content-Type": "multipart/form-data",
+            },
+            withCredentials: true, // if using cookies for auth
+         });
+
+         if(response.data.success){
+            toast.success("Profile photo updated successfully!")
+         }else{
+            toast.error("an error occured in updating profile photo!");
+         }
+      }
+      catch(e){
+         // console.log(e);
+         toast.error("an error occured in updating profile photo!");
+      }
+   },
+   deleteProfilePic : async()=>{
+      try{
+         const response = await axios.delete(`${BASE_URL}/profile/deleteprofilepic`,);
+
+         if(response.data.success){
+            toast.success("Profile photo Deleted successfully!")
+         }else{
+            toast.error("an error occured in Deleting profile photo!");
+         }
+      }
+      catch(e){
+         // console.log(e);
+         toast.error("an error occured in Deleting profile photo!");
+      }
+   },
+
 
 }))

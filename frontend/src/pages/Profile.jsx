@@ -12,6 +12,7 @@ import { usePostStore } from '../store/PostStore';
 import EditProfile from '../components/EditProfile';
 import FollowListModal from "../components/FollowListModal"
 import { IoCameraOutline } from "react-icons/io5";
+import ProfilePhoto from '../components/ProfilePhoto';
 
 const Profile = () => {
   const {authUser} = useAuthStore();
@@ -113,6 +114,8 @@ const Profile = () => {
     setLoading(false);
   }
 
+  const [profilePicOpen,setProfilePicOpen] = useState(false);
+
 
   return (
   <div className="relative min-h-screen accent-bg-mode accent-text-mode">
@@ -136,7 +139,7 @@ const Profile = () => {
                       alt="profile"
                       className="rounded-full object-cover w-full h-full"
                     />
-                    <IoCameraOutline className="absolute m-1 h-7 w-7 bottom-[0.15rem] right-[0.20rem] backdrop-blur-xl text-white p-[0.15rem] rounded-full text-xl cursor-pointer shadow-md" />
+                    <IoCameraOutline onClick={()=>setProfilePicOpen(true)} className="absolute hover:-translate-y-1 transition-all duration-500 m-1 h-7 w-7 bottom-[0.15rem] right-[0.20rem] backdrop-blur-xl text-white p-[0.15rem] rounded-full text-xl cursor-pointer shadow-md" />
                   </div>
                   <div>
                     <h1 className="text-xl font-semibold accent-text">
@@ -274,6 +277,10 @@ const Profile = () => {
           title="Following's"
           users={Followings}
         />
+      }
+
+      {
+        profilePicOpen && <ProfilePhoto setLiked={setLiked} setProfilePicOpen={setProfilePicOpen} user={user}/>
       }
     </div>
   );

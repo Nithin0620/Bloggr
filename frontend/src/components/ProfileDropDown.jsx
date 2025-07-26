@@ -42,7 +42,7 @@ const ProfileDropDown = ({ setOpenProfileDropDown }) => {
       {/* Share Profile */}
       <div
         onClick={handleShareProfile}
-        className="px-4 py-2 transition-all duration-150 flex items-center gap-2 text-sm cursor-pointer hover:scale-95"
+        className="px-4 py-2 transition-all duration-200 flex items-center gap-2 text-sm cursor-pointer hover:scale-95"
       >
         <IoMdShare />
         Share my profile
@@ -51,7 +51,7 @@ const ProfileDropDown = ({ setOpenProfileDropDown }) => {
       {/* View Profile */}
       <div
         onClick={handleViewProfile}
-        className="flex items-center px-4 py-2 gap-2 hover:border-0 rounded-xl transition-all duration-200 cursor-pointer"
+        className="flex hover:scale-95  items-center px-4 py-2 gap-2 hover:border-0 rounded-xl transition-all duration-300 cursor-pointer"
       >
         <img
           src={authUser?.profilePic || "https://via.placeholder.com/32"}

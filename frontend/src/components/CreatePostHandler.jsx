@@ -89,8 +89,8 @@ const CreatePostHandler = () => {
    const handleFileChange = (e) => {
       const file = e.target.files[0];
       if (file) {
-         setValue("image", file); // update react-hook-form value
-         setPreviewUrl(URL.createObjectURL(file)); // set preview
+         setValue("image", file);
+         setPreviewUrl(URL.createObjectURL(file));
       }
    }
 

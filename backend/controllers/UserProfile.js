@@ -1,4 +1,4 @@
-const cloudinary = require("../configuration/cloudinary")
+const {cloudinaryInstance } = require("../configuration/cloudinary"); // or correct relative path
 const bcrypt = require("bcrypt")
 const User = require("../modals/user")
 const Profile = require("../modals/profile")
@@ -117,10 +117,13 @@ exports.uploadProfilePic = async(req,res)=>{
          return res.status(404).json({ success: false, message: "User not found" });
       }
 
-      const image = req.body;
+      const image = req.file.path;
+      console.log("image",image)
+      
+
       if(!image) return res.status(400).json({success:false,message:"image not found"});
 
-      const uploadResponse  = await cloudinary.uploader.upload(image);
+      const uploadResponse  = await cloudinaryInstance.uploader.upload(image);
       if(uploadResponse) user.profilePic = uploadResponse.secure_url;
 
       await user.save();
