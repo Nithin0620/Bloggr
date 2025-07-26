@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/AuthStore";
-import { ImSpinner3 } from "react-icons/im";
+import {Loader} from "lucide-react"
 
 const Signup = () => {
   const {
@@ -153,7 +153,7 @@ const Signup = () => {
           >
             {
               isSendingotp ? (<div className='flex justify-center items-center accent-text-mode animate-spin'>
-                <ImSpinner3/>
+                <Loader/>
               </div>) : (<div>
                 Sign up
               </div>)

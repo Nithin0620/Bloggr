@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import OtpInput from "react-otp-input";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/AuthStore";
-import { ImSpinner3 } from "react-icons/im";
+import { Loader } from "lucide-react";
 
 const VerifyEmail = () => {
   const [otp, setOtp] = useState("");
@@ -50,7 +50,7 @@ const VerifyEmail = () => {
           >
             {
               isSigningup ? (<div className='flex justify-center items-center accent-text-mode animate-spin'>
-                <ImSpinner3/>
+                <Loader/>
               </div>) : (<div>
                 Verify Email
               </div>)

@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuthStore } from '../store/AuthStore';
-import { ImSpinner3 } from "react-icons/im";
 import { usePageStore } from '../store/PageStore';
-
+import {Loader} from "lucide-react"
 
 const Login = () => {
   const {setCurrentPage} = usePageStore();
@@ -80,7 +79,7 @@ const Login = () => {
           >
             {
                 isLoggingin ? (<div className='flex justify-center items-center accent-text-mode animate-spin'>
-                  <ImSpinner3/>
+                  <Loader/>
                 </div>) : (<div>
                   Log in
                 </div>)
