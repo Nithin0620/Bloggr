@@ -74,7 +74,7 @@ export const useAuthStore = create((set,get)=>({
       try{
          // console.log("response:",email)
          // console.log("url:",BASE_URL)
-         const response = await axiosInstance.post(`${BASE_URL}/auth/sendotp`,{email});
+         const response = await axios.post(`${BASE_URL}/auth/sendotp`,{email});
          
          // console.log("response in sendOtp:",response.data.success)
          if(response.data.success) {
