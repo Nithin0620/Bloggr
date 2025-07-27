@@ -54,8 +54,8 @@ exports.welcomeMailTemplate = (firstName) => {
         display: inline-block;
         margin-top: 30px;
         padding: 12px 24px;
-        background-color: #4f46e5;
-        color: white;
+        background-color:  linear-gradient(90deg, #4f46e5, #3b82f6);
+        color: #FFFFFF;
         text-decoration: none;
         font-size: 16px;
         border-radius: 8px;
@@ -91,7 +91,7 @@ exports.welcomeMailTemplate = (firstName) => {
         <p class="message">
           Start your journey now by creating your first blog or exploring trending posts.
         </p>
-        <a href="https://yourapp.com/dashboard" class="cta-button">Go to Dashboard</a>
+        <a href="https://bloggr-y7gx.onrender.com" class="cta-button">Go to Dashboard</a>
       </div>
       <div class="footer">
         &copy; ${new Date().getFullYear()} Bloggr. All rights reserved.

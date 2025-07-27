@@ -1,10 +1,12 @@
 import React from "react";
 import { IoMdClose } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 
-const FollowListModal = ({ isOpen, onClose, title, users }) => {
+const FollowListModal = ({ setLiked, isOpen, onClose, title, users }) => {
+
+  const navigate = useNavigate();
 
   const formatDate = (date)=>{
     const newDate = new Date(date);
@@ -13,6 +15,15 @@ const FollowListModal = ({ isOpen, onClose, title, users }) => {
       month:"long",
       day:"numeric",
     })
+  }
+
+  const handleViewProfile = (userId) =>{
+    navigate(`/profile/${userId}`)
+    setTimeout(()=>{
+      setLiked(true);
+      onClose()
+    },500)
+    
   }
 
   if (!isOpen) return null;
@@ -33,10 +44,8 @@ const FollowListModal = ({ isOpen, onClose, title, users }) => {
         <div className="max-h-80 overflow-y-auto space-y-3">
           {users?.length > 0 ? (
             users.map((user) => (
-              <Link
+              <div
                 key={user._id}
-                to={`/profile/${user._id}`}
-                onClick={onClose}
                 className="flex  items-center gap-3 hover:bg-muted/20 p-2 rounded-xl transition"
               >
                 <img
@@ -45,10 +54,10 @@ const FollowListModal = ({ isOpen, onClose, title, users }) => {
                   className="w-10 h-10 rounded-full object-cover"
                 />
                 <div>
-                  <p className="hover:underline font-medium">{user.firstName} {user.lastName}</p>
+                  <p onClick={()=>handleViewProfile(user._id)} className="hover:underline font-medium">{user.firstName} {user.lastName}</p>
                   <p className="text-sm text-muted-foreground">user since {formatDate(user.createdAt)}</p>
                 </div>
-              </Link>
+              </div>
             ))
           ) : (
             <p className="text-muted-foreground text-center py-10">

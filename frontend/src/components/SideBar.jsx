@@ -76,7 +76,7 @@ const SideBar = () => {
                 setSelectedUser(user);
                 setIsOpen(false); // close sidebar on mobile after selection
               }}
-              className={`p-2 md:p-3 flex items-center gap-3 hover:bg-base-300 transition-colors rounded-lg ${
+              className={`p-2 md:p-3 accent-border border-b shadow-slate-400 shadow-sm flex items-center gap-3 hover:bg-base-300 transition-colors rounded-lg ${
                 selectedUser?._id === user._id ? "accent-highlight bg-opacity-0" : ""
               }`}
             >

@@ -117,10 +117,10 @@ const Profile = () => {
                       alt="profile"
                       className="rounded-full object-cover w-full h-full"
                     />
-                    <IoCameraOutline
+                    {user._id === authUser._id && <IoCameraOutline
                       onClick={() => setProfilePicOpen(true)}
                       className="absolute hover:-translate-y-1 transition-all duration-500 m-1 h-7 w-7 bottom-[0.15rem] right-[0.20rem] backdrop-blur-xl text-white p-[0.15rem] rounded-full text-xl cursor-pointer shadow-md"
-                    />
+                    />}
                   </div>
                   <div className="flex-1">
                     <h1 className="text-xl font-semibold accent-text">{user.firstName + " " + user.lastName}</h1>
@@ -240,6 +240,7 @@ const Profile = () => {
         <FollowListModal
           isOpen={followingModal}
           onClose={() => setFollowingModal(false)}
+          setLiked={setLiked}
           title="Following's"
           users={Followings}
         />

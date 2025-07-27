@@ -22,8 +22,8 @@ const HeroCard = () => {
       {token === null && (
         <div className="text-center space-y-4">
           {/* Top Right Share Button */}
-          <div className="relative">
-            <div onClick={()=>openShareModal("bloggr")} className="absolute right-0 top-0 flex items-center gap-1 text-xs font-thin italic cursor-pointer hover:accent-underline transition">
+          <div className="md:relative">
+            <div onClick={()=>openShareModal("bloggr")} className="absolute md:right-0 -right-1 md:top-0 top-[-0.80rem] flex items-center gap-1 text-xs font-thin italic cursor-pointer hover:accent-underline transition">
               <IoMdShare />
               <span>Share Bloggr</span>
             </div>
@@ -74,7 +74,7 @@ const HeroCard = () => {
       {token !== null && (
         <div className="text-center space-y-4">
           <div className="relative">
-            <div onClick={()=>openShareModal("bloggr")} className="absolute right-0 top-0 flex items-center gap-1 text-xs font-thin italic cursor-pointer hover:accent-underline transition">
+            <div onClick={()=>openShareModal("bloggr")} className="absolute md:right-0 -right-1 md:top-0 top-[-0.80rem] flex items-center gap-1 text-xs font-thin italic cursor-pointer hover:accent-underline transition">
               <IoMdShare />
               <span>Share Bloggr</span>
             </div>

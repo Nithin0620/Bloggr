@@ -9,9 +9,11 @@ import { MdOutlineAutoDelete } from "react-icons/md";
 import {toast} from "react-hot-toast"
 import EmojiPicker from 'emoji-picker-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/AuthStore';
 
 const Comment = ({ post:id}) => {
   const navigate = useNavigate();
+  const {authUser} = useAuthStore();
   const [inputValue, setInputValue] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const inputRef = useRef(null);
@@ -59,6 +61,10 @@ const Comment = ({ post:id}) => {
   }
 
   const handleDeleteComment = async(comment)=>{
+    if(comment.user._id !== authUser._id){
+      toast.error("you are not the author of this comment.")
+      return;
+    }
     const commentDate = new Date(comment.updatedAt);
     const now = new Date();
     const diffInMinutes = Math.floor((now - commentDate) / (1000 * 60));
@@ -167,7 +173,7 @@ const Comment = ({ post:id}) => {
                         }}
                       />
                     </div>
-                    <div onClick={()=>handleDeleteComment(comment)} className='text-red-400 cursor-pointer transition-all duration-150 ml-[0.3rem] mt-1 my-auto hover:text-red-600'><MdOutlineAutoDelete/></div>
+                    <div onClick={()=>handleDeleteComment(comment)} className='text-red-400 cursor-pointer transition-all duration-150 ml-[0.3rem] mt-1 my-auto hover:text-red-600'>{comment.user._id === authUser._id && <MdOutlineAutoDelete/>}</div>
                   </div>
                   
                   <div className="flex-1">

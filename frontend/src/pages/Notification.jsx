@@ -139,6 +139,7 @@ const Notification = () => {
   };
 
   const handleChatClick = () => {
+    setCurrentPage("message")
     navigate("/message")
   };
   const handleSenderProfileClick = (userId) => {

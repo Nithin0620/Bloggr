@@ -39,11 +39,11 @@ const App = () => {
     checkAuth();
     setnavigate(navigate);
     const savedMode = localStorage.getItem("accent-mode");
-    if(!savedMode) localStorage.setItem("accent-mode","Dark");
+    if(!savedMode) localStorage.setItem("accent-mode","Light");
     const savedMode2 = localStorage.getItem("accent-mode");
     if(savedMode || savedMode2) applyMode(savedMode || savedMode2);
     const savedAccent = localStorage.getItem("accent-theme");
-    if(!savedAccent) localStorage.setItem("accent-theme","Yellow");
+    if(!savedAccent) localStorage.setItem("accent-theme","Green");
     const savedAccent2 = localStorage.getItem("accent-theme");
     if (savedAccent ||savedAccent2) {
       applyTheme(savedAccent || savedAccent2);

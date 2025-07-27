@@ -106,7 +106,7 @@ const ProfilePostCard = ({
                 <IoIosStats />
               </span>
 
-              {post.author._id && (
+              {post.author._id === authUser._id && (
                 <div className="flex items-center gap-3 text-[1rem] ml-2">
                   <button
                     onClick={handleUpdatePost}

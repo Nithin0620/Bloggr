@@ -189,7 +189,7 @@ const Home = () => {
           )
         }
         {loading && (
-          <div className="absolute inset-0 flex justify-center items-cente z-10">
+          <div className="absolute backdrop-blur-sm inset-0 flex justify-center items-cente z-10">
             <div >
               <Loader className="animate-spin" />
             </div>

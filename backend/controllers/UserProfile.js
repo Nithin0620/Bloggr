@@ -220,7 +220,7 @@ exports.followUser = async (req, res) => {
                      username: targetUser.firstName,
                      actionType: "follow",
                      actorName: currentUser.firstName,
-                     link: `/profile/${currentUser._id}`,
+                     link: `https://bloggr-y7gx.onrender.com/profile/${currentUser._id}`,
                   })
                 );
             })
