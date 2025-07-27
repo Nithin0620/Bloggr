@@ -1,192 +1,163 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../store/AuthStore';
 import ProfilePostCard from '../components/ProfilePostCard';
-import {usePageStore} from "../store/PageStore"
-import UpdatePostHandler from "../components/UpdatePostHandler"
-import {IoMdClose} from "react-icons/io"
+import { usePageStore } from "../store/PageStore";
+import UpdatePostHandler from "../components/UpdatePostHandler";
+import { IoMdClose } from "react-icons/io";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useProfileStore } from '../store/ProfileStore';
 import { Loader } from 'lucide-react';
-import {toast} from "react-hot-toast"
+import { toast } from "react-hot-toast";
 import { usePostStore } from '../store/PostStore';
 import EditProfile from '../components/EditProfile';
-import FollowListModal from "../components/FollowListModal"
+import FollowListModal from "../components/FollowListModal";
 import { IoCameraOutline } from "react-icons/io5";
 import ProfilePhoto from '../components/ProfilePhoto';
 
 const Profile = () => {
-  const {authUser} = useAuthStore();
-  const {isUpdatePostOpen,updatePost} = usePageStore();
-  const [isDeleteModalOpen,setIsDeleteModalOpen] = useState();
-  const [user,setUser] = useState(null);
-  const {deletePost} = usePostStore();
-  // console.log("isUpdatePostOpen",isUpdatePostOpen)
-  // console.log("updatePost",updatePost)
-  const [deletePostid,setDeletePostid] = useState(null);
-  const [deleted,setDeleted] = useState(false);
-
-  const [postUpdated,setPostUpdated] =  useState(false);
-
-  const deletePostHandler = async()=>{
-    console.log(deletePostid)
-
-    const success = await deletePost(deletePostid);
-    if(!success) toast.error("error occured in deleting the post!");
-    else{
-      toast.success("Blog Deleted Successfully");
-      setDeletePostid(null);
-      setIsDeleteModalOpen(false);
-      setDeleted(true);
-      
-    }
-  }
-
+  const { authUser } = useAuthStore();
+  const { isUpdatePostOpen, updatePost } = usePageStore();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const { deletePost } = usePostStore();
+  const [deletePostid, setDeletePostid] = useState(null);
+  const [deleted, setDeleted] = useState(false);
+  const [postUpdated, setPostUpdated] = useState(false);
+  const [posts, setPosts] = useState(null);
+  const [editProfile, setEditProfile] = useState(false);
   const navigate = useNavigate();
-  const {fetchUserProfile,editProfileInfo,FollowUser,unFollowUser,getFollowers,getFollowings} = useProfileStore();
-  const {userId} = useParams();
-  const [loading,setLoading] = useState(false);
+  const { fetchUserProfile, editProfileInfo, Followuser, unFollowUser, getFollowers, getFollowings } = useProfileStore();
+  const { userId } = useParams();
+  const [loading, setLoading] = useState(false);
+  const [Followers, setFollowers] = useState([]);
+  const [FollowersId, setFollowersId] = useState([]);
+  const [Followings, setFollowings] = useState([]);
+  const [FollowingsId, setFollowingsId] = useState([]);
+  const [followerModal, setFollowerModal] = useState(false);
+  const [followingModal, setFollowingModal] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [profilePicOpen, setProfilePicOpen] = useState(false);
 
-  const [Followers,setFollowers] = useState([]);
-  const [Followings,setFollowings] = useState([]);
-
-  // const [followersfollowingsModal , setFollworrsFollowingsModal] = useState(false);
-  const [followerModal,setFollowerModal] = useState(false);
-  const [followingModal,setFollowingModal] = useState(false);
-  
-  const [liked,setLiked] = useState(false);
-  useEffect(()=>{
-    setDeleted(false)
+  useEffect(() => {
+    setDeleted(false);
     setLiked(false);
-    const fetchProfileData = async()=>{
+    const fetchProfileData = async () => {
       setLoading(true);
       const response = await fetchUserProfile(userId);
       const followers = await getFollowers(userId);
-      const followings = await getFollowings(userId);
       setFollowers(followers);
+      const followersId = followers.map(user => user._id);
+      const followings = await getFollowings(userId);
       setFollowings(followings);
+      const followingsId = followings.map(user => user._id);
+      setFollowersId(followersId);
+      setFollowingsId(followingsId);
       setUser(response.data || []);
       setPosts(response.data.profile.posts);
       setLoading(false);
-    }
+    };
     fetchProfileData();
-    setTimeout(()=>{
-      setPostUpdated(false);
-    },2000)
-  },[deleted,postUpdated,liked])
+    setTimeout(() => setPostUpdated(false), 2000);
+  }, [deleted, postUpdated, liked]);
 
-  const [posts,setPosts] = useState(null);
-
-  const [editProfile,setEditProfile] = useState(false);
-
-  const followUnfollowUser = async()=>{
-    const isFollowing = Followers.includes(userId) ? true : false 
-    setLoading(true);
-    if(!isFollowing){
-      const success = await FollowUser(userId);
-    }
+  const deletePostHandler = async () => {
+    const success = await deletePost(deletePostid);
+    if (!success) toast.error("Error deleting post!");
     else {
-      const success = await unFollowUser(userId);
+      toast.success("Post deleted successfully!");
+      setDeletePostid(null);
+      setIsDeleteModalOpen(false);
+      setDeleted(true);
     }
-    
+  };
+
+  const followUnfollowUser = async () => {
+    const isFollowing = FollowersId.includes(authUser._id);
+    setLoading(true);
+    if (!isFollowing) await Followuser(userId);
+    else await unFollowUser(userId);
     setLiked(true);
     setLoading(false);
-  }
+  };
 
-
-  const handlefollowedit = async()=>{
-
-    // console.log("here in function")
-    console.log("here in function",authUser && user._id === authUser._id)
-    
-    if(authUser && user._id === authUser._id){
+  const handleFollowEdit = () => {
+    if (authUser && user._id === authUser._id) {
       setEditProfile(true);
-    } 
-    else{
+    } else {
       followUnfollowUser();
     }
-                        
-  }
+  };
 
-  const handleProfileUpdate = async(data)=>{
+  const handleProfileUpdate = async (data) => {
     setLoading(true);
     const success = await editProfileInfo(data);
     setLiked(true);
     setLoading(false);
-  }
-
-  const [profilePicOpen,setProfilePicOpen] = useState(false);
-
+  };
 
   return (
-  <div className="relative min-h-screen accent-bg-mode accent-text-mode">
+    <div className="relative min-h-screen accent-bg-mode accent-text-mode">
       {loading && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-black bg-opacity-5 backdrop-blur-sm">
           <Loader className="animate-spin" />
         </div>
       )}
 
-      <div className="flex justify-center mx-auto px-4 py-2 transition-colors duration-300">
-        <div className="w-[85%] rounded-lg p-8">
+      <div className="max-w-[66rem] mx-auto px-4 sm:px-6 py-10 transition-colors duration-300">
+        <div className="rounded-lg">
           {!user ? (
             <div className="text-center text-lg">Unable to load user profile.</div>
           ) : (
             <>
-              <div className="rounded-xl p-6 flex flex-col md:flex-row items-start justify-between shadow-accent-box accent-border border">
-                <div className="flex w-[80%] items-start gap-6 md:w-auto">
-                   <div className="relative w-25 h-25 md:w-28 md:h-28">
+              <div className="rounded-xl p-6 flex flex-col md:flex-row items-start justify-between shadow-accent-box accent-border border gap-6">
+                <div className="flex flex-col sm:flex-row sm:items-start gap-6 w-full md:w-auto">
+                  <div className="relative w-24 h-24 sm:w-28 sm:h-28 mx-auto sm:mx-0">
                     <img
                       src={user.profilePic}
                       alt="profile"
                       className="rounded-full object-cover w-full h-full"
                     />
-                    <IoCameraOutline onClick={()=>setProfilePicOpen(true)} className="absolute hover:-translate-y-1 transition-all duration-500 m-1 h-7 w-7 bottom-[0.15rem] right-[0.20rem] backdrop-blur-xl text-white p-[0.15rem] rounded-full text-xl cursor-pointer shadow-md" />
+                    <IoCameraOutline
+                      onClick={() => setProfilePicOpen(true)}
+                      className="absolute hover:-translate-y-1 transition-all duration-500 m-1 h-7 w-7 bottom-[0.15rem] right-[0.20rem] backdrop-blur-xl text-white p-[0.15rem] rounded-full text-xl cursor-pointer shadow-md"
+                    />
                   </div>
-                  <div>
-                    <h1 className="text-xl font-semibold accent-text">
-                      {user.firstName + " " + user.lastName}
-                    </h1>
-                    <p className="text-sm">
-                      Joined on{" "}
-                      {new Date(user.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
+                  <div className="flex-1">
+                    <h1 className="text-xl font-semibold accent-text">{user.firstName + " " + user.lastName}</h1>
+                    <p className="text-sm">Joined on {new Date(user.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}</p>
                     <p className="mt-2 text-sm">{user.profile.bio}</p>
-                    <button onClick={()=>handlefollowedit()} className="mt-4 accent-bg hover:accent-bg-dark text-sm font-medium py-1.5 px-4 rounded-md transition-all duration-150">
-                      {authUser && user._id === authUser._id ? (
-                        <div className=''>Edit Profile</div>
-                      ) : (
-                        <div>{Followers.includes(userId)? "UnFollow" : "Follow" }</div>
-                      )}
+                    <button
+                      onClick={handleFollowEdit}
+                      className="mt-4 accent-bg hover:accent-bg-dark text-sm font-medium py-1.5 px-4 rounded-md transition-all duration-150"
+                    >
+                      {authUser && user._id === authUser._id ? "Edit Profile" : FollowersId.includes(authUser._id) ? "Unfollow" : "Follow"}
                     </button>
                   </div>
                 </div>
 
-                <div className="flex md:flex-col pl-12 w-[20%] items-center gap-6 border-l-2 mt-6 md:mt-0 md:w-auto justify-around">
-                  <div onClick={()=>setFollowerModal(true)} className="text-center cursor-pointer">
-                    <p className="text-xl font-bold">
-                      {user.profile.followers.length}
-                    </p>
+                {/* Right Section: Follower Count */}
+                <div className="flex sm:flex-row md:flex-col gap-6 items-center w-full md:w-auto justify-around md:justify-center border-t pt-4 md:border-t-0 md:border-l md:pl-6">
+                  <div onClick={() => setFollowerModal(true)} className="text-center cursor-pointer">
+                    <p className="text-xl font-bold">{user.profile.followers.length}</p>
                     <p className="text-sm font-medium">Followers</p>
                   </div>
-                  <div onClick={()=>setFollowingModal(true)} className="text-center cursor-pointer">
-                    <p className="text-xl font-bold">
-                      {user.profile.following.length}
-                    </p>
+                  <div onClick={() => setFollowingModal(true)} className="text-center cursor-pointer">
+                    <p className="text-xl font-bold">{user.profile.following.length}</p>
                     <p className="text-sm font-medium">Following</p>
                   </div>
                 </div>
               </div>
 
+              {/* User Posts */}
               <div className="mt-10">
-                <h2 className="text-lg font-semibold  accent-text pb-3">
-                  <span className='accent-underline'>Posts</span> - {posts.length}
-                </h2> 
-
-                <div className="min-w-full h-[0.12rem] accent-bg-light rounded-full"></div>
-
+                <h2 className="text-lg font-semibold accent-text pb-3">
+                  <span className="accent-underline">Posts</span> - {posts.length}
+                </h2>
+                <div className="h-[0.12rem] rounded-full accent-bg-light"></div>
                 <div className="mt-6 space-y-6">
                   {posts && posts.length > 0 ? (
                     posts.map((post, index) => (
@@ -208,6 +179,7 @@ const Profile = () => {
         </div>
       </div>
 
+      {/* Delete Modal */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm">
           <div className="w-[90%] sm:w-[400px] accent-bg-mode p-6 rounded-2xl shadow-accent-box relative">
@@ -217,15 +189,8 @@ const Profile = () => {
             >
               <IoMdClose />
             </button>
-
-            <h2 className="text-2xl font-semibold accent-text mb-3">
-              Delete Post
-            </h2>
-            <p className="accent-text-mode mb-6">
-              Are you sure you want to delete this post? This action cannot be
-              undone.
-            </p>
-
+            <h2 className="text-2xl font-semibold accent-text mb-3">Delete Post</h2>
+            <p className="accent-text-mode mb-6">Are you sure you want to delete this post? This action cannot be undone.</p>
             <div className="flex justify-end gap-4">
               <button
                 onClick={() => setIsDeleteModalOpen(false)}
@@ -247,44 +212,44 @@ const Profile = () => {
       {isUpdatePostOpen && (
         <UpdatePostHandler post={updatePost} setPostUpdated={setPostUpdated} />
       )}
-      { authUser && <EditProfile
-        editProfile={editProfile}
-        setEditProfile={setEditProfile}
-        onSubmit={handleProfileUpdate}
-        initialValues={{
-          firstName: `${authUser.firstName}`,
-          lastName:  `${authUser.lastName}`,
-          email:  `${authUser.email}`,
-          bio:  `${authUser?.profile.bio}`,
-        }}
-      />}
-      {
-        followerModal && 
 
+      {authUser && (
+        <EditProfile
+          editProfile={editProfile}
+          setEditProfile={setEditProfile}
+          onSubmit={handleProfileUpdate}
+          initialValues={{
+            firstName: `${authUser.firstName}`,
+            lastName: `${authUser.lastName}`,
+            email: `${authUser.email}`,
+            bio: `${authUser?.profile.bio}`,
+          }}
+        />
+      )}
+
+      {followerModal && (
         <FollowListModal
           isOpen={followerModal}
           onClose={() => setFollowerModal(false)}
           title="Followers"
           users={Followers}
         />
-      }
-      {
-        followingModal && 
+      )}
 
+      {followingModal && (
         <FollowListModal
           isOpen={followingModal}
           onClose={() => setFollowingModal(false)}
           title="Following's"
           users={Followings}
         />
-      }
+      )}
 
-      {
-        profilePicOpen && <ProfilePhoto setLiked={setLiked} setProfilePicOpen={setProfilePicOpen} user={user}/>
-      }
+      {profilePicOpen && (
+        <ProfilePhoto setLiked={setLiked} setProfilePicOpen={setProfilePicOpen} user={user} />
+      )}
     </div>
   );
-
 };
 
 export default Profile;

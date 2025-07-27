@@ -65,8 +65,8 @@ const HomePostCards = ({ post ,setLiked}) => {
 
 
   return (
-  <div className="w-full p-2 h-[29rem] rounded-2xl transition-colors duration-300 accent-bg-mode accent-text-mode">
-    <div className="border accent-border accent-box-shadow rounded-xl shadow p-4 h-[28rem] flex flex-col justify-between hover:scale-[1.015] transition-transform duration-300 ease-in-out">
+  <div className="w-full p-2 lg:h-[29rem] h-auto rounded-2xl transition-colors duration-300 accent-bg-mode accent-text-mode">
+    <div className="border accent-border accent-box-shadow rounded-xl shadow p-4 lg:h-[28rem] h-auto flex flex-col justify-between hover:scale-[1.015] transition-transform duration-300 ease-in-out">
 
       {/* Row 1 - Categories and Read Time */}
       <div className="flex justify-between items-center flex-wrap text-sm mb-2">
@@ -100,7 +100,7 @@ const HomePostCards = ({ post ,setLiked}) => {
 
       {/* Description */}
       <div className="flex flex-col gap-2 text-sm accent-text-mode mb-3">
-        <div className="text-xs text-gray-400 italic">
+        <div onClick={()=>navigate(`/profile/${post.author._id}`)} className="hover:underline cursor-pointer text-xs text-gray-400 italic">
           By {post.author.firstName + " "+ post.author.lastName || "Anonymous"} •{" "}
          
           {getTimeAgo(post.createdAt)}

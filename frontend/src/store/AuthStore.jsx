@@ -60,7 +60,8 @@ export const useAuthStore = create((set,get)=>({
          }
       }
       catch(e){
-         console.log("error occured in signup function in zustand:",e);
+         toast.error(e.response.data.message)
+         // console.log("error occured in signup function in zustand:",e);
          set({authUser:null});
       }
       finally{
@@ -85,8 +86,10 @@ export const useAuthStore = create((set,get)=>({
                   
       }
       catch(e){
-         toast.error(e.message)
-         console.log("error in the auth store in sendotp:",e);
+         // if(e.message===)
+         toast.error(e.response.data.message)
+         // console.log("error in the auth :",e.response.data.message);
+         // console.log("error in the auth store in sendotp:",e);
       }
       finally{
          set({isSendingotp:false});
@@ -109,7 +112,8 @@ export const useAuthStore = create((set,get)=>({
          }
       }
       catch(e){
-         console.log("Error occured in signup function in zustand store:",e);
+         toast.error(e.response.data.message)
+         // console.log("Error occured in signup function in zustand store:",e);
          toast.error(e.message)
       }
       finally{
@@ -124,7 +128,7 @@ export const useAuthStore = create((set,get)=>({
          if(response.data.success){
             set({token:null});
             set({authUser:null});
-            toast.success("Loggeed out Successfully");
+            toast.success("Logged out Successfully");
             get().disconnectSocket();
             const navigate = get().navigate;
             if(navigate) navigate("/");
@@ -135,7 +139,8 @@ export const useAuthStore = create((set,get)=>({
          }
       }
       catch (error) {
-         console.log("error in logour", error)
+         toast.error(error.response.data.message)
+         // console.log("error in logour", error)
          toast.error(error.message);
       }
       finally{
@@ -157,7 +162,7 @@ export const useAuthStore = create((set,get)=>({
          }
 
          if (!response.data.success && response.data.code === "JWT_EXPIRED") {
-            console.log("Session expired. Showing nothing...");
+            // console.log("Session expired. Showing nothing...");
             return; 
          }
          // console.log("hello",get().authUser)
@@ -166,7 +171,8 @@ export const useAuthStore = create((set,get)=>({
          if(e.message === "JWT_EXPIRED") {
             toast.error("JWT EXpired")
          } 
-         console.log(e);
+         toast.error(e.response.data.message)
+         // console.log(e);
          // toast.error("Error occured in checking auth");
       }
    },
@@ -174,7 +180,7 @@ export const useAuthStore = create((set,get)=>({
    connectSocket: ()=>{
       const {authUser} = get();
       if(!authUser || get().socket?.connected) return;
-      console.log("Connecting with userId:", authUser._id); 
+      // console.log("Connecting with userId:", authUser._id); 
 
       const socket = io(`${process.env.REACT_APP_MODE === "development" ? "http://localhost:4000" : "https://bloggr-y7gx.onrender.com"}`,{
          query:{

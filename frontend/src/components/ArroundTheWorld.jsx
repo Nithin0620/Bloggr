@@ -25,7 +25,7 @@ const ArroundTheWorld = () => {
     fetchTechArticles();
   }, []);
 
-  if(loading) return <div className='flex h-[70vh] justify-center items-center'><div className='spinner'></div></div>
+  if(loading) return <div className='flex md:h-[70vh] h-auto justify-center items-center'><div className='spinner'></div></div>
   
   return (
     <div>

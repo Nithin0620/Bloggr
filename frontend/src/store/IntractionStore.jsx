@@ -38,16 +38,16 @@ export const useIntractionStore = create((set, get) => ({
   getAllPostLikedByCurrentUser: async () => {
     try {
       const response = await axios.get(`${BASE_URL}/interactions/getalllikedpostbycurrentuser`);
-      console.log("response2", response);
+      // console.log("response2", response);
 
       if (response.data.data) {
         const postIds = response.data.data.map(post => post._id);  
         set({ postsLikedByUser: postIds });
-        console.log(postIds)
+        // console.log(postIds)
       }
     } catch (e) {
-      console.log(e);
-      console.log("Error in getAllPostLikedByCurrentUser");
+      // console.log(e);
+      // console.log("Error in getAllPostLikedByCurrentUser");
     }
   },
 
@@ -62,7 +62,7 @@ export const useIntractionStore = create((set, get) => ({
       else return [];
     }
     catch(e){
-      console.log(e);
+      // console.log(e);
       return [];
     }
   },
@@ -77,7 +77,7 @@ export const useIntractionStore = create((set, get) => ({
       else toast.error("Error occured in marking all as read, please try again after sometime")
     }
     catch(e){
-      console.log(e);
+      // console.log(e);
       toast.error("Error occured in marking all as read, please try again after sometime")
     }
   },
@@ -91,7 +91,7 @@ export const useIntractionStore = create((set, get) => ({
       else toast.error("Error occured in marking Notification as read, please try again after sometime")
     }
     catch(e){
-      console.log(e);
+      // console.log(e);
       toast.error("Error occured in marking Notification as read, please try again after sometime")
     }
   },
@@ -105,7 +105,7 @@ export const useIntractionStore = create((set, get) => ({
       else toast.error("Error occured in Deleting Notification, please try again after sometime")
     }
     catch(e){
-      console.log(e);
+      // console.log(e);
       toast.error("Error occured in Deleting Notification, please try again after sometime")
     }
   },
@@ -119,7 +119,7 @@ export const useIntractionStore = create((set, get) => ({
       else toast.error("Error occured in clearing All Notification's, please try again after sometime")
     }
     catch(e){
-      console.log(e);
+      // console.log(e);
       toast.error("Error occured in Clearing All Notification, please try again after sometime")
     }
   }

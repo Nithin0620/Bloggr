@@ -8,8 +8,10 @@ import { Loader } from 'lucide-react';
 import { MdOutlineAutoDelete } from "react-icons/md";
 import {toast} from "react-hot-toast"
 import EmojiPicker from 'emoji-picker-react';
+import { useNavigate } from 'react-router-dom';
 
 const Comment = ({ post:id}) => {
+  const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const inputRef = useRef(null);
@@ -18,7 +20,7 @@ const Comment = ({ post:id}) => {
   const [comments, setComments] = useState(null);
 
   useEffect(()=>{
-    console.log(showEmojiPicker)
+    // console.log(showEmojiPicker)
   },showEmojiPicker)
 
   const [newComment,setNewComment] = useState(false);
@@ -32,9 +34,9 @@ const Comment = ({ post:id}) => {
       
       setLoading(true);
       try {
-        console.log("here")
+        // console.log("here")
         const fetchedComments = await getComments(id);
-        console.log("fetched comments :",fetchedComments)
+        // console.log("fetched comments :",fetchedComments)
         setComments(fetchedComments.data || []);
       } catch (error) {
         console.error('Error fetching comments:', error);
@@ -105,6 +107,7 @@ const Comment = ({ post:id}) => {
     </div>
   );
 
+
   return (
     <div className="sticky top-16 transition-colors duration-300 accent-bg-mode accent-text-mode">
       <div className="w-full max-w-sm">
@@ -164,11 +167,11 @@ const Comment = ({ post:id}) => {
                         }}
                       />
                     </div>
-                    <div onClick={()=>handleDeleteComment(comment)} className='text-red-400 transition-all duration-150 ml-[0.3rem] mt-1 my-auto hover:text-red-600'><MdOutlineAutoDelete/></div>
+                    <div onClick={()=>handleDeleteComment(comment)} className='text-red-400 cursor-pointer transition-all duration-150 ml-[0.3rem] mt-1 my-auto hover:text-red-600'><MdOutlineAutoDelete/></div>
                   </div>
                   
                   <div className="flex-1">
-                    <div className="text-sm flex items-center font-semibold">
+                    <div onClick={()=>navigate(`/profile/${comment.user._id}`)} className="cursor-pointer hover:underline text-sm flex items-center font-semibold">
                       {comment.user.firstName + " " + comment.user.lastName}
                       <span className="ml-2 text-xs accent-text-mode">
                         • {getTimeAgo(comment.updatedAt)}

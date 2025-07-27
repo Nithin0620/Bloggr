@@ -25,7 +25,7 @@ const Trending = () => {
   useEffect(()=>{
     if(liked === false) window.scrollTo({top:0,behavior:'smooth'});
 
-    console.log(postsLikedByUser)
+    // console.log(postsLikedByUser)
 
     setLoading(true);
     const getposts = async()=>{

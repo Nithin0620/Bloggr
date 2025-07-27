@@ -8,12 +8,12 @@ const Message = () => {
   const { chatSelected } = useChatStore();
 
   return (
-    <div className="flex min-h-screen transition-colors duration-300 accent-bg-mode accent-text-mode"> 
+    <div className="flex md:flex-row md:mb-0 mb-7 flex-col  min-h-screen transition-colors duration-300 accent-bg-mode accent-text-mode"> 
       {/* Sidebar */}
       <SideBar />
 
       {/* Chat area */}
-      <div className="flex-1">
+      <div className="flex-1 ">
         {chatSelected ? <ChatSelected /> : <NoChatSelected />}
       </div>
     </div>

@@ -37,7 +37,7 @@ const ShareModal = () => {
       break;
     case "post":
       shareTitle = "Share this Post";
-      shareUrl = `${window.location.origin}/post/${shareData?.postId}`;
+      shareUrl = `${window.location.origin}/readmore/${shareData?.postId}`;
       break;
     default:
       break;

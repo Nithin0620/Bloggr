@@ -10,12 +10,13 @@ export const useProfileStore = create((get,set)=>({
    fetchUserProfile : async(userId)=>{
       try{
          const response = await axios(`${BASE_URL}/profile/viewuserprofile/${userId}`);
-         console.log("Reaspone",response)
+         // console.log("Reaspone",response)
          set({UserProfile:response.data})
          return response.data;
       }
       catch(e){
-         console.log("error in the fetchUser profile function:",e);
+         toast.error(e.response.data.message);
+         // console.log("error in the fetchUser profile function:",e);
          return [];
       }
    },
@@ -31,7 +32,7 @@ export const useProfileStore = create((get,set)=>({
          }
       }
       catch(e){
-         console.log(e);
+         // console.log(e);
          toast.error("Error occured in updating your profile")
       }
    },
@@ -75,7 +76,8 @@ export const useProfileStore = create((get,set)=>({
          else return [];
       }
       catch(e){
-         console.log(e);
+         // console.log(e);
+         toast.error(e.response.data.message);
          return [];
       }
    },
@@ -89,6 +91,7 @@ export const useProfileStore = create((get,set)=>({
          else return [];
       }
       catch(e){
+         toast.error(e.response.data.message);
          // console.log(e);
          return [];
       }

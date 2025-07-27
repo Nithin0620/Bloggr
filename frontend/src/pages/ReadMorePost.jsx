@@ -16,7 +16,7 @@ import { useIntractionStore } from '../store/IntractionStore';
 
 const ReadMorePost = () => {
    const {LikeUnlikePost,postsLikedByUser} = useIntractionStore();
-   console.log("posts liked by user",postsLikedByUser)
+   // console.log("posts liked by user",postsLikedByUser)
    
 
    const getTimeAgo = (timestamp) => {
@@ -128,7 +128,7 @@ const ReadMorePost = () => {
          </div>
          )}
          <div onClick={() => handleNavigate()} className='  pt-9 cursor-pointer flex accent-text left-0 items-center accent-shadow hover:scale-105 transition-all ease-in-out duration-500 font-sans gap-2'><IoCaretBack/> Back</div>
-         <div className="flex sm:flex-col md:flex-row gap-8 pt-5">
+         <div className="flex flex-col lg:flex-row lg:gap-8">
             {/* LEFT: Post Content */}
             <div className="w-full lg:w-[70%] space-y-6">
                <h1 className="text-3xl font-bold accent-text">{post.title}</h1>
@@ -145,7 +145,7 @@ const ReadMorePost = () => {
                </div>
 
                <div className="text-sm text-gray-500 flex gap-4 flex-wrap">
-                  <span className="accent-text">{post.author.firstName + " " + post.author.lastName}</span>
+                  <span onClick={()=>navigate(`/profile/${post.author._id}`)} className="cursor-pointer hover:underline accent-text">{post.author.firstName + " " + post.author.lastName}</span>
                   <span>• {getTimeAgo(post.createdAt)}</span>
                   <span>• {post.readTime} min read</span>
                </div>
@@ -177,17 +177,17 @@ const ReadMorePost = () => {
                   ########## <h1 className='px-5 font-bold font-serif accent-text accent-underline'>END OF THE BLOG</h1> ##########
                </div>
 
-               <div className='min-w-full h-[0.12rem] bg-slate-400'></div>
+               <div className="block lg:hidden h-[0.12rem] w-full bg-gray-400 my-5"></div>
 
                <div>
                   <RelatedBlogs />
                </div>
             </div>
 
-            <div className='min-h-screen w-[0.12rem] bg-gray-400 mx-5'></div>
+            <div className="hidden lg:block lg:min-h-screen w-[0.12rem] bg-gray-400 mx-5"></div>
 
             {/* RIGHT: Comment Section */}
-            <div className="w-full lg:w-[25%] top-0">
+            <div className="w-full lg:w-[25%]">
                <Comment post={post._id} />
             </div>
          </div>

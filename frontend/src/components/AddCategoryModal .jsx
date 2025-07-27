@@ -11,7 +11,7 @@ const AddCategoryModal = ({ isOpen, setAddCategoryOpen,setCategoryCreated }) => 
 
   const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log(categoryName)
+    // console.log(categoryName)
     if (!categoryName.trim()) return;
     
     setLoading(true);

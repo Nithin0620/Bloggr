@@ -51,7 +51,7 @@ const CreatePostHandler = () => {
       });
 
       for (let pair of formData.entries()) {
-         console.log(`${pair[0]}: ${pair[1]}`);
+         // console.log(`${pair[0]}: ${pair[1]}`);
       }
 
       setLoading(true);
@@ -102,7 +102,7 @@ const CreatePostHandler = () => {
 
    return (
       <div className="fixed  inset-0 z-40 flex custom-scroll items-center justify-center backdrop-blur-[1px] bg-opacity-40">
-         <div className="w-1/2 max-h-[75vh] overflow-y-auto rounded-lg p-6 accent-bg-mode shadow-accent-box relative">
+         <div className="md:w-1/2 sm:w-2/3 max-h-[75vh] overflow-y-auto rounded-lg p-6 accent-bg-mode shadow-accent-box relative">
          <button
             className="absolute hover:rotate-90 hover:scale-75 transition-all duration-500 top-4 right-4 text-2xl text-red-500"
             onClick={() => handleclose()}

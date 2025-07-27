@@ -50,7 +50,7 @@ const DevToPostCard = ({ post }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full max-w-3xl mx-auto my-4 accent-bg-mode accent-text-mode border rounded-2xl overflow-hidden hover:scale-[1.01] transition-all duration-300">
+    <div className="w-full max-w-3xl mx-auto md:my-4 my-10 accent-bg-mode accent-text-mode border accent-border rounded-2xl overflow-hidden hover:scale-[1.01] transition-all duration-300">
       <div className="flex flex-col md:flex-row w-full">
         <div className="w-full md:w-1/3 h-44 md:h-auto">
           <img

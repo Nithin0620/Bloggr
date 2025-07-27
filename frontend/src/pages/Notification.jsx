@@ -149,12 +149,12 @@ const Notification = () => {
 
   return (
     <div className="p-6 min-h-screen flex justify-around transition-colors duration-300 accent-bg-mode accent-text-mode">
-      <div className="w-[50%]">
+      <div className="md:w-[50%] w-full">
         {/* Header */}
         <div className="text-xl  font-semibold mb-4 accent-text">🔔 Notifications</div>
 
         {/* Filter Buttons */}
-        <div className="flex gap-4 mb-4">
+        <div className="flex md:gap-4 gap-3 md:mb-4 mb-4">
           {["All", "Like", "Comment", "Follow"].map((type) => (
             <button
               key={type}
@@ -256,7 +256,7 @@ const Notification = () => {
 
               {/* Post Image & Description */}
               {notification.post?.image && (
-                <div onClick={() => handleViewPost(notification._id,notification.post._id)} className="flex items-center -mt-3 gap-4">
+                <div onClick={() => handleViewPost(notification._id,notification.post._id)} className="flex items-center md:-mt-3 mt-0 gap-4">
                   <img
                     src={notification.post.image}
                     alt="post"
@@ -276,7 +276,7 @@ const Notification = () => {
               {notification.type === "follow" && (
                 <div
                   onClick={handleChatClick}
-                  className="text-sm cursor-pointer accent-underline accent-text"
+                  className=" cursor-pointer font-bold text-base hover:underline accent-text"
                 >
                   Send a "Hello!" on chat?
                 </div>

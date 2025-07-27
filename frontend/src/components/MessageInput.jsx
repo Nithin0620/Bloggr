@@ -36,7 +36,7 @@ const MessageInput = () => {
 
     try {
       setLoading(true);
-      console.log(text);
+      // console.log(text);
       await sendMessage({
         text: text.trim() || null,
         image: imagePreview || null,

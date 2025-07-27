@@ -33,7 +33,7 @@ export const usePostStore = create((get,set)=>({
       // console.log(get().categoryList)
     }
     catch(e){
-      console.log(e);
+      // console.log(e);
       return [];
     }
     set({createPostLoading:false});
@@ -54,7 +54,7 @@ export const usePostStore = create((get,set)=>({
       // console.log(get().categoryList)
     }
     catch(e){
-      console.log(e);
+      // console.log(e);
       toast.error("Unable to fetch post by category!")
       return [];
     }
@@ -62,9 +62,9 @@ export const usePostStore = create((get,set)=>({
   },
   createCategory : async(data)=>{
     try{
-      console.log(data)
+      // console.log(data)
       const response = await axios.post(`${BASE_URL}/category/createcategory`,{categoryName:data});
-      console.log("respone for create category",response);
+      // console.log("respone for create category",response);
 
       if(response.data.success){
         toast.success("New Category Created Successfully!")
@@ -76,8 +76,9 @@ export const usePostStore = create((get,set)=>({
       }
     }
     catch(e){
-      console.log(e);
-      toast.error("Unable to create New category. pls try again after some time.");
+      // console.log(e);
+      toast.error(e.response.data.message)
+      // toast.error("Unable to create New category. pls try again after some time.");
       return false;
     }
   },
@@ -96,7 +97,8 @@ export const usePostStore = create((get,set)=>({
       // console.log(get().posts);
     }
     catch(e){
-      console.log(e);
+      // console.log(e);
+      toast.error(e.response.data.message)
       return [];
     }
     finally{
@@ -112,13 +114,14 @@ export const usePostStore = create((get,set)=>({
     try{
       // console.log("in the store")
       const response =  await axios.get(`${BASE_URL}/post/getpostbyid/${postId}`);
-      console.log("response in the from id:",response.data.data);
+      // console.log("response in the from id:",response.data.data);
       set({readMorePostData:response.data.data})
       return response.data.data;
       // console.log(get().posts);
     }
     catch(e){
-      console.log(e);
+      // console.log(e);
+      toast.error(e.response.data.message);
       return [];
     }
     finally{
@@ -129,11 +132,12 @@ export const usePostStore = create((get,set)=>({
   getComments : async(id)=>{
     try{
       const response = await axios.get(`${BASE_URL}/interactions/getcomments/${id}`)
-      console.log("comments,:" , response.data);
+      // console.log("comments,:" , response.data);
       return response.data;
     }
     catch(e){
-      console.log(e)
+      // console.log(e)
+      
       return [];
     }
   },
@@ -150,14 +154,14 @@ export const usePostStore = create((get,set)=>({
       }
     }
     catch(e){
-      console.log(e);
+      // console.log(e);
     }
   },
 
   deleteComment:async(id,commentId)=>{
     try{
       const response  = await axios.delete(`${BASE_URL}/interactions/deletecomment/${id}/${commentId}`);
-      console.log(response)
+      // console.log(response)
 
       if(response.data.success){
         toast.success("comment Deleted Successfully");
@@ -167,7 +171,7 @@ export const usePostStore = create((get,set)=>({
       }
     }
     catch(e){
-      console.log(e);
+      // console.log(e);
     }
   },
 
@@ -184,7 +188,7 @@ export const usePostStore = create((get,set)=>({
           withCredentials: true, // if using cookies for auth
         }
       );
-      console.log(res)
+      // console.log(res)
       if(res.data.success){
         toast.success("New Blog posted successfully.")
         return true;
@@ -196,8 +200,8 @@ export const usePostStore = create((get,set)=>({
       }
     }
     catch(e){
-      console.log(e)
-      toast.error("Error occured in posting the Blog!",e.message)
+      // console.log(e)
+      toast.error("Error occured in posting the Blog!",e.response.data.message)
       return false;
     }
     finally{
@@ -222,7 +226,7 @@ export const usePostStore = create((get,set)=>({
           withCredentials: true,
         }
       );
-      console.log(res)
+      // console.log(res)
       if(res.data.success){
         toast.success(" Blog updated successfully.")
         // return res.data.data;
@@ -234,8 +238,9 @@ export const usePostStore = create((get,set)=>({
       }
     }
     catch(e){
-      console.log(e)
-      toast.error("Error occured in posting the Blog!",e.message)
+      // console.log(e)
+      // toast.error(e.response.data.message)
+      toast.error("Error occured in posting the Blog!",e.response.data.message)
     }
     finally{
       set({updatePostLoading:false});
@@ -253,7 +258,8 @@ export const usePostStore = create((get,set)=>({
 
     }
     catch(e){
-      console.log(e);
+      toast.error(e.response.data.message)
+      // console.log(e);
     }
   }
 

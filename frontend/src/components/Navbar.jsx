@@ -46,7 +46,7 @@ const Navbar = () => {
 
   return (
     <div>
-    <div className="min-w-full flex items-center justify-between px-6 py-[0.65rem] top-0 sticky z-50 transition-colors duration-300 accent-text-mode accent-bg-mode  accent-box-shadow shadow-sm ">
+    <div className="min-w-full flex items-center justify-between md:px-6 px-2 py-[0.65rem] top-0 sticky z-50 transition-colors duration-300 accent-text-mode accent-bg-mode  accent-box-shadow shadow-sm ">
       <div
         onClick={() => handleOnClickForNavigate("home")}
         className="flex items-center space-x-2 cursor-pointer accent-text  transition"
@@ -62,7 +62,7 @@ const Navbar = () => {
         <h1 className="text-xl font-bold tracking-wide">Bloggr</h1>
       </div>
 
-      <div className="flex items-center transition-all duration-500 space-x-6">
+      <div className="flex items-center transition-all duration-500 md:space-x-6 space-x-3">
         <div
           onClick={handleCreatePostClick}
           className="flex items-center space-x-2 cursor-pointer group group-hover:scale-105 transition rounded-3xl p-[0.15rem] accent-shadow"

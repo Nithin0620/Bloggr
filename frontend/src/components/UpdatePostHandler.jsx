@@ -58,7 +58,7 @@ const UpdatePostHandler = ({ post,setPostUpdated }) => {
          toast.error("Please select at least one category!");
          return;
       }
-      console.log(data)
+      // console.log(data)
 
       const formData = new FormData();
       formData.append("title", data.title);
@@ -97,7 +97,7 @@ const UpdatePostHandler = ({ post,setPostUpdated }) => {
    };
 
    const handleRemoveCategory = (cat) => {
-      console.log("here")
+      // console.log("here")
       setSelectedCategories((prev) => prev.filter((catId) => catId !== cat));
    };
 

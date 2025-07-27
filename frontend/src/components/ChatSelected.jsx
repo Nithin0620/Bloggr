@@ -56,7 +56,7 @@ const ChatSelected = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col custom-scroll accent-border border max-h-[79vh] rounded-2xl mx-5 mt-5 overflow-auto">
+    <div className="flex-1 flex flex-col custom-scroll accent-border border min-h-[79vh] max-h-[79vh] rounded-2xl mx-5 mt-5 overflow-auto">
       <ChatHeader />
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -99,7 +99,7 @@ const ChatSelected = () => {
                     className={`chat-bubble  p-2 text-sm break-words shadow-sm
                     ${isSentByMe
                       ? "accent-bg bg-opacity-70 text-white self-end rounded-t-2xl rounded-bl-2xl "
-                      : "accent-bg-mode accent-border border accent-text-mode self-start rounded-bl-none"
+                      : "accent-bg-mode border accent-border rounded-t-2xl rounded-br-2xl accent-text-mode self-start "
                     }`}
                   >
                     {/* Image if present */}

@@ -6,7 +6,6 @@
 
 
 /* spinner stype */
-
 .spinner {
    width: 56px;
    height: 56px;
@@ -44,7 +43,6 @@
 
 /* theme setting section */
 :root {
-  /* fallback values - not enforced if JS sets it */
   --accent: var(--accent, #22c55e);
   --accent-bg-light: var(--accent-bg-light, #d1fae5);
   --accent-bg-dark: var(--accent-bg-dark, #15803d);
@@ -112,20 +110,19 @@
 
 
 
-/* Hide spinner arrows for number input (Chrome, Safari, Edge) */
 .no-spinner::-webkit-inner-spin-button,
 .no-spinner::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-/* For Firefox */
 .no-spinner {
   -moz-appearance: textfield;
 }
 
 
 
+/* cuustom cursor */
 .custom-scroll::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -142,7 +139,6 @@
   background-clip: content-box;
 }
 
-/* For Firefox */
 .custom-scroll {
   scrollbar-width: thin;
   scrollbar-color: var(--accent-bg-light) transparent;

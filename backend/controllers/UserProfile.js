@@ -203,9 +203,9 @@ exports.followUser = async (req, res) => {
       currentProfile.following.push(targetUserId);
 
       const responseNotification = await Notification.create({
-         sender: currentProfile._id,
+         sender: currentUser._id,
          type: "follow",
-         receiver: targetProfile._id,
+         receiver: targetUser._id,
       });
 
       const settings = await Settings.findOne({ user: targetUser._id });
@@ -256,34 +256,40 @@ exports.followUser = async (req, res) => {
    }
 };
 
-exports.unfollowUser = async(req,res)=>{
-   try{
+exports.unfollowUser = async (req, res) => {
+   try {
       const currentUserId = req.user.user._id;
       const targetUserId = req.params.id;
 
       if (currentUserId === targetUserId) {
          return res.status(400).json({
-         success: false,
-         message: "You cannot Unfollow yourself",
+            success: false,
+            message: "You cannot unfollow yourself",
          });
       }
 
+      // Fetch users with their profiles
       const targetUser = await User.findById(targetUserId).populate("profile");
       const currentUser = await User.findById(currentUserId).populate("profile");
 
       if (!targetUser || !currentUser) {
          return res.status(404).json({
-         success: false,
-         message: "User not found",
-         });
-      }
-       if (!targetProfile.followers.includes(currentUserId)) {
-         return res.status(400).json({
-         success: false,
-         message: "You have already Un followed this user",
+            success: false,
+            message: "User not found",
          });
       }
 
+      const targetProfile = targetUser.profile;
+      const currentProfile = currentUser.profile;
+
+      if (!targetProfile.followers.includes(currentUserId)) {
+         return res.status(400).json({
+            success: false,
+            message: "You are not following this user",
+         });
+      }
+
+      // Remove from followers and following
       targetProfile.followers.pull(currentUserId);
       currentProfile.following.pull(targetUserId);
 
@@ -292,17 +298,17 @@ exports.unfollowUser = async(req,res)=>{
 
       return res.status(200).json({
          success: true,
-         message: "User Un followed successfully",
+         message: "User unfollowed successfully",
       });
-   } 
-   catch (e) {
-      console.log(e);
+   } catch (e) {
+      console.error(e);
       return res.status(500).json({
          success: false,
-         message: "An error occurred while Un following the user",
+         message: "An error occurred while unfollowing the user",
       });
    }
 };
+
 
 exports.getFollowersList = async(req,res)=>{
    try{

@@ -26,7 +26,7 @@ export const useSettingsStore = create((get,set)=>({
       }
 
       catch(e){
-         console.log(e);
+         // console.log(e);
          toast.error("Error in saving the settings, please try again after some time");
          return false;
       }
@@ -40,7 +40,7 @@ export const useSettingsStore = create((get,set)=>({
             set({mode:response.data.data.mode});
             localStorage.setItem("accent-theme",response.data.data.theme);
             localStorage.setItem("accent-mode",response.data.data.mode);
-            console.log(response.data.data.theme)
+            // console.log(response.data.data.theme)
             applyMode(response.data.data.mode);
             applyTheme(response.data.data.theme);
             return response.data.data;
@@ -48,7 +48,8 @@ export const useSettingsStore = create((get,set)=>({
          else return null;
       }
       catch(e){
-         console.log("Error occure in the getSettings function",e);
+         
+         // console.log("Error occure in the getSettings function",e);
       }
    },
 
@@ -66,7 +67,7 @@ export const useSettingsStore = create((get,set)=>({
          }
       }
       catch(e){
-         console.log("error occured in reset settings function:",e);
+         // console.log("error occured in reset settings function:",e);
          toast.error("Error occured in resetting the settings!")
          return false;
       }
