@@ -166,7 +166,7 @@ const Home = () => {
               ))}
             </select>
 
-            <button onClick={handleAddCategory} className="text-sm hover:scale-105 cursor-pointer transition-all duration-300 flex items-center px-4 gap-1 py-2 border accent-border rounded-md shadow-sm  accent-bg-mode accent-text-mode ">
+            <button onClick={handleAddCategory} className="text-sm hover:scale-105 cursor-pointer transition-all duration-300 flex items-center px-2 gap-1 py-2 border accent-border rounded-md shadow-sm  accent-bg-mode accent-text-mode ">
                 <FaPlus/> <p>Add new Category</p>
             </button>
           </div>
