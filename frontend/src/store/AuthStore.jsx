@@ -168,10 +168,10 @@ export const useAuthStore = create((set,get)=>({
          // console.log("hello",get().authUser)
       }
       catch(e){
-         if(e.message === "JWT_EXPIRED") {
-            toast.error("JWT EXpired")
-         } 
-         toast.error(e.response.data.message)
+         // if(e.message === "JWT_EXPIRED") {
+         //    toast.error("JWT EXpired")
+         // } 
+         // toast.error(e.response.data.message)
          // console.log(e);
          // toast.error("Error occured in checking auth");
       }
