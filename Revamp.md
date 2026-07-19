@@ -25,11 +25,11 @@ Feature	What to Build
 <!-- Rich Text Editor	Replace textarea with TipTap/BlockNote — headings, bold, code blocks, embeds, markdown (Done) -->
 <!-- Bookmarks/Save Posts	Backend model + UI — the README mentions it but it's not implemented
 Pagination	getAllPosts fetches everything — add cursor/offset pagination -->
-Forgot Password	Button exists but does nothing — full OTP-based password reset flow
-Followed Feed	Settings has "Followed" option but Home page doesn't filter by it
+<!-- Forgot Password	Button exists but does nothing — full OTP-based password reset flow -->
+<!-- Followed Feed	Settings has "Followed" option but Home page doesn't filter by it
 Post Scheduling	Schedule posts for future publishing
 Reading List	Curate personal collections of saved posts
-Tags System	Alongside categories — multi-tag support for better discovery
+Tags System	Alongside categories — multi-tag support for better discovery -->
 Dark Mode Improvements	Fix theme persistence, add system theme detection
 UI/UX Improvements
 Improvement	What to Do

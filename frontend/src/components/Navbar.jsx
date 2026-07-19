@@ -88,30 +88,44 @@ const Navbar = () => {
             </div>
           ) : (
             <div className="flex items-center gap-4">
-              <FaRegBookmark
-                onClick={() => handleOnClickForNavigate("bookmarks")}
-                className={`cursor-pointer text-xl hover:scale-105 transition ${
-                  currentPage === "bookmarks"
-                    ? "accent-text"
-                    : ""
-                }`}
-              />
-              <BiListPlus
-                onClick={() => handleOnClickForNavigate("readinglists")}
-                className={`cursor-pointer text-xl hover:scale-105 transition ${
-                  currentPage === "readinglists"
-                    ? "accent-text"
-                    : ""
-                }`}
-              />
-              <IoSettingsOutline
-                onClick={() => handleOnClickForNavigate("settings")}
-                className={`cursor-pointer text-xl hover:scale-105 transition ${
-                  currentPage === "settings"
-                    ? "accent-text rotate-90 ease-in-out transition-all duration-300"
-                    : ""
-                }`}
-              />
+              <div className="relative group">
+                <FaRegBookmark
+                  onClick={() => handleOnClickForNavigate("bookmarks")}
+                  className={`cursor-pointer text-xl hover:scale-105 transition ${
+                    currentPage === "bookmarks" ? "accent-text" : ""
+                  }`}
+                />
+                <div className="absolute -bottom-9 left-1/2 -translate-x-1/2 px-3 py-1 rounded-lg bg-gray-900 text-white text-[0.65rem] font-medium whitespace-nowrap shadow-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  Bookmarks
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 -mb-1" />
+                </div>
+              </div>
+              <div className="relative group">
+                <BiListPlus
+                  onClick={() => handleOnClickForNavigate("readinglists")}
+                  className={`cursor-pointer text-xl hover:scale-105 transition ${
+                    currentPage === "readinglists" ? "accent-text" : ""
+                  }`}
+                />
+                <div className="absolute -bottom-9 left-1/2 -translate-x-1/2 px-3 py-1 rounded-lg bg-gray-900 text-white text-[0.65rem] font-medium whitespace-nowrap shadow-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  Reading Lists
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 -mb-1" />
+                </div>
+              </div>
+              <div className="relative group">
+                <IoSettingsOutline
+                  onClick={() => handleOnClickForNavigate("settings")}
+                  className={`cursor-pointer text-xl hover:scale-105 transition ${
+                    currentPage === "settings"
+                      ? "accent-text rotate-90 ease-in-out transition-all duration-300"
+                      : ""
+                  }`}
+                />
+                <div className="absolute -bottom-9 left-1/2 -translate-x-1/2 px-3 py-1 rounded-lg bg-gray-900 text-white text-[0.65rem] font-medium whitespace-nowrap shadow-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  Settings
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 -mb-1" />
+                </div>
+              </div>
             </div>
           )}
         </div>

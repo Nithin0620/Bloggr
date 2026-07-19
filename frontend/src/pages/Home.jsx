@@ -6,7 +6,6 @@ import { useAuthStore } from "../store/AuthStore";
 import { usePostStore } from "../store/PostStore";
 import {Loader} from "lucide-react"
 import { useIntractionStore } from "../store/IntractionStore";
-import { useSettingsStore } from "../store/SettingsStore";
 import { usePageStore } from "../store/PageStore";
 import { FaPlus } from "react-icons/fa6";
 import AddCategoryModal from "../components/AddCategoryModal ";
@@ -15,65 +14,46 @@ import toast from "react-hot-toast";
 const Home = () => {
   const [liked,setLiked] = useState(false);
   const {token,authUser} = useAuthStore();
-  const {getSettings} = useSettingsStore();
   const {isCreatePostOpen} = usePageStore();
   const {getAllPostLikedByCurrentUser} = useIntractionStore();
-  const { fetchCategories, categoriesList,posts,fetchPosts ,createPostLoading , fetchPostsByCategories, fetchMorePosts, fetchFollowedPosts, fetchMoreFollowedPosts, hasMore, fetchPostLoading} = usePostStore();
-  const [categories,setCategories] = useState([]);
-  const [Post,setPost] = useState([]);
-  const [PostCopy,setPostCopy] = useState([]);
-  const[loading , setLoading] = useState(false);
-  const [categoryCreated,setCategoryCreated] = useState(false);
-  const [categorySelected,setCategorySelected] = useState("");
-  const [addCategoryOpen,setAddCategoryOpen] = useState(false);
+  const { fetchCategories, posts, fetchPosts, fetchPostsByCategories, fetchMorePosts, hasMore, fetchPostLoading } = usePostStore();
+  const [categories, setCategories] = useState([]);
+  const [Post, setPost] = useState([]);
+  const [PostCopy, setPostCopy] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [categoryCreated, setCategoryCreated] = useState(false);
+  const [categorySelected, setCategorySelected] = useState("");
+  const [addCategoryOpen, setAddCategoryOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [feedType, setFeedType] = useState("All");
   const observerRef = useRef(null);
-  const loadMoreRef = useRef(null);
 
   const fetchCategoryAndPostfromStore = async()=>{
       setLoading(true);
       const array = await fetchCategories();
-      const settings = await getSettings();
-      const feedPref = settings?.homeFeedType;
       let PostArray = [];
 
-      if (token && authUser && Array.isArray(feedPref) && feedPref.length === 1 && feedPref[0] === "Followed") {
-        setFeedType("Followed");
-        PostArray = await fetchFollowedPosts();
-      } else if (Array.isArray(feedPref) && feedPref.length > 0 && feedPref[0] !== "All" && feedPref[0] !== "Followed") {
-        setFeedType("Categories");
-        PostArray = await fetchPostsByCategories(feedPref[0]);
-      } else {
-        setFeedType("All");
-        PostArray = await fetchPosts();
-      }
+      PostArray = await fetchPosts();
 
       setCategorySelected("All Categories");
       setPost(PostArray);
       setPostCopy(PostArray);
       setCategories(array);
       setLoading(false);
-      setLiked(false);
     }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setCategoryCreated(false);
-    const getSettingsOnRender = async()=>{
-      await getSettings();
-    }
-    getSettingsOnRender();
-    setCategorySelected("All Categories")
+    setCategorySelected("All Categories");
     getAllPostLikedByCurrentUser();
     fetchCategoryAndPostfromStore();
-  }, [fetchCategories,categoriesList,fetchPosts,posts,liked,createPostLoading,isCreatePostOpen,categoryCreated]);
+  }, [isCreatePostOpen, categoryCreated]);
 
   const lastPostRef = useCallback((node) => {
     if (observerRef.current) observerRef.current.disconnect();
     observerRef.current = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && hasMore && !loading && !fetchPostLoading && searchTerm === "" && categorySelected === "All Categories") {
-        const loadMore = feedType === "Followed" ? fetchMoreFollowedPosts : fetchMorePosts;
-        loadMore().then((newPosts) => {
+        fetchMorePosts().then((newPosts) => {
           if (newPosts) {
             setPost((prev) => [...prev, ...newPosts]);
           }
@@ -81,12 +61,7 @@ const Home = () => {
       }
     }, { threshold: 0.1 });
     if (node) observerRef.current.observe(node);
-  }, [hasMore, loading, fetchPostLoading, searchTerm, categorySelected, fetchMorePosts, fetchMoreFollowedPosts, feedType]);
-
-  useEffect(() => {
-    setPost(posts);
-    setPostCopy(posts);
-  }, [posts]);
+  }, [hasMore, loading, fetchPostLoading, searchTerm, categorySelected, fetchMorePosts]);
 
   const fetchCategoryWisePost = async(e)=>{
     setLoading(true);

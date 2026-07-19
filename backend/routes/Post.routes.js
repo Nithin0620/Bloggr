@@ -11,16 +11,12 @@ const {
    getPostById,
    getPostByCategory,
    getPostByUser,
-   getFollowedPosts,
-   getScheduledPosts
 } = require("../controllers/Post")
 
 router.post("/createpost",protectRoute,upload.single("image"),createPost);
 router.put("/updatepost/:id",protectRoute,upload.single("image"),updatePost);
 router.delete("/deletepost/:id",protectRoute,deletePost);
 router.get("/getallposts",getAllPosts)
-router.get("/getfollowedposts",protectRoute,getFollowedPosts)
-router.get("/getscheduledposts",protectRoute,getScheduledPosts)
 router.get("/getpostbyid/:id",getPostById);
 router.get("/getpostbycategory/:category",getPostByCategory);
 router.get("/getpostbyuser/:id",getPostByUser);

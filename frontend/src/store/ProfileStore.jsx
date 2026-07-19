@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 
 const BASE_URL = process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api" : "/api";
 
-export const useProfileStore = create((get,set)=>({
+export const useProfileStore = create((set,get)=>({
    UserProfile : null,
 
    fetchUserProfile : async(userId)=>{

@@ -274,12 +274,7 @@ exports.getAllPosts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 12;
     const cursor = req.query.cursor;
 
-    const query = {
-      $or: [
-        { status: "published" },
-        { status: "scheduled", scheduledAt: { $lte: new Date() } },
-      ]
-    };
+    const query = {};
     if (cursor) {
       query.createdAt = { $lt: new Date(cursor) };
     }
@@ -385,99 +380,7 @@ exports.getPostByCategory = async (req, res) => {
    }
 };
 
-exports.getFollowedPosts = async (req, res) => {
-  try {
-    const userId = req.user.user._id;
-    const limit = parseInt(req.query.limit) || 12;
-    const cursor = req.query.cursor;
 
-    const user = await User.findById(userId).populate("profile");
-    if (!user || !user.profile) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-
-    const followingIds = user.profile.following || [];
-
-    if (followingIds.length === 0) {
-      return res.status(200).json({
-        success: true,
-        message: "No followed users",
-        data: [],
-        nextCursor: null,
-        hasMore: false,
-      });
-    }
-
-    const query = { 
-      author: { $in: followingIds },
-      $or: [
-        { status: "published" },
-        { status: "scheduled", scheduledAt: { $lte: new Date() } },
-      ]
-    };
-    if (cursor) {
-      query.createdAt = { $lt: new Date(cursor) };
-    }
-
-    const response = await Post.find(query)
-      .populate("author", "firstName lastName image profilePic")
-      .populate("categories", "name")
-      .populate("likes", "firstName lastName createdAt")
-      .populate({
-        path: "comments",
-        populate: { path: "user", select: "firstName lastName image" },
-      })
-      .sort({ createdAt: -1 })
-      .limit(limit + 1)
-      .exec();
-
-    const hasMore = response.length > limit;
-    const posts = hasMore ? response.slice(0, limit) : response;
-    const nextCursor = hasMore ? posts[posts.length - 1].createdAt : null;
-
-    return res.status(200).json({
-      success: true,
-      message: "Followed posts fetched successfully",
-      data: posts,
-      nextCursor,
-      hasMore,
-    });
-  } catch (e) {
-    console.log(e);
-    return res.status(500).json({
-      success: false,
-      message: "Error fetching followed posts",
-    });
-  }
-};
-
-exports.getScheduledPosts = async (req, res) => {
-  try {
-    const userId = req.user.user._id;
-
-    const response = await Post.find({
-      author: userId,
-      status: "scheduled",
-      scheduledAt: { $gt: new Date() },
-    })
-      .populate("author", "firstName lastName image profilePic")
-      .populate("categories", "name")
-      .sort({ scheduledAt: 1 })
-      .exec();
-
-    return res.status(200).json({
-      success: true,
-      message: "Scheduled posts fetched successfully",
-      data: response,
-    });
-  } catch (e) {
-    console.log(e);
-    return res.status(500).json({
-      success: false,
-      message: "Error fetching scheduled posts",
-    });
-  }
-};
 
 exports.getPostByUser = async(req,res)=>{
    try{

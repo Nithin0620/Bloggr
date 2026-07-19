@@ -6,7 +6,7 @@ import { applyMode, applyTheme } from "../lib/SetColours";
 const BASE_URL = process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api" : "/api";
 
 
-export const useSettingsStore = create((get,set)=>({
+export const useSettingsStore = create((set,get)=>({
    theme:"Green",
    mode:"Light",
    
@@ -31,25 +31,23 @@ export const useSettingsStore = create((get,set)=>({
          return false;
       }
    },
-   getSettings : async()=>{
-      try{
-         const response = await axios.get(`${BASE_URL}/settings/getsettings`)
+   getSettings: async () => {
+      try {
+         const response = await axios.get(`${BASE_URL}/settings/getsettings`, { withCredentials: true });
 
-         if(response.data.success){
-            set({theme:response.data.data.theme});
-            set({mode:response.data.data.mode});
-            localStorage.setItem("accent-theme",response.data.data.theme);
-            localStorage.setItem("accent-mode",response.data.data.mode);
-            // console.log(response.data.data.theme)
+         if (response.data.success) {
+            set({ theme: response.data.data.theme });
+            set({ mode: response.data.data.mode });
+            localStorage.setItem("accent-theme", response.data.data.theme);
+            localStorage.setItem("accent-mode", response.data.data.mode);
             applyMode(response.data.data.mode);
             applyTheme(response.data.data.theme);
             return response.data.data;
          }
-         else return null;
+         return null;
       }
-      catch(e){
-         
-         // console.log("Error occure in the getSettings function",e);
+      catch (e) {
+         return null;
       }
    },
 

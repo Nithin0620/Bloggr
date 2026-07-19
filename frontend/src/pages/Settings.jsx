@@ -55,9 +55,8 @@ const Settings = () => {
       if(response){
          setTheme(response.theme);
          setMode(response.mode);
-         if(response.homeFeedType[0] === "All") setFeed("All");
-         else if(response.homeFeedType[0] === "Followed" ) setFeed("Followed");
-         else {
+         if(response.homeFeedType && response.homeFeedType[0] === "All") setFeed("All");
+         else if(response.homeFeedType && response.homeFeedType.length > 0 && response.homeFeedType[0] !== "All") {
             setSelectedCategories(response.homeFeedType)
          }
          setNotifications({email:response.emailNotification,push:response.pushNotification});
@@ -250,42 +249,33 @@ const Settings = () => {
          <div className="w-full h-[1px] accent-border" />
 
          {/* Feed Preference */}
-         <div>
-            <h1 className="text-base font-semibold mb-2">
-               What type of Feed Recommendations do you want?
-            </h1>
-            <div className="flex flex-wrap gap-4 items-center">
-               <label className="flex items-center gap-2">
-                  <input
-                     type="checkbox"
-                     checked={feed === "All"}
-                     onClick={() => setFeed("All")}
-                  />
-                  All
-               </label>
+          <div>
+             <h1 className="text-base font-semibold mb-2">
+                What type of Feed Recommendations do you want?
+             </h1>
+             <div className="flex flex-wrap gap-4 items-center">
+                <label className="flex items-center gap-2">
+                   <input
+                      type="checkbox"
+                      checked={feed === "All"}
+                      onClick={() => setFeed("All")}
+                   />
+                   All
+                </label>
 
-               <label className="flex items-center gap-2">
-                  <input
-                     type="checkbox"
-                     checked={feed === "Followed"}
-                     onClick={() => setFeed("Followed")}
-                  />
-                  Followed
-               </label>
-
-               <select
-                  className="border accent-border rounded px-3 py-1 select:border-none transition-colors duration-300 accent-bg-mode accent-text-mode"
-                  value={selectedCategories.length > 0 ? selectedCategories[selectedCategories.length - 1] : ""}
-                  onChange={(e) => handleCategorySelect(e.target.value)}
-               >
-                  <option value="" disabled>Select Categories Instead</option>
-                  {categories.map((category, index) => (
-                     <option key={index} value={category}>
-                        {category}
-                     </option>
-                  ))}
-               </select>
-            </div>
+                <select
+                   className="border accent-border rounded px-3 py-1 select:border-none transition-colors duration-300 accent-bg-mode accent-text-mode"
+                   value={selectedCategories.length > 0 ? selectedCategories[selectedCategories.length - 1] : ""}
+                   onChange={(e) => handleCategorySelect(e.target.value)}
+                >
+                   <option value="" disabled>Select Categories Instead</option>
+                   {categories.map((category, index) => (
+                      <option key={index} value={category}>
+                         {category}
+                      </option>
+                   ))}
+                </select>
+             </div>
 
             {/* Selected Categories */}
             {selectedCategories.length > 0 && (
