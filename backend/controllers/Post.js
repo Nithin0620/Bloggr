@@ -2,14 +2,14 @@ const User = require("../modals/user");
 const Post = require("../modals/post");
 const Profile = require("../modals/profile")
 const Category = require("../modals/category");
-// const clo = require("../configuration/cloudinary");
-const {cloudinaryInstance } = require("../configuration/cloudinary"); // or correct relative path
+const Tag = require("../modals/tag");
+const {cloudinaryInstance } = require("../configuration/cloudinary");
 
 
 exports.createPost = async (req, res) => {
   try {
     const author = req.user.user._id;
-    const { title, content, readTime } = req.body;
+    const { title, content, readTime, scheduledAt } = req.body;
     const categories = req.body.categories;
     if (!req.file) {
       return res.status(400).json({
@@ -19,8 +19,6 @@ exports.createPost = async (req, res) => {
     }
 
     const imagePath = req.file.path;
-
-    // console.log("data",title,content,readTime,imagePath,categories);
 
     if (!title || !content || !categories || !readTime) {
       return res.status(400).json({
@@ -38,22 +36,33 @@ exports.createPost = async (req, res) => {
     }
 
     const categoryDocs = await Category.find({ name: { $in: categories } });
-    // if (categoryDocs.length !== categories.length) {
-    //   return res.status(402).json({
-    //     success: false,
-    //     message: "One or more categories not found",
-    //   });
-    // }
     const categoryIds = categoryDocs.map(cat => cat._id);
+
+    // Handle tags
+    let tagIds = [];
+    const tagNames = req.body.tags ? (Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags]) : [];
+    if (tagNames.length > 0) {
+      const tagDocs = await Promise.all(
+        tagNames.map(async (tagName) => {
+          const slug = tagName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+          let tag = await Tag.findOne({ slug });
+          if (!tag) {
+            tag = await Tag.create({ name: tagName.toLowerCase().trim(), slug });
+          }
+          await Tag.findByIdAndUpdate(tag._id, { $inc: { postCount: 1 } });
+          return tag._id;
+        })
+      );
+      tagIds = tagDocs;
+    }
 
     var imageUpload;
 
     if(imagePath){
-      // console.log("cloudinary: ", cloudinaryInstance );
-      // console.log("cloudinary.uploader:", cloudinaryInstance ?.uploader);
-
       imageUpload = await cloudinaryInstance .uploader.upload(imagePath);
     }  
+
+    const isScheduled = scheduledAt && new Date(scheduledAt) > new Date();
 
     const payload = {
       author: author,
@@ -61,7 +70,10 @@ exports.createPost = async (req, res) => {
       content: content,
       readTime: readTime,
       categories: categoryIds,
-      image:imageUpload ? imageUpload.secure_url : undefined
+      tags: tagIds,
+      image:imageUpload ? imageUpload.secure_url : undefined,
+      status: isScheduled ? "scheduled" : "published",
+      scheduledAt: isScheduled ? new Date(scheduledAt) : null,
     };
 
     const response = await Post.create(payload);
@@ -136,6 +148,34 @@ exports.updatePost = async (req, res) => {
     const categoryDocs = await Category.find({ name: { $in: categories } });
     const categoryIds = categoryDocs.map(cat => cat._id);
 
+    // Handle tags - decrement old tags, increment new ones
+    const oldTagIds = post.tags || [];
+    let tagIds = [];
+    const tagNames = req.body.tags ? (Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags]) : [];
+    if (tagNames.length > 0) {
+      const tagDocs = await Promise.all(
+        tagNames.map(async (tagName) => {
+          const slug = tagName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+          let tag = await Tag.findOne({ slug });
+          if (!tag) {
+            tag = await Tag.create({ name: tagName.toLowerCase().trim(), slug });
+          }
+          if (!oldTagIds.includes(tag._id.toString())) {
+            await Tag.findByIdAndUpdate(tag._id, { $inc: { postCount: 1 } });
+          }
+          return tag._id;
+        })
+      );
+      tagIds = tagDocs;
+    }
+
+    // Decrement removed tags
+    for (const oldTagId of oldTagIds) {
+      if (!tagIds.includes(oldTagId)) {
+        await Tag.findByIdAndUpdate(oldTagId, { $inc: { postCount: -1 } });
+      }
+    }
+
     // OPTIONAL: Remove post ID from old categories if categories changed
     await Category.updateMany(
       { _id: { $in: post.categories } },
@@ -159,7 +199,8 @@ exports.updatePost = async (req, res) => {
       content,
       readTime,
       categories: categoryIds,
-      image: imageUpload ? imageUpload.secure_url : post.image, // keep old image if new not uploaded
+      tags: tagIds,
+      image: imageUpload ? imageUpload.secure_url : post.image,
     };
 
     const updatedPost = await Post.findByIdAndUpdate(postId, updatedPayload, {
@@ -233,7 +274,12 @@ exports.getAllPosts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 12;
     const cursor = req.query.cursor;
 
-    const query = {};
+    const query = {
+      $or: [
+        { status: "published" },
+        { status: "scheduled", scheduledAt: { $lte: new Date() } },
+      ]
+    };
     if (cursor) {
       query.createdAt = { $lt: new Date(cursor) };
     }
@@ -337,6 +383,100 @@ exports.getPostByCategory = async (req, res) => {
          message: "Error in fetching the posts by category",
       });
    }
+};
+
+exports.getFollowedPosts = async (req, res) => {
+  try {
+    const userId = req.user.user._id;
+    const limit = parseInt(req.query.limit) || 12;
+    const cursor = req.query.cursor;
+
+    const user = await User.findById(userId).populate("profile");
+    if (!user || !user.profile) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const followingIds = user.profile.following || [];
+
+    if (followingIds.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No followed users",
+        data: [],
+        nextCursor: null,
+        hasMore: false,
+      });
+    }
+
+    const query = { 
+      author: { $in: followingIds },
+      $or: [
+        { status: "published" },
+        { status: "scheduled", scheduledAt: { $lte: new Date() } },
+      ]
+    };
+    if (cursor) {
+      query.createdAt = { $lt: new Date(cursor) };
+    }
+
+    const response = await Post.find(query)
+      .populate("author", "firstName lastName image profilePic")
+      .populate("categories", "name")
+      .populate("likes", "firstName lastName createdAt")
+      .populate({
+        path: "comments",
+        populate: { path: "user", select: "firstName lastName image" },
+      })
+      .sort({ createdAt: -1 })
+      .limit(limit + 1)
+      .exec();
+
+    const hasMore = response.length > limit;
+    const posts = hasMore ? response.slice(0, limit) : response;
+    const nextCursor = hasMore ? posts[posts.length - 1].createdAt : null;
+
+    return res.status(200).json({
+      success: true,
+      message: "Followed posts fetched successfully",
+      data: posts,
+      nextCursor,
+      hasMore,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching followed posts",
+    });
+  }
+};
+
+exports.getScheduledPosts = async (req, res) => {
+  try {
+    const userId = req.user.user._id;
+
+    const response = await Post.find({
+      author: userId,
+      status: "scheduled",
+      scheduledAt: { $gt: new Date() },
+    })
+      .populate("author", "firstName lastName image profilePic")
+      .populate("categories", "name")
+      .sort({ scheduledAt: 1 })
+      .exec();
+
+    return res.status(200).json({
+      success: true,
+      message: "Scheduled posts fetched successfully",
+      data: response,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching scheduled posts",
+    });
+  }
 };
 
 exports.getPostByUser = async(req,res)=>{

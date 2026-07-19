@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaRegCommentDots } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
 import { usePageStore } from '../store/PageStore';
@@ -12,15 +12,17 @@ import toast from 'react-hot-toast';
 import { truncateContent } from '../lib/utils';
 import { FaRegBookmark, FaBookmark } from "react-icons/fa";
 import { useBookmarkStore } from '../store/BookmarkStore';
+import { BiListPlus } from "react-icons/bi";
+import AddToReadingListModal from './AddToReadingListModal';
 
 
 const HomePostCards = ({ post ,setLiked}) => {
-  // console.log("in home postcard component",post)
   const navigate = useNavigate();
   const {setCurrentPage} = usePageStore();
   const {token , authUser} = useAuthStore();
   const {LikeUnlikePost,postsLikedByUser} = useIntractionStore();
   const {bookmarkedPostIds, toggleBookmark} = useBookmarkStore();
+  const [showReadingListModal, setShowReadingListModal] = useState(false);
   
 
   const handleReadmoreClick = ()=>{
@@ -69,6 +71,7 @@ const HomePostCards = ({ post ,setLiked}) => {
 
 
   return (
+  <>
   <div className="w-full p-2 lg:h-[29rem] h-auto rounded-2xl transition-colors duration-300 accent-bg-mode accent-text-mode">
     <div className="border accent-border accent-box-shadow rounded-xl shadow p-4 lg:h-[28rem] h-auto flex flex-col justify-between hover:scale-[1.015] transition-transform duration-300 ease-in-out">
 
@@ -80,7 +83,15 @@ const HomePostCards = ({ post ,setLiked}) => {
               key={index}
               className="px-2 py-[2px] text-xs font-sans border accent-border rounded-md accent-text"
             >
-              {category.name} {/* fallback if category is a string */}
+              {category.name}
+            </span>
+          ))}
+          {post.tags && post.tags.length > 0 && post.tags.map((tag, index) => (
+            <span
+              key={`tag-${index}`}
+              className="px-2 py-[2px] text-xs font-sans bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-md"
+            >
+              #{typeof tag === "string" ? tag : tag.name}
             </span>
           ))}
           <span className="font-extrabold opacity-60">•</span>
@@ -148,10 +159,27 @@ const HomePostCards = ({ post ,setLiked}) => {
           >
             {bookmarkedPostIds.includes(post._id) ? <FaBookmark className="text-yellow-500" /> : <FaRegBookmark />}
           </button>
+
+          <button
+            onClick={() => {
+              if (!token) { toast.error("Login to add to list"); return; }
+              setShowReadingListModal(true);
+            }}
+            className="flex items-center hover:text-purple-500 transition duration-200"
+            title="Add to reading list"
+          >
+            <BiListPlus />
+          </button>
         </div>
       </div>
     </div>
   </div>
+    <AddToReadingListModal
+      isOpen={showReadingListModal}
+      onClose={() => setShowReadingListModal(false)}
+      postId={post._id}
+    />
+  </>
 );
 };
 

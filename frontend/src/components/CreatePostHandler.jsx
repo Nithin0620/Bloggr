@@ -7,8 +7,9 @@ import { usePageStore } from "../store/PageStore";
 import { useNavigate } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
 import {toast} from "react-hot-toast"
-import {Loader} from "lucide-react"
+import {Loader, Clock, Send, Tag} from "lucide-react"
 import RichTextEditor from "./RichTextEditor";
+import { useTagStore } from "../store/TagStore";
 
 
 const CreatePostHandler = () => {
@@ -19,6 +20,11 @@ const CreatePostHandler = () => {
    const [selectedCategories, setSelectedCategories] = useState([]);
     const [previewURL,setPreviewUrl] = useState(null)
     const [editorContent, setEditorContent] = useState("");
+    const [isScheduled, setIsScheduled] = useState(false);
+    const [scheduledAt, setScheduledAt] = useState("");
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [tagInput, setTagInput] = useState("");
+    const { tags: allTags, fetchTags } = useTagStore();
 
   const navigate = useNavigate();
 
@@ -28,9 +34,9 @@ const CreatePostHandler = () => {
       const fetchCategoryAndPostfromStore = async()=>{
          const array = await fetchCategories();
          setCategories(array);
-         
       }
-      fetchCategoryAndPostfromStore(); // will updaate Zustand store
+      fetchCategoryAndPostfromStore();
+      fetchTags();
    }, [fetchCategories,categoriesList]);
    
 
@@ -46,6 +52,14 @@ const CreatePostHandler = () => {
          toast("Please write some content")
          return;
       }
+      if (isScheduled && !scheduledAt) {
+         toast("Please select a date and time for scheduling")
+         return;
+      }
+      if (isScheduled && new Date(scheduledAt) <= new Date()) {
+         toast("Scheduled time must be in the future")
+         return;
+      }
 
       const formData = new FormData();
       formData.append("title", data.title);
@@ -55,8 +69,12 @@ const CreatePostHandler = () => {
       selectedCategories.forEach((cat) => {
          formData.append("categories", cat); 
       });
-
-
+      if (isScheduled && scheduledAt) {
+         formData.append("scheduledAt", scheduledAt);
+      }
+      selectedTags.forEach((tag) => {
+         formData.append("tags", tag);
+      });
 
       setLoading(true);
       await createPost(formData);
@@ -65,6 +83,8 @@ const CreatePostHandler = () => {
          reset();
          setSelectedCategories([]);
          setEditorContent("");
+         setIsScheduled(false);
+         setScheduledAt("");
          setIsCreatePostOpen(false);
          fetchPosts();
      }
@@ -210,7 +230,111 @@ const CreatePostHandler = () => {
                   return (
                      <div key={index} className="flex items-center accent-bg-light accent-text-mode accent-bg-mode px-3 py-1 rounded-full text-sm">
                      {catId}
-                     <button
+            <div className="w-full h-[1px] accent-border" />
+
+            {/* Tags Section */}
+            <div className="accent-text-mode accent-bg-mode">
+               <label className="accent-text block mb-1">
+                  <span className="flex items-center gap-1"><Tag className="w-4 h-4" /> Tags (optional)</span>
+               </label>
+               <div className="flex gap-2">
+                  <input
+                     type="text"
+                     value={tagInput}
+                     onChange={(e) => setTagInput(e.target.value)}
+                     onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === ",") {
+                           e.preventDefault();
+                           if (tagInput.trim() && !selectedTags.includes(tagInput.trim().toLowerCase())) {
+                              setSelectedTags([...selectedTags, tagInput.trim().toLowerCase()]);
+                           }
+                           setTagInput("");
+                        }
+                     }}
+                     placeholder="Type a tag and press Enter"
+                     className="flex-1 px-4 py-2 border rounded-lg accent-border accent-bg-mode accent-text-mode text-sm"
+                  />
+               </div>
+               <div className="flex flex-wrap gap-2 mt-2">
+                  {selectedTags.map((tag, index) => (
+                     <div key={index} className="flex items-center bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full text-sm">
+                        #{tag}
+                        <button
+                           onClick={() => setSelectedTags(selectedTags.filter((_, i) => i !== index))}
+                           className="ml-1.5 hover:scale-110 transition"
+                        >
+                           <IoMdClose size={14} />
+                        </button>
+                     </div>
+                  ))}
+               </div>
+               {allTags.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-1">
+                     <span className="text-xs text-gray-400">Popular:</span>
+                     {allTags.slice(0, 8).map((tag) => (
+                        <button
+                           key={tag._id}
+                           type="button"
+                           onClick={() => {
+                              if (!selectedTags.includes(tag.name)) {
+                                 setSelectedTags([...selectedTags, tag.name]);
+                              }
+                           }}
+                           className="text-xs px-2 py-0.5 rounded-full border accent-border hover:accent-bg-light transition"
+                        >
+                           #{tag.name}
+                        </button>
+                     ))}
+                  </div>
+               )}
+            </div>
+
+            <div className="w-full h-[1px] accent-border" />
+
+            {/* Schedule Section */}
+            <div className="accent-text-mode accent-bg-mode">
+               <label className="accent-text block mb-2">Publishing</label>
+               <div className="flex gap-3">
+                  <button
+                     type="button"
+                     onClick={() => setIsScheduled(false)}
+                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border transition-all duration-200 ${
+                        !isScheduled
+                           ? "accent-bg accent-text-mode border-transparent shadow-sm"
+                           : "accent-border hover:opacity-80"
+                     }`}
+                  >
+                     <Send className="w-4 h-4" />
+                     Publish Now
+                  </button>
+                  <button
+                     type="button"
+                     onClick={() => setIsScheduled(true)}
+                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border transition-all duration-200 ${
+                        isScheduled
+                           ? "accent-bg accent-text-mode border-transparent shadow-sm"
+                           : "accent-border hover:opacity-80"
+                     }`}
+                  >
+                     <Clock className="w-4 h-4" />
+                     Schedule
+                  </button>
+               </div>
+               {isScheduled && (
+                  <div className="mt-3">
+                     <input
+                        type="datetime-local"
+                        value={scheduledAt}
+                        onChange={(e) => setScheduledAt(e.target.value)}
+                        min={new Date().toISOString().slice(0, 16)}
+                        className="w-full px-4 py-2 border rounded-lg accent-border accent-bg-mode accent-text-mode text-sm"
+                     />
+                     <p className="text-xs text-gray-400 mt-1">Post will be published automatically at this time</p>
+                  </div>
+               )}
+            </div>
+
+            <button
                         className="hover:scale-105 transition-all duration-300 ml-2 text-red-600 font-extrabold"
                         onClick={() => handleRemoveCategory(catId)}
                      > 

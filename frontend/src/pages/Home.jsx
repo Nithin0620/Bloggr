@@ -18,7 +18,7 @@ const Home = () => {
   const {getSettings} = useSettingsStore();
   const {isCreatePostOpen} = usePageStore();
   const {getAllPostLikedByCurrentUser} = useIntractionStore();
-  const { fetchCategories, categoriesList,posts,fetchPosts ,createPostLoading , fetchPostsByCategories, fetchMorePosts, hasMore, fetchPostLoading} = usePostStore();
+  const { fetchCategories, categoriesList,posts,fetchPosts ,createPostLoading , fetchPostsByCategories, fetchMorePosts, fetchFollowedPosts, fetchMoreFollowedPosts, hasMore, fetchPostLoading} = usePostStore();
   const [categories,setCategories] = useState([]);
   const [Post,setPost] = useState([]);
   const [PostCopy,setPostCopy] = useState([]);
@@ -27,13 +27,28 @@ const Home = () => {
   const [categorySelected,setCategorySelected] = useState("");
   const [addCategoryOpen,setAddCategoryOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [feedType, setFeedType] = useState("All");
   const observerRef = useRef(null);
   const loadMoreRef = useRef(null);
 
   const fetchCategoryAndPostfromStore = async()=>{
       setLoading(true);
       const array = await fetchCategories();
-      const PostArray = await fetchPosts();
+      const settings = await getSettings();
+      const feedPref = settings?.homeFeedType;
+      let PostArray = [];
+
+      if (token && authUser && Array.isArray(feedPref) && feedPref.length === 1 && feedPref[0] === "Followed") {
+        setFeedType("Followed");
+        PostArray = await fetchFollowedPosts();
+      } else if (Array.isArray(feedPref) && feedPref.length > 0 && feedPref[0] !== "All" && feedPref[0] !== "Followed") {
+        setFeedType("Categories");
+        PostArray = await fetchPostsByCategories(feedPref[0]);
+      } else {
+        setFeedType("All");
+        PostArray = await fetchPosts();
+      }
+
       setCategorySelected("All Categories");
       setPost(PostArray);
       setPostCopy(PostArray);
@@ -57,7 +72,8 @@ const Home = () => {
     if (observerRef.current) observerRef.current.disconnect();
     observerRef.current = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && hasMore && !loading && !fetchPostLoading && searchTerm === "" && categorySelected === "All Categories") {
-        fetchMorePosts().then((newPosts) => {
+        const loadMore = feedType === "Followed" ? fetchMoreFollowedPosts : fetchMorePosts;
+        loadMore().then((newPosts) => {
           if (newPosts) {
             setPost((prev) => [...prev, ...newPosts]);
           }
@@ -65,7 +81,7 @@ const Home = () => {
       }
     }, { threshold: 0.1 });
     if (node) observerRef.current.observe(node);
-  }, [hasMore, loading, fetchPostLoading, searchTerm, categorySelected, fetchMorePosts]);
+  }, [hasMore, loading, fetchPostLoading, searchTerm, categorySelected, fetchMorePosts, fetchMoreFollowedPosts, feedType]);
 
   useEffect(() => {
     setPost(posts);

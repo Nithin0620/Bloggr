@@ -20,6 +20,12 @@ const postSchema = new mongoose.Schema({
          ref:"Category",
       }
    ],
+   tags:[
+      {
+         type:mongoose.Schema.Types.ObjectId,
+         ref:"Tag",
+      }
+   ],
    likes:[
       {
          type:mongoose.Schema.Types.ObjectId,
@@ -41,6 +47,15 @@ const postSchema = new mongoose.Schema({
    },
    readTime:{
       type:String,
+   },
+   status:{
+      type:String,
+      enum:["published","scheduled","draft"],
+      default:"published",
+   },
+   scheduledAt:{
+      type:Date,
+      default:null,
    }
 },{
    timestamps:true

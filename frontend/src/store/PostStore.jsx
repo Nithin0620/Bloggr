@@ -110,6 +110,50 @@ export const usePostStore = create((get,set)=>({
     }
   },
 
+  fetchFollowedPosts : async()=>{
+    set({fetchPostLoading:true});
+    try{
+      const response = await axios.get(`${BASE_URL}/post/getfollowedposts`,{
+        withCredentials: true,
+      });
+      set({
+        posts: response.data.data,
+        nextCursor: response.data.nextCursor,
+        hasMore: response.data.hasMore,
+      })
+      return response.data.data;
+    }
+    catch(e){
+      toast.error(e.response?.data?.message)
+      return [];
+    }
+    finally{
+      set({fetchPostLoading:false});
+    }
+  },
+
+  fetchMoreFollowedPosts : async()=>{
+    const { nextCursor, posts } = get();
+    if (!nextCursor) return;
+    set({fetchPostLoading:true});
+    try{
+      const response = await axios.get(`${BASE_URL}/post/getfollowedposts?cursor=${encodeURIComponent(nextCursor)}&limit=12`,{
+        withCredentials: true,
+      });
+      set({
+        posts: [...posts, ...response.data.data],
+        nextCursor: response.data.nextCursor,
+        hasMore: response.data.hasMore,
+      });
+    }
+    catch(e){
+      toast.error("Failed to load more posts");
+    }
+    finally{
+      set({fetchPostLoading:false});
+    }
+  },
+
   fetchMorePosts : async()=>{
     const { nextCursor, posts } = get();
     if (!nextCursor) return;

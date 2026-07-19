@@ -12,6 +12,8 @@ import ReadMorePost from "./pages/ReadMorePost"
 import Explore from "./pages/Explore"
 import Bookmarks from "./pages/Bookmarks"
 import ForgotPassword from "./pages/ForgotPassword"
+import ReadingLists from "./pages/ReadingLists"
+import ReadingListDetail from "./pages/ReadingListDetail"
 import ProtectRoute from "./components/ProtectRoute"
 import GuestOnlyRoute from "./components/GuestOnlyRoute"
 
@@ -67,6 +69,14 @@ export const router = createBrowserRouter([
          {
             path:"forgot-password",
             element:<GuestOnlyRoute><ForgotPassword/></GuestOnlyRoute>
+         },
+         {
+            path:"readinglists",
+            element:<ProtectRoute><ReadingLists/></ProtectRoute>
+         },
+         {
+            path:"readinglist/:id",
+            element:<ProtectRoute><ReadingListDetail/></ProtectRoute>
          },
       ]
    },

@@ -17,6 +17,8 @@ const postRoutes = require("./routes/Post.routes");
 const profileRoutes = require("./routes/Profile.routes");
 const settingsRoutes = require("./routes/Settings.routes")
 const bookmarkRoutes = require("./routes/Bookmark.routes")
+const readingListRoutes = require("./routes/ReadingList.routes")
+const tagRoutes = require("./routes/Tag.routes")
 const path = require("path")
 
 const PORT  = process.env.PORT || 5000;
@@ -45,6 +47,8 @@ app.use("/api/post",postRoutes);
 app.use("/api/profile",profileRoutes);
 app.use("/api/settings",settingsRoutes)
 app.use("/api/bookmarks",bookmarkRoutes);
+app.use("/api/readinglists",readingListRoutes);
+app.use("/api/tags",tagRoutes);
 
 
 server.listen(PORT,()=>{

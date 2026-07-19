@@ -2,6 +2,7 @@ import { React, useEffect, useState, useRef } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaAngleDown, FaRegBookmark } from "react-icons/fa";
+import { BiListPlus } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/AuthStore";
 import { usePageStore } from "../store/PageStore";
@@ -91,6 +92,14 @@ const Navbar = () => {
                 onClick={() => handleOnClickForNavigate("bookmarks")}
                 className={`cursor-pointer text-xl hover:scale-105 transition ${
                   currentPage === "bookmarks"
+                    ? "accent-text"
+                    : ""
+                }`}
+              />
+              <BiListPlus
+                onClick={() => handleOnClickForNavigate("readinglists")}
+                className={`cursor-pointer text-xl hover:scale-105 transition ${
+                  currentPage === "readinglists"
                     ? "accent-text"
                     : ""
                 }`}
