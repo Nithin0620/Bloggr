@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { usePostStore } from '../store/PostStore'
-import { FaRegHeart } from "react-icons/fa6";
-import {FaHeart} from "react-icons/fa"
+import { FaRegHeart, FaHeart, FaRegBookmark, FaBookmark } from "react-icons/fa";
 import { FaRegCommentDots } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
@@ -9,11 +8,15 @@ import { useIntractionStore } from '../store/IntractionStore';
 import {Loader} from "lucide-react"
 import { usePageStore } from '../store/PageStore';
 import { truncateContent } from '../lib/utils';
+import { useBookmarkStore } from '../store/BookmarkStore';
+import { useAuthStore } from '../store/AuthStore';
 
 const Trending = () => {
   const {posts,fetchPosts} = usePostStore();
   const {LikeUnlikePost,postsLikedByUser} = useIntractionStore();
   const {setCurrentPage} = usePageStore();
+  const {bookmarkedPostIds, toggleBookmark} = useBookmarkStore();
+  const {token} = useAuthStore();
 
 
   const [Post,setPost] = useState([]);
@@ -131,6 +134,15 @@ const Trending = () => {
                       {post.views ? post.views : 0}
                       <IoIosStats />
                     </span>
+                    <button
+                      onClick={() => {
+                        if (!token) return;
+                        toggleBookmark(post._id);
+                      }}
+                      className="flex items-center gap-1 hover:text-yellow-500 transition duration-200"
+                    >
+                      {bookmarkedPostIds.includes(post._id) ? <FaBookmark className="text-yellow-500" /> : <FaRegBookmark />}
+                    </button>
                   </div>
                 </div>
               </div>

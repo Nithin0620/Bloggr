@@ -1,6 +1,6 @@
 import React from "react";
 import { FaRegHeart } from "react-icons/fa6";
-import { FaHeart } from "react-icons/fa";
+import { FaHeart, FaRegBookmark, FaBookmark } from "react-icons/fa";
 import { FaRegCommentDots } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
 import { GoPencil } from "react-icons/go";
@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { usePageStore } from "../store/PageStore";
 import { useIntractionStore } from "../store/IntractionStore";
 import { truncateContent } from "../lib/utils";
+import { useBookmarkStore } from "../store/BookmarkStore";
 
 const ProfilePostCard = ({
   post,
@@ -19,8 +20,9 @@ const ProfilePostCard = ({
 }) => {
   const { setIsUpdatePostOpen, setUpdatePost } = usePageStore();
   const { LikeUnlikePost, postsLikedByUser } = useIntractionStore();
+  const { bookmarkedPostIds, toggleBookmark } = useBookmarkStore();
   const navigate = useNavigate();
-  const { authUser } = useAuthStore();
+  const { authUser, token } = useAuthStore();
 
   const handleReadmoreClick = (postId) => {
     navigate(`/readmore/${postId}`);
@@ -104,6 +106,16 @@ const ProfilePostCard = ({
                 {post.views}
                 <IoIosStats />
               </span>
+
+              <button
+                onClick={() => {
+                  if (!token) { return; }
+                  toggleBookmark(post._id);
+                }}
+                className="flex items-center hover:text-yellow-500 transition duration-200"
+              >
+                {bookmarkedPostIds.includes(post._id) ? <FaBookmark className="text-yellow-500" /> : <FaRegBookmark />}
+              </button>
 
               {post.author._id === authUser._id && (
                 <div className="flex items-center gap-3 text-[1rem] ml-2">

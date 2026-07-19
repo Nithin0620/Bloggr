@@ -28,7 +28,7 @@ const Login = () => {
   };
 
   const handleForgotPassword = () => {
-    // your forgot password logic
+    navigate("/forgot-password");
   };
 
   return (

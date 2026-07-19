@@ -1,6 +1,7 @@
 const User = require("../modals/user")
 const Post = require("../modals/post")
 const OTP = require("../modals/otp")
+const PasswordResetOTP = require("../modals/passwordResetOtp")
 const bcrypt = require("bcrypt")
 const gravatar = require('gravatar');
 const otpGenerator = require("otp-generator");
@@ -243,3 +244,163 @@ exports.checkAuth = async (req, res) => {
       res.status(500).json({ message: "Internal Server Error" });
    }
 };
+
+exports.sendResetOtp = async(req,res)=>{
+   try{
+      const {email} = req.body;
+
+      if(!email){
+         return res.status(400).json({
+            success:false,
+            message:"Email is required",
+         })
+      }
+
+      const user = await User.findOne({email:email});
+      if(!user){
+         return res.status(404).json({
+            success:false,
+            message:"No account found with this email",
+         })
+      }
+
+      var otp = otpGenerator.generate(6,{
+         upperCaseAlphabets:false,
+         lowerCaseAlphabets:false,
+         specialChars:false,
+      })
+
+      var result = await PasswordResetOTP.findOne({otp:otp});
+      while(result){
+         otp = otpGenerator.generate(6,{
+            upperCaseAlphabets:false,
+            lowerCaseAlphabets:false,
+            specialChars:false,
+         })
+         result = await PasswordResetOTP.findOne({otp:otp});
+      }
+
+      await PasswordResetOTP.create({email,otp});
+
+      return res.status(200).json({
+         success:true,
+         message:"Reset OTP sent to your email",
+         data:{email},
+      })
+   }
+   catch(e){
+      console.log(e);
+      return res.status(500).json({
+         success:false,
+         message:"Error sending reset OTP",
+      })
+   }
+}
+
+exports.verifyResetOtp = async(req,res)=>{
+   try{
+      const {email, otp} = req.body;
+
+      if(!email || !otp){
+         return res.status(400).json({
+            success:false,
+            message:"Email and OTP are required",
+         })
+      }
+
+      const recentOtp = await PasswordResetOTP.findOne({email:email}).sort({createdAt:-1}).limit(1);
+
+      if(!recentOtp){
+         return res.status(400).json({
+            success:false,
+            message:"OTP has expired or was never sent. Please request a new one.",
+         })
+      }
+
+      if(recentOtp.otp !== otp){
+         return res.status(400).json({
+            success:false,
+            message:"Invalid OTP",
+         })
+      }
+
+      // Delete the OTP after successful verification
+      await PasswordResetOTP.deleteMany({email:email});
+
+      return res.status(200).json({
+         success:true,
+         message:"OTP verified successfully",
+         data:{email},
+      })
+   }
+   catch(e){
+      console.log(e);
+      return res.status(500).json({
+         success:false,
+         message:"Error verifying OTP",
+      })
+   }
+}
+
+exports.resetPassword = async(req,res)=>{
+   try{
+      const {email, newPassword, confirmPassword} = req.body;
+
+      if(!email || !newPassword || !confirmPassword){
+         return res.status(400).json({
+            success:false,
+            message:"All fields are required",
+         })
+      }
+
+      if(newPassword !== confirmPassword){
+         return res.status(400).json({
+            success:false,
+            message:"Passwords do not match",
+         })
+      }
+
+      if(newPassword.length < 6){
+         return res.status(400).json({
+            success:false,
+            message:"Password must be at least 6 characters",
+         })
+      }
+
+      const user = await User.findOne({email:email});
+      if(!user){
+         return res.status(404).json({
+            success:false,
+            message:"User not found",
+         })
+      }
+
+      // Check if new password is same as old
+      const isSamePassword = await bcrypt.compare(newPassword, user.password);
+      if(isSamePassword){
+         return res.status(400).json({
+            success:false,
+            message:"New password must be different from current password",
+         })
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await User.findOneAndUpdate(
+         {email:email},
+         {password:hashedPassword},
+         {new:true}
+      )
+
+      return res.status(200).json({
+         success:true,
+         message:"Password reset successful. Please login with your new password.",
+      })
+   }
+   catch(e){
+      console.log(e);
+      return res.status(500).json({
+         success:false,
+         message:"Error resetting password",
+      })
+   }
+}
