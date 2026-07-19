@@ -8,15 +8,17 @@ import { useNavigate } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
 import {toast} from "react-hot-toast"
 import {Loader} from "lucide-react"
+import RichTextEditor from "./RichTextEditor";
 
 
 const CreatePostHandler = () => {
    const {isCreatePostOpen, setIsCreatePostOpen,setCurrentPage} = usePageStore();
   const { categoriesList, createPost,fetchCategories,createPostLoading ,fetchPosts} = usePostStore();
   const { authUser } = useAuthStore();
-  const { register, handleSubmit, reset ,setValue} = useForm();
-  const [selectedCategories, setSelectedCategories] = useState([]);
-   const [previewURL,setPreviewUrl] = useState(null)
+   const { register, handleSubmit, reset ,setValue} = useForm();
+   const [selectedCategories, setSelectedCategories] = useState([]);
+    const [previewURL,setPreviewUrl] = useState(null)
+    const [editorContent, setEditorContent] = useState("");
 
   const navigate = useNavigate();
 
@@ -40,19 +42,21 @@ const CreatePostHandler = () => {
          toast("Please select atleat one Category")
          return;
       }
+      if (!editorContent || editorContent === "<p></p>") {
+         toast("Please write some content")
+         return;
+      }
 
       const formData = new FormData();
       formData.append("title", data.title);
-      formData.append("content", data.content);
+      formData.append("content", editorContent);
       formData.append("readTime", data.readTime);
       formData.append("image", data.image); 
       selectedCategories.forEach((cat) => {
          formData.append("categories", cat); 
       });
 
-      for (let pair of formData.entries()) {
-         // console.log(`${pair[0]}: ${pair[1]}`);
-      }
+
 
       setLoading(true);
       await createPost(formData);
@@ -60,6 +64,7 @@ const CreatePostHandler = () => {
          setLoading(false);
          reset();
          setSelectedCategories([]);
+         setEditorContent("");
          setIsCreatePostOpen(false);
          fetchPosts();
      }
@@ -130,10 +135,9 @@ const CreatePostHandler = () => {
 
             <div>
                <label className="accent-text block mb-1 ">Content</label>
-               <textarea
-               rows={6}
-               {...register("content", { required: true })}
-               className="w-full px-4 py-2 border rounded-lg transition-colors duration-300 accent-bg-mode accent-text-mode accent-border"
+               <RichTextEditor
+               content={editorContent}
+               onChange={setEditorContent}
                placeholder="Write your content here..."
                />
             </div>

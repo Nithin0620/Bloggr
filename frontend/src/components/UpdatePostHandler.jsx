@@ -4,10 +4,10 @@ import { IoMdClose } from "react-icons/io";
 import { usePostStore } from "../store/PostStore";
 import { useAuthStore } from "../store/AuthStore";
 import { usePageStore } from "../store/PageStore";
-import { useNavigate } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { Loader } from "lucide-react";
+import RichTextEditor from "./RichTextEditor";
 
 const UpdatePostHandler = ({ post,setPostUpdated }) => {
    const { isUpdatePostOpen, setIsUpdatePostOpen } = usePageStore();
@@ -17,8 +17,8 @@ const UpdatePostHandler = ({ post,setPostUpdated }) => {
    const [selectedCategories, setSelectedCategories] = useState([]);
    const [previewURL, setPreviewUrl] = useState(null);
    const [loading, setLoading] = useState(false);
+   const [editorContent, setEditorContent] = useState("");
    const imageref = useRef();
-   const navigate = useNavigate();
    const [categories, setCategories] = useState([]);
 
       
@@ -41,7 +41,7 @@ const UpdatePostHandler = ({ post,setPostUpdated }) => {
          setSelectedCategories(categoryNames);
 
          setValue("title", post.title);
-         setValue("content", post.content);
+         setEditorContent(post.content || "");
          setValue("readTime", post.readTime);
          setValue("image", post.image);
          setPreviewUrl(post.image);
@@ -58,11 +58,14 @@ const UpdatePostHandler = ({ post,setPostUpdated }) => {
          toast.error("Please select at least one category!");
          return;
       }
-      // console.log(data)
+      if (!editorContent || editorContent === "<p></p>") {
+         toast.error("Please write some content!");
+         return;
+      }
 
       const formData = new FormData();
       formData.append("title", data.title);
-      formData.append("content", data.content);
+      formData.append("content", editorContent);
       formData.append("readTime", data.readTime);
       formData.append("author", authUser._id);
       formData.append("_id", post._id);
@@ -84,6 +87,7 @@ const UpdatePostHandler = ({ post,setPostUpdated }) => {
       setLoading(false);
       reset();
       setSelectedCategories([]);
+      setEditorContent("");
       setIsUpdatePostOpen(false);
       fetchPosts();
       setPostUpdated(true);
@@ -155,10 +159,9 @@ const UpdatePostHandler = ({ post,setPostUpdated }) => {
 
             <div>
                <label className="accent-text block mb-1">Content</label>
-               <textarea
-               rows={6}
-               {...register("content", { required: true })}
-               className="w-full px-4 py-2 border rounded-lg accent-bg-mode accent-text-mode accent-border"
+               <RichTextEditor
+               content={editorContent}
+               onChange={setEditorContent}
                placeholder="Write your content here..."
                />
             </div>

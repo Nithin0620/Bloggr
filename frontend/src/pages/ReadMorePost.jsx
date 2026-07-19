@@ -1,4 +1,4 @@
-import React, { useEffect, useInsertionEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Comment from "../components/Comment";
 import { usePostStore } from '../store/PostStore';
 import RelatedBlogs from '../components/RelatedBlogs';
@@ -83,15 +83,13 @@ const ReadMorePost = () => {
       if(liked === false) window.scrollTo({top:0,behavior:'smooth'});
       const fetchReadMorePost = async()=>{
          setLoading(true);
-         // console.log("here")
-         const response = await getPostByID(postId);
-         setPost(response)
-         // console.log("response",response)
+         const fetchedPost = await getPostByID(postId);
+         setPost(fetchedPost)
          setLoading(false);
       }
       fetchReadMorePost();
       setLiked(false);
-   },[liked]);
+   },[liked, getPostByID, postId]);
 
    const {setCurrentPage} = usePageStore();
    const {openShareModal} = useShareModalStore();
@@ -102,7 +100,7 @@ const ReadMorePost = () => {
    }
 
    const handleLike = async()=>{
-      const response = await LikeUnlikePost(post._id);
+      await LikeUnlikePost(post._id);
       setLiked(true);
    }
 
@@ -160,9 +158,7 @@ const ReadMorePost = () => {
 
                <div className="h-[0.12rem] rounded-full min-w-full accent-bg-dark"></div>
 
-               <div className="leading-7 text-base text-justify whitespace-pre-wrap">
-                  {post.content}
-               </div>
+               <div className="leading-7 text-base text-justify prose-content" dangerouslySetInnerHTML={{ __html: post.content }} />
 
                <div className="flex gap-10 transition-all duration-300 text-sm">
                   <span onClick={()=>handleLike()} className=" cursor-pointer hover:text-red-500">{postsLikedByUser.includes(post._id) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> } Like {post.likes.length}</span>
