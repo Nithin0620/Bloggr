@@ -19,15 +19,13 @@ export const useChatStore = create((set,get)=>({
       set({isUsersLoading:true});
       try{
          const response = await axios.get(`${BASE_URL}/messages/getusersforsidebar`)
-         // console.log(response)
-         // console.log(response.data.data)
          if(response.data.success){
             set({users:response.data.data})
          }
       }
       catch(e){
-         toast.error(e.response.data.message)
-         // console.log(e);
+         console.error("getUsers error:", e.response?.data || e.message);
+         toast.error(e.response?.data?.message || "Failed to load users")
       }
       finally{
          set({isUsersLoading:false})
@@ -38,15 +36,13 @@ export const useChatStore = create((set,get)=>({
       set({isMessagesLoading:true});
       try{
          const response = await axios.get(`${BASE_URL}/messages/getmessages/${id}`);
-         // console.log(response);
          if(response?.data?.success){
             set({messages:response.data.data});
          }
       }
       catch(e){
-         // console.log(e);
-         toast.error("Error occured in retriving previous chats! sorry for your losses.")
-         toast.error(e.response.data.message)
+         console.error("getMessages error:", e.response?.data || e.message);
+         toast.error(e.response?.data?.message || "Error occured in retriving previous chats!")
       }
       set({isMessagesLoading:false});
    },
@@ -81,17 +77,14 @@ export const useChatStore = create((set,get)=>({
       try{
          const response = await axios.post(`${BASE_URL}/messages/sendmessage/${selectedUser._id}`,data);
          set({messages:[...message,response.data.data]})
-         // toast.error(" message sent")
       }
       catch(e){
-         // console.log(e);
-         toast.error("An error occured in sending the message.")
-         toast.error("we are working tirelessly to fix it pls try after some time.")
+         console.error("sendMessage error:", e.response?.data || e.message);
+         toast.error(e.response?.data?.message || "An error occured in sending the message.")
       }
    },
-   
+
    setSelectedUser: (selectedUser) => {
-      // console.log(selectedUser)
       set({ selectedUser:selectedUser })
       set({chatSelected:selectedUser});
    }

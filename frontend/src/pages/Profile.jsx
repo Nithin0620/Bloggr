@@ -9,6 +9,7 @@ import { useProfileStore } from '../store/ProfileStore';
 import { Loader } from 'lucide-react';
 import { toast } from "react-hot-toast";
 import { usePostStore } from '../store/PostStore';
+import { truncateContent } from "../lib/utils";
 import EditProfile from '../components/EditProfile';
 import FollowListModal from "../components/FollowListModal";
 import { IoCameraOutline } from "react-icons/io5";
@@ -37,6 +38,8 @@ const Profile = () => {
   const [followingModal, setFollowingModal] = useState(false);
   const [liked, setLiked] = useState(false);
   const [profilePicOpen, setProfilePicOpen] = useState(false);
+  const [scheduledPosts, setScheduledPosts] = useState([]);
+  const isOwnProfile = authUser && user && authUser._id === user._id;
 
   useEffect(() => {
     setDeleted(false);
@@ -57,8 +60,21 @@ const Profile = () => {
       setLoading(false);
     };
     fetchProfileData();
-    setTimeout(() => setPostUpdated(false), 2000);
-  }, [deleted, postUpdated, liked]);
+  }, [deleted, postUpdated, liked, userId]);
+
+  useEffect(() => {
+    if (!isOwnProfile || !user) {
+      setScheduledPosts([]);
+      return;
+    }
+    let cancelled = false;
+    const loadScheduledPosts = async () => {
+      const data = await usePostStore.getState().fetchScheduledPosts();
+      if (!cancelled) setScheduledPosts(data);
+    };
+    loadScheduledPosts();
+    return () => { cancelled = true; };
+  }, [isOwnProfile, user]);
 
   const deletePostHandler = async () => {
     const success = await deletePost(deletePostid);
@@ -151,6 +167,70 @@ const Profile = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Scheduled Posts (own profile only) */}
+              {isOwnProfile && scheduledPosts.length > 0 && (
+                <div className="mt-10">
+                  <h2 className="text-lg font-semibold accent-text pb-3">
+                    <span className="accent-underline">Scheduled</span> - {scheduledPosts.length}
+                  </h2>
+                  <div className="h-[0.12rem] rounded-full accent-bg-light"></div>
+                  <div className="mt-6 space-y-4">
+                    {scheduledPosts.map((post) => (
+                      <div
+                        key={post._id}
+                        className="w-full max-w-[58rem] mx-auto accent-bg-mode accent-text-mode rounded-2xl shadow-md border accent-border overflow-hidden opacity-80"
+                      >
+                        <div className="flex gap-20 flex-col sm:flex-row">
+                          {post.image && (
+                            <div className="sm:w-48 w-full h-52 sm:h-auto relative">
+                              <img
+                                src={post.image}
+                                alt="Post"
+                                className="w-full h-full object-cover"
+                              />
+                              <span className="absolute top-2 left-2 bg-amber-500 text-white text-[0.65rem] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide">
+                                Scheduled
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex gap-1 flex-col justify-between p-4 flex-1">
+                            <div className="flex flex-wrap gap-1 text-[0.7rem] font-medium">
+                              {post.categories?.map((category, index) => (
+                                <span
+                                  key={index}
+                                  className="uppercase tracking-wide border accent-border rounded-lg px-1 py-[0.15rem]"
+                                >
+                                  {category.name}
+                                </span>
+                              ))}
+                            </div>
+                            <h2 className="text-base sm:text-lg font-semibold mt-1 accent-text">
+                              {post.title.length <= 50
+                                ? post.title
+                                : post.title.substring(0, 50) + "..."}
+                            </h2>
+                            <div className="text-sm mt-1 line-clamp-2">
+                              {truncateContent(post.content, 100)}
+                            </div>
+                            <div className="mt-3 flex items-center justify-between">
+                              <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                                Publishes on {new Date(post.scheduledAt).toLocaleDateString("en-US", {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* User Posts */}
               <div className="mt-10">

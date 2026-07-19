@@ -41,6 +41,7 @@ exports.getBookmarks = async (req, res) => {
         populate: [
           { path: "author", select: "firstName lastName profilePic" },
           { path: "categories", select: "name" },
+          { path: "tags", select: "name slug" },
           { path: "likes", select: "firstName lastName" },
           {
             path: "comments",

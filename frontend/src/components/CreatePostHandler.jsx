@@ -14,7 +14,7 @@ import { useTagStore } from "../store/TagStore";
 
 const CreatePostHandler = () => {
    const {isCreatePostOpen, setIsCreatePostOpen,setCurrentPage} = usePageStore();
-  const { categoriesList, createPost,fetchCategories,createPostLoading ,fetchPosts} = usePostStore();
+  const { createPost,fetchCategories,createPostLoading ,fetchPosts} = usePostStore();
   const { authUser } = useAuthStore();
    const { register, handleSubmit, reset ,setValue} = useForm();
    const [selectedCategories, setSelectedCategories] = useState([]);
@@ -37,7 +37,7 @@ const CreatePostHandler = () => {
       }
       fetchCategoryAndPostfromStore();
       fetchTags();
-   }, [fetchCategories,categoriesList]);
+   }, []);
    
 
   const imageref = useRef()
@@ -77,17 +77,19 @@ const CreatePostHandler = () => {
       });
 
       setLoading(true);
-      await createPost(formData);
-     if(!createPostLoading){
-         setLoading(false);
-         reset();
-         setSelectedCategories([]);
-         setEditorContent("");
-         setIsScheduled(false);
-         setScheduledAt("");
-         setIsCreatePostOpen(false);
-         fetchPosts();
-     }
+      const success = await createPost(formData);
+      if(success){
+          setLoading(false);
+          reset();
+          setSelectedCategories([]);
+          setEditorContent("");
+          setIsScheduled(false);
+          setScheduledAt("");
+          setIsCreatePostOpen(false);
+          fetchPosts();
+      } else {
+          setLoading(false);
+      }
    };
 
    const handleCategorySelect = (e) => {
@@ -226,10 +228,21 @@ const CreatePostHandler = () => {
 
                <div className="flex accent-text-mode accent-bg-mode flex-wrap gap-2 mt-2">
                {selectedCategories.map((catId,index) => {
-                  // const cat = categoriesList.find(c => c=== catId);
                   return (
                      <div key={index} className="flex items-center accent-bg-light accent-text-mode accent-bg-mode px-3 py-1 rounded-full text-sm">
                      {catId}
+                     <button
+                        className="hover:scale-110 transition ml-1.5"
+                        onClick={() => handleRemoveCategory(catId)}
+                     >
+                        <IoMdClose size={14} />
+                     </button>
+                     </div>
+                  );
+               })}
+               </div>
+            </div>
+
             <div className="w-full h-[1px] accent-border" />
 
             {/* Tags Section */}
@@ -332,18 +345,6 @@ const CreatePostHandler = () => {
                      <p className="text-xs text-gray-400 mt-1">Post will be published automatically at this time</p>
                   </div>
                )}
-            </div>
-
-            <button
-                        className="hover:scale-105 transition-all duration-300 ml-2 text-red-600 font-extrabold"
-                        onClick={() => handleRemoveCategory(catId)}
-                     > 
-                     <IoMdClose/> 
-                     </button>
-                     </div>
-                  );
-               })}
-               </div>
             </div>
 
             <button

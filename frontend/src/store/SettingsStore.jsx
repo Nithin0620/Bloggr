@@ -13,7 +13,7 @@ export const useSettingsStore = create((set,get)=>({
 
    setSettings:async(data)=>{
       try{
-         const response = await axios.post(`${BASE_URL}/settings/setsettings`,data);
+         const response = await axios.post(`${BASE_URL}/settings/setsettings`, data, { withCredentials: true });
 
          if(response.data.success){
             toast.success("Settings saved Successfully");
@@ -26,8 +26,8 @@ export const useSettingsStore = create((set,get)=>({
       }
 
       catch(e){
-         // console.log(e);
-         toast.error("Error in saving the settings, please try again after some time");
+         console.error("setSettings error:", e.response?.data || e.message);
+         toast.error(e.response?.data?.message || "Error in saving the settings, please try again after some time");
          return false;
       }
    },
@@ -54,7 +54,7 @@ export const useSettingsStore = create((set,get)=>({
    resetSettings: async()=>{
       try{
 
-         const response = await axios.get(`${BASE_URL}/settings/resetsettings`);
+         const response = await axios.get(`${BASE_URL}/settings/resetsettings`, { withCredentials: true });
          if(response.data.success){
             toast.success("Settings reset Completed!")
             return true;
@@ -65,8 +65,8 @@ export const useSettingsStore = create((set,get)=>({
          }
       }
       catch(e){
-         // console.log("error occured in reset settings function:",e);
-         toast.error("Error occured in resetting the settings!")
+         console.error("resetSettings error:", e.response?.data || e.message);
+         toast.error(e.response?.data?.message || "Error occured in resetting the settings!")
          return false;
       }
    }

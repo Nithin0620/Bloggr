@@ -24,7 +24,8 @@ export const useReadingListStore = create((set, get) => ({
       }
       return [];
     } catch (e) {
-      toast.error("Failed to fetch reading lists");
+      console.error("fetchMyLists error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Failed to fetch reading lists");
       return [];
     } finally {
       set({ loading: false });
@@ -41,7 +42,8 @@ export const useReadingListStore = create((set, get) => ({
       }
       return null;
     } catch (e) {
-      toast.error("Failed to fetch reading list");
+      console.error("fetchListById error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Failed to fetch reading list");
       return null;
     } finally {
       set({ loading: false });
@@ -62,6 +64,7 @@ export const useReadingListStore = create((set, get) => ({
       }
       return null;
     } catch (e) {
+      console.error("createList error:", e.response?.data || e.message);
       toast.error(e.response?.data?.message || "Failed to create list");
       return null;
     }
@@ -79,7 +82,8 @@ export const useReadingListStore = create((set, get) => ({
       }
       return false;
     } catch (e) {
-      toast.error("Failed to delete list");
+      console.error("deleteList error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Failed to delete list");
       return false;
     }
   },
@@ -97,6 +101,7 @@ export const useReadingListStore = create((set, get) => ({
       }
       return false;
     } catch (e) {
+      console.error("addPostToList error:", e.response?.data || e.message);
       toast.error(e.response?.data?.message || "Failed to add post");
       return false;
     }
@@ -122,7 +127,8 @@ export const useReadingListStore = create((set, get) => ({
       }
       return false;
     } catch (e) {
-      toast.error("Failed to remove post");
+      console.error("removePostFromList error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Failed to remove post");
       return false;
     }
   },

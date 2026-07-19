@@ -32,15 +32,12 @@ Reading List	Curate personal collections of saved posts
 Tags System	Alongside categories — multi-tag support for better discovery -->
 Dark Mode Improvements	Fix theme persistence, add system theme detection
 UI/UX Improvements
-Improvement	What to Do
-Markdown Support	Render markdown in post content (if not going rich-text)
 Infinite Scroll	Replace pagination with smooth infinite scroll on Home
 Post Reading Progress	Progress bar at top of ReadMorePost page
-Keyboard Shortcuts	Ctrl+K for search, Ctrl+N for new post
 Mobile-First Polish	Better responsive layout, swipe gestures for chat
 Skeleton Loading	More skeleton screens (currently only chat has them)
 Image Lightbox	Click to enlarge images in posts
-404 Page	Custom not-found page
+<!-- 404 Page	Custom not-found page -->
 Backend Improvements
 Improvement	What to Do
 Rate Limiting	express-rate-limit on auth endpoints
@@ -63,7 +60,7 @@ Add CORS configuration per environment	Dev vs prod origins
 ---
 My Recommendation: Revamp Order
 1. Fix critical bugs (1-2 hours)
-2. Add rich text editor + markdown (biggest UX win)
+<!-- 2. Add rich text editor + markdown (biggest UX win) -->
 3. AI Writing Assistant (impressive for portfolio + actually useful)
 4. Bookmarks + Pagination + Followed Feed (missing core features)
 5. Rate limiting + input validation + error handling (production readiness)

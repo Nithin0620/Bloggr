@@ -34,6 +34,7 @@ export const usePostStore = create((set, get) => ({
       return [];
     }
     catch (e) {
+      console.error("fetchCategories error:", e.response?.data || e.message);
       return [];
     }
     finally {
@@ -44,18 +45,14 @@ export const usePostStore = create((set, get) => ({
   fetchPostsByCategories: async (e) => {
     set({ createPostLoading: true });
     try {
-      // console.log("in store",e);
       const res = await axios.get(`${BASE_URL}/category/getpostsbycategory/${e}`);
-      // console.log("response in fetch post by category",res);
       if (res.data.success) {
         const categoryPostArray = res.data.data;
         return categoryPostArray;
       }
-
-      // console.log(get().categoryList)
     }
     catch (e) {
-      // console.log(e);
+      console.error("fetchPostsByCategories error:", e.response?.data || e.message);
       toast.error("Unable to fetch post by category!")
       return [];
     }
@@ -63,9 +60,7 @@ export const usePostStore = create((set, get) => ({
   },
   createCategory: async (data) => {
     try {
-      // console.log(data)
       const response = await axios.post(`${BASE_URL}/category/createcategory`, { categoryName: data });
-      // console.log("respone for create category",response);
 
       if (response.data.success) {
         toast.success("New Category Created Successfully!")
@@ -77,16 +72,11 @@ export const usePostStore = create((set, get) => ({
       }
     }
     catch (e) {
-      // console.log(e);
-      toast.error(e.response.data.message)
-      // toast.error("Unable to create New category. pls try again after some time.");
+      console.error("createCategory error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Unable to create New category.")
       return false;
     }
   },
-
-  // getCategories : ()=>{
-  //   return get().categoriesList;
-  // },
 
   fetchPosts: async () => {
     set({ fetchPostLoading: true });
@@ -100,7 +90,8 @@ export const usePostStore = create((set, get) => ({
       return response.data.data;
     }
     catch (e) {
-      toast.error(e.response?.data?.message)
+      console.error("fetchPosts error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Failed to load posts")
       return [];
     }
     finally {
@@ -121,6 +112,7 @@ export const usePostStore = create((set, get) => ({
       });
     }
     catch (e) {
+      console.error("fetchMorePosts error:", e.response?.data || e.message);
       toast.error("Failed to load more posts");
     }
     finally {
@@ -128,21 +120,31 @@ export const usePostStore = create((set, get) => ({
     }
   },
 
-
+  fetchScheduledPosts: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/post/getscheduledposts`, {
+        withCredentials: true,
+      });
+      if (response.data.success) {
+        return response.data.data;
+      }
+      return [];
+    } catch (e) {
+      console.error("fetchScheduledPosts error:", e.response?.data || e.message);
+      return [];
+    }
+  },
 
   getPostByID: async (postId) => {
     set({ isReadMoreLoading: true });
     try {
-      // console.log("in the store")
       const response = await axios.get(`${BASE_URL}/post/getpostbyid/${postId}`);
-      // console.log("response in the from id:",response.data.data);
       set({ readMorePostData: response.data.data })
       return response.data.data;
-      // console.log(get().posts);
     }
     catch (e) {
-      // console.log(e);
-      toast.error(e.response.data.message);
+      console.error("getPostByID error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Failed to load post");
       return [];
     }
     finally {
@@ -153,12 +155,10 @@ export const usePostStore = create((set, get) => ({
   getComments: async (id) => {
     try {
       const response = await axios.get(`${BASE_URL}/interactions/getcomments/${id}`)
-      // console.log("comments,:" , response.data);
       return response.data;
     }
     catch (e) {
-      // console.log(e)
-
+      console.error("getComments error:", e.response?.data || e.message);
       return [];
     }
   },
@@ -175,14 +175,14 @@ export const usePostStore = create((set, get) => ({
       }
     }
     catch (e) {
-      // console.log(e);
+      console.error("sendComment error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Failed to add comment");
     }
   },
 
   deleteComment: async (id, commentId) => {
     try {
       const response = await axios.delete(`${BASE_URL}/interactions/deletecomment/${id}/${commentId}`);
-      // console.log(response)
 
       if (response.data.success) {
         toast.success("comment Deleted Successfully");
@@ -192,7 +192,8 @@ export const usePostStore = create((set, get) => ({
       }
     }
     catch (e) {
-      // console.log(e);
+      console.error("deleteComment error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Failed to delete comment");
     }
   },
 
@@ -204,37 +205,30 @@ export const usePostStore = create((set, get) => ({
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data", // Let Axios handle boundary
+            "Content-Type": "multipart/form-data",
           },
-          withCredentials: true, // if using cookies for auth
+          withCredentials: true,
         }
       );
-      // console.log(res)
       if (res.data.success) {
         toast.success("New Blog posted successfully.")
         return true;
       }
       else {
         toast.error("Error occured in posting the Blog!")
-        toast("please Try again after sometime!")
         return false;
       }
     }
     catch (e) {
-      // console.log(e)
-      toast.error("Error occured in posting the Blog!", e.response.data.message)
+      console.error("createPost error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Error occured in posting the Blog!")
       return false;
     }
     finally {
       set({ createPostLoading: false });
-
     }
   },
   updatePost: async (formData, postId) => {
-    // console.log("formData");
-    // for (let pair of formData.entries()) {
-    //   console.log(pair[0] + ": " + pair[1]);
-    //   }
     set({ updatePostLoading: true });
     try {
       const res = await axios.put(
@@ -247,25 +241,19 @@ export const usePostStore = create((set, get) => ({
           withCredentials: true,
         }
       );
-      // console.log(res)
       if (res.data.success) {
         toast.success(" Blog updated successfully.")
-        // return res.data.data;
       }
       else {
-        toast.error("Error occured in posting the Blog!")
-        toast("please Try again after sometime!")
-        // return [];
+        toast.error("Error occured in updating the Blog!")
       }
     }
     catch (e) {
-      // console.log(e)
-      // toast.error(e.response.data.message)
-      toast.error("Error occured in posting the Blog!", e.response.data.message)
+      console.error("updatePost error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Error occured in updating the Blog!")
     }
     finally {
       set({ updatePostLoading: false });
-
     }
   },
   deletePost: async (id) => {
@@ -279,9 +267,9 @@ export const usePostStore = create((set, get) => ({
 
     }
     catch (e) {
-      toast.error(e.response.data.message)
-      // console.log(e);
+      console.error("deletePost error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Failed to delete post")
     }
   }
 
-}))   
+}))

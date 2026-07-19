@@ -16,6 +16,7 @@ import ReadingLists from "./pages/ReadingLists"
 import ReadingListDetail from "./pages/ReadingListDetail"
 import ProtectRoute from "./components/ProtectRoute"
 import GuestOnlyRoute from "./components/GuestOnlyRoute"
+import NotFound from "./pages/NotFound"
 
 
 export const router = createBrowserRouter([
@@ -77,6 +78,10 @@ export const router = createBrowserRouter([
          {
             path:"readinglist/:id",
             element:<ProtectRoute><ReadingListDetail/></ProtectRoute>
+         },
+         {
+            path:"*",
+            element:<NotFound/>
          },
       ]
    },

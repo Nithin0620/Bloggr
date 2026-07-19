@@ -28,7 +28,8 @@ export const useBookmarkStore = create((set, get) => ({
         toast.success(bookmarked ? "Post bookmarked" : "Bookmark removed");
       }
     } catch (e) {
-      toast.error("Failed to update bookmark");
+      console.error("toggleBookmark error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Failed to update bookmark");
     }
   },
 
@@ -41,7 +42,7 @@ export const useBookmarkStore = create((set, get) => ({
         set({ bookmarkedPostIds: res.data.data });
       }
     } catch (e) {
-      // silent fail if not logged in
+      console.error("fetchBookmarkedIds error:", e.response?.data || e.message);
     }
   },
 
@@ -57,7 +58,8 @@ export const useBookmarkStore = create((set, get) => ({
       }
       return [];
     } catch (e) {
-      toast.error("Failed to fetch bookmarks");
+      console.error("fetchBookmarks error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Failed to fetch bookmarks");
       return [];
     } finally {
       set({ loading: false });

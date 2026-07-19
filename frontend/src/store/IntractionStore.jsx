@@ -6,23 +6,18 @@ const BASE_URL = process.env.REACT_APP_MODE === "development" ? "http://localhos
 
 export const useIntractionStore = create((set, get) => ({
   postsLikedByUser: [],
-  
 
   LikeUnlikePost: async (postId) => {
     try {
       const response = await axios.put(`${BASE_URL}/interactions/like-unlikepost/${postId}`);
-      // console.log("responsesssss",response)
 
       if (response.data.success) {
         const likedPosts = get().postsLikedByUser;
         const alreadyLiked = likedPosts.includes(postId);
-        // console.log("alreadyLiked",alreadyLiked)
 
         const updatedPosts = alreadyLiked
-          ? likedPosts.filter(id => id !== postId) 
-          : [...likedPosts, postId];      
-          
-          // console.log(updatedPosts)
+          ? likedPosts.filter(id => id !== postId)
+          : [...likedPosts, postId];
 
         set({ postsLikedByUser: updatedPosts });
         return true;
@@ -30,7 +25,7 @@ export const useIntractionStore = create((set, get) => ({
         return false;
       }
     } catch (e) {
-      console.error("Error liking/unliking post:", e);
+      console.error("LikeUnlikePost error:", e.response?.data || e.message);
       return false;
     }
   },
@@ -38,16 +33,13 @@ export const useIntractionStore = create((set, get) => ({
   getAllPostLikedByCurrentUser: async () => {
     try {
       const response = await axios.get(`${BASE_URL}/interactions/getalllikedpostbycurrentuser`);
-      // console.log("response2", response);
 
       if (response.data.data) {
-        const postIds = response.data.data.map(post => post._id);  
+        const postIds = response.data.data.map(post => post._id);
         set({ postsLikedByUser: postIds });
-        // console.log(postIds)
       }
     } catch (e) {
-      // console.log(e);
-      // console.log("Error in getAllPostLikedByCurrentUser");
+      console.error("getAllPostLikedByCurrentUser error:", e.response?.data || e.message);
     }
   },
 
@@ -62,7 +54,7 @@ export const useIntractionStore = create((set, get) => ({
       else return [];
     }
     catch(e){
-      // console.log(e);
+      console.error("getAllNotifications error:", e.response?.data || e.message);
       return [];
     }
   },
@@ -77,7 +69,7 @@ export const useIntractionStore = create((set, get) => ({
       else toast.error("Error occured in marking all as read, please try again after sometime")
     }
     catch(e){
-      // console.log(e);
+      console.error("MarkAllAsRead error:", e.response?.data || e.message);
       toast.error("Error occured in marking all as read, please try again after sometime")
     }
   },
@@ -91,7 +83,7 @@ export const useIntractionStore = create((set, get) => ({
       else toast.error("Error occured in marking Notification as read, please try again after sometime")
     }
     catch(e){
-      // console.log(e);
+      console.error("MarkNotificationAsRead error:", e.response?.data || e.message);
       toast.error("Error occured in marking Notification as read, please try again after sometime")
     }
   },
@@ -105,7 +97,7 @@ export const useIntractionStore = create((set, get) => ({
       else toast.error("Error occured in Deleting Notification, please try again after sometime")
     }
     catch(e){
-      // console.log(e);
+      console.error("DeleteNotification error:", e.response?.data || e.message);
       toast.error("Error occured in Deleting Notification, please try again after sometime")
     }
   },
@@ -119,7 +111,7 @@ export const useIntractionStore = create((set, get) => ({
       else toast.error("Error occured in clearing All Notification's, please try again after sometime")
     }
     catch(e){
-      // console.log(e);
+      console.error("ClearAllNotification error:", e.response?.data || e.message);
       toast.error("Error occured in Clearing All Notification, please try again after sometime")
     }
   }

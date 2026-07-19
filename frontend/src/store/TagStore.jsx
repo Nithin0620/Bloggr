@@ -21,6 +21,7 @@ export const useTagStore = create((set) => ({
       }
       return [];
     } catch (e) {
+      console.error("fetchTags error:", e.response?.data || e.message);
       return [];
     } finally {
       set({ loading: false });
@@ -41,6 +42,7 @@ export const useTagStore = create((set) => ({
       }
       return null;
     } catch (e) {
+      console.error("createTag error:", e.response?.data || e.message);
       toast.error(e.response?.data?.message || "Failed to create tag");
       return null;
     }
@@ -54,6 +56,7 @@ export const useTagStore = create((set) => ({
       }
       return null;
     } catch (e) {
+      console.error("fetchPostsByTag error:", e.response?.data || e.message);
       toast.error("Failed to fetch posts by tag");
       return null;
     }

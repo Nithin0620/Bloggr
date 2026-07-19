@@ -32,4 +32,5 @@ node_modules
 ./backend/.env
 ./frontend/.env
 .env
+build
 ./backend/uploads

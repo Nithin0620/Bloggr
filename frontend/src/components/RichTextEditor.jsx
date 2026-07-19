@@ -23,6 +23,28 @@ import {
 } from "react-icons/fa";
 import { BsTypeH1, BsTypeH2, BsTypeH3, BsCodeSquare } from "react-icons/bs";
 
+const ToolBtn = ({ onClick, isActive, children, title }) => (
+   <button
+      type="button"
+      onMouseDown={(e) => {
+         e.preventDefault();
+         onClick();
+      }}
+      title={title}
+      className={`p-1.5 rounded transition-colors duration-200 ${
+         isActive
+            ? "accent-bg text-white"
+            : "accent-text-mode hover:accent-bg-light"
+      }`}
+   >
+      {children}
+   </button>
+);
+
+const Separator = () => (
+   <div className="w-px h-6 bg-gray-300 mx-1" />
+);
+
 const MenuBar = ({ editor }) => {
    const fileInputRef = useRef(null);
 
@@ -51,25 +73,6 @@ const MenuBar = ({ editor }) => {
       }
       editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
    };
-
-   const ToolBtn = ({ onClick, isActive, children, title }) => (
-      <button
-         type="button"
-         onClick={onClick}
-         title={title}
-         className={`p-1.5 rounded transition-colors duration-200 ${
-            isActive
-               ? "accent-bg text-white"
-               : "accent-text-mode hover:accent-bg-light"
-         }`}
-      >
-         {children}
-      </button>
-   );
-
-   const Separator = () => (
-      <div className="w-px h-6 bg-gray-300 mx-1" />
-   );
 
    return (
       <div className="flex flex-wrap items-center gap-0.5 p-2 border-b accent-border bg-gray-50 rounded-t-lg">
@@ -227,6 +230,7 @@ const MenuBar = ({ editor }) => {
 
 const RichTextEditor = ({ content, onChange, placeholder }) => {
    const editor = useEditor({
+      immediatelyRender: false,
       extensions: [
          StarterKit.configure({
             heading: { levels: [1, 2, 3] },

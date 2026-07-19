@@ -274,7 +274,12 @@ exports.getAllPosts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 12;
     const cursor = req.query.cursor;
 
-    const query = {};
+    const query = {
+      $or: [
+        { status: { $ne: "scheduled" } },
+        { status: "scheduled", scheduledAt: { $lte: new Date() } },
+      ]
+    };
     if (cursor) {
       query.createdAt = { $lt: new Date(cursor) };
     }
@@ -282,6 +287,7 @@ exports.getAllPosts = async (req, res) => {
     const response = await Post.find(query)
       .populate("author", "firstName lastName image profilePic")
       .populate("categories", "name")
+      .populate("tags", "name slug")
       .populate("likes", "firstName lastName createdAt")
       .populate({
         path: "comments",
@@ -318,6 +324,7 @@ exports.getPostById = async (req, res) => {
     const response = await Post.findById(postId)
       .populate("author", "firstName lastName image")
       .populate("categories", "name")
+      .populate("tags", "name slug")
       .populate("likes", "firstName lastName")
       .populate({
         path: "comments",
@@ -350,6 +357,7 @@ exports.getPostByCategory = async (req, res) => {
          populate: [
             { path: "author", select: "firstName lastName image" },
             { path: "categories", select: "name" },
+            { path: "tags", select: "name slug" },
             { path: "likes", select: "firstName lastName" },
             {
                path: "comments",
@@ -380,7 +388,34 @@ exports.getPostByCategory = async (req, res) => {
    }
 };
 
+exports.getScheduledPosts = async (req, res) => {
+  try {
+    const userId = req.user.user._id;
 
+    const response = await Post.find({
+      author: userId,
+      status: "scheduled",
+      scheduledAt: { $gt: new Date() },
+    })
+      .populate("author", "firstName lastName image profilePic")
+      .populate("categories", "name")
+      .populate("tags", "name slug")
+      .sort({ scheduledAt: 1 })
+      .exec();
+
+    return res.status(200).json({
+      success: true,
+      message: "Scheduled posts fetched successfully",
+      data: response,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching scheduled posts",
+    });
+  }
+};
 
 exports.getPostByUser = async(req,res)=>{
    try{
@@ -403,6 +438,7 @@ exports.getPostByUser = async(req,res)=>{
          populate: [
             { path: "author", select: "firstName lastName image" },
             { path: "categories", select: "name" },
+            { path: "tags", select: "name slug" },
             { path: "likes", select: "firstName lastName" },
             {
                path: "comments",

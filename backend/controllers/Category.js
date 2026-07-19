@@ -46,6 +46,7 @@ exports.getPostsByCategory = async (req, res) => {
          populate: [
          { path: "author", select: "firstName lastName image" },
          { path: "categories", select: "name" },
+         { path: "tags", select: "name slug" },
          { path: "likes", select: "firstName lastName createdAt" },
          {
             path: "comments",

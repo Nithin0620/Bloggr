@@ -10,13 +10,12 @@ export const useProfileStore = create((set,get)=>({
    fetchUserProfile : async(userId)=>{
       try{
          const response = await axios(`${BASE_URL}/profile/viewuserprofile/${userId}`);
-         // console.log("Reaspone",response)
          set({UserProfile:response.data})
          return response.data;
       }
       catch(e){
-         toast.error(e.response.data.message);
-         // console.log("error in the fetchUser profile function:",e);
+         console.error("fetchUserProfile error:", e.response?.data || e.message);
+         toast.error(e.response?.data?.message || "Failed to load profile");
          return [];
       }
    },
@@ -32,8 +31,8 @@ export const useProfileStore = create((set,get)=>({
          }
       }
       catch(e){
-         // console.log(e);
-         toast.error("Error occured in updating your profile")
+         console.error("editProfileInfo error:", e.response?.data || e.message);
+         toast.error(e.response?.data?.message || "Error occured in updating your profile")
       }
    },
    Followuser : async(id)=>{
@@ -47,7 +46,7 @@ export const useProfileStore = create((set,get)=>({
          }
       }
       catch(e){
-         console.log(e);
+         console.error("Followuser error:", e.response?.data || e.message);
          toast.error("Error occured in Following this profile")
       }
    },
@@ -62,7 +61,7 @@ export const useProfileStore = create((set,get)=>({
          }
       }
       catch(e){
-         console.log(e);
+         console.error("unFollowUser error:", e.response?.data || e.message);
          toast.error("Error occured in unFollowing this profile")
       }
    },
@@ -76,8 +75,8 @@ export const useProfileStore = create((set,get)=>({
          else return [];
       }
       catch(e){
-         // console.log(e);
-         toast.error(e.response.data.message);
+         console.error("getFollowers error:", e.response?.data || e.message);
+         toast.error(e.response?.data?.message || "Failed to load followers");
          return [];
       }
    },
@@ -91,8 +90,8 @@ export const useProfileStore = create((set,get)=>({
          else return [];
       }
       catch(e){
-         toast.error(e.response.data.message);
-         // console.log(e);
+         console.error("getFollowings error:", e.response?.data || e.message);
+         toast.error(e.response?.data?.message || "Failed to load followings");
          return [];
       }
    },
@@ -103,7 +102,7 @@ export const useProfileStore = create((set,get)=>({
             headers: {
                "Content-Type": "multipart/form-data",
             },
-            withCredentials: true, // if using cookies for auth
+            withCredentials: true,
          });
 
          if(response.data.success){
@@ -113,8 +112,8 @@ export const useProfileStore = create((set,get)=>({
          }
       }
       catch(e){
-         // console.log(e);
-         toast.error("an error occured in updating profile photo!");
+         console.error("updateProfilePic error:", e.response?.data || e.message);
+         toast.error(e.response?.data?.message || "an error occured in updating profile photo!");
       }
    },
    deleteProfilePic : async()=>{
@@ -128,8 +127,8 @@ export const useProfileStore = create((set,get)=>({
          }
       }
       catch(e){
-         // console.log(e);
-         toast.error("an error occured in Deleting profile photo!");
+         console.error("deleteProfilePic error:", e.response?.data || e.message);
+         toast.error(e.response?.data?.message || "an error occured in Deleting profile photo!");
       }
    },
 
