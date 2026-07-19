@@ -42,7 +42,7 @@ const Footbar = () => {
 
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-11/12 max-w-md z-40 transition-all duration-300 accent-text-mode">
-      <div className="flex justify-evenly h-12 rounded-full gap-5 px-6 py-0 backdrop-blur-3xl shadow-accent-box border border-gray-200">
+      <div className="flex justify-evenly h-12 rounded-full gap-5 px-6 py-0 backdrop-blur-3xl shadow-accent-box border accent-border">
         {tabs.map((tab) => {
           const isActive = currentPage === tab.id;
           const isHovered = hoveredTab === tab.id;

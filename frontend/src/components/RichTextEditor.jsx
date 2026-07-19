@@ -42,7 +42,7 @@ const ToolBtn = ({ onClick, isActive, children, title }) => (
 );
 
 const Separator = () => (
-   <div className="w-px h-6 bg-gray-300 mx-1" />
+   <div className="w-px h-6 accent-bg-dark mx-1" />
 );
 
 const MenuBar = ({ editor }) => {
@@ -75,7 +75,7 @@ const MenuBar = ({ editor }) => {
    };
 
    return (
-      <div className="flex flex-wrap items-center gap-0.5 p-2 border-b accent-border bg-gray-50 rounded-t-lg">
+      <div className="flex flex-wrap items-center gap-0.5 p-2 border-b accent-border accent-bg-light rounded-t-lg">
          <ToolBtn
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
             isActive={editor.isActive("heading", { level: 1 })}

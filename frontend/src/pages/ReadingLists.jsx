@@ -50,7 +50,7 @@ const ReadingLists = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold accent-text">Reading Lists</h1>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs accent-text-mode opacity-70">
                 {lists.length} {lists.length === 1 ? "list" : "lists"}
               </p>
             </div>
@@ -68,15 +68,15 @@ const ReadingLists = () => {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <Loader className="animate-spin accent-text" />
-            <p className="text-sm text-gray-400">Loading your lists...</p>
+            <p className="text-sm accent-text-mode opacity-70">Loading your lists...</p>
           </div>
         ) : lists.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-            <div className="p-6 rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
+          <div className="flex flex-col items-center justify-center py-20 accent-text-mode">
+            <div className="p-6 rounded-full accent-bg-light mb-4">
               <BookOpen className="text-5xl opacity-40" />
             </div>
-            <p className="text-lg font-medium text-gray-500">No reading lists yet</p>
-            <p className="text-sm text-gray-400 mt-1 mb-4">
+            <p className="text-lg font-medium accent-text-mode">No reading lists yet</p>
+            <p className="text-sm accent-text-mode mt-1 mb-4 opacity-70">
               Create lists to organize posts you want to read later
             </p>
             <button
@@ -98,7 +98,7 @@ const ReadingLists = () => {
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold accent-text truncate">{list.name}</h3>
                     {list.description && (
-                      <p className="text-sm text-gray-400 mt-1 line-clamp-2">{list.description}</p>
+                      <p className="text-sm accent-text-mode mt-1 line-clamp-2 opacity-70">{list.description}</p>
                     )}
                   </div>
                   <button
@@ -109,7 +109,7 @@ const ReadingLists = () => {
                   </button>
                 </div>
                 <div className="mt-3 flex items-center gap-2">
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs accent-text-mode opacity-70">
                     {list.posts?.length || 0} {(list.posts?.length || 0) === 1 ? "post" : "posts"}
                   </span>
                 </div>
@@ -120,11 +120,11 @@ const ReadingLists = () => {
                         key={i}
                         src={post.image}
                         alt=""
-                        className="w-8 h-8 rounded-md object-cover border-2 border-white dark:border-gray-900"
+                        className="w-8 h-8 rounded-md object-cover border-2 accent-border"
                       />
                     ))}
                     {list.posts.length > 3 && (
-                      <div className="w-8 h-8 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium border-2 border-white dark:border-gray-900">
+                      <div className="w-8 h-8 rounded-md accent-bg-light flex items-center justify-center text-xs font-medium border-2 accent-border">
                         +{list.posts.length - 3}
                       </div>
                     )}

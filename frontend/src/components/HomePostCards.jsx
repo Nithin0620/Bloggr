@@ -89,7 +89,7 @@ const HomePostCards = ({ post ,setLiked}) => {
           {post.tags && post.tags.length > 0 && post.tags.map((tag, index) => (
             <span
               key={`tag-${index}`}
-              className="px-2 py-[2px] text-xs font-sans bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-md"
+              className="px-2 py-[2px] text-xs font-sans accent-bg-light accent-text rounded-md"
             >
               #{typeof tag === "string" ? tag : tag.name}
             </span>
@@ -115,7 +115,7 @@ const HomePostCards = ({ post ,setLiked}) => {
 
       {/* Description */}
       <div className="flex flex-col gap-2 text-sm accent-text-mode mb-3">
-        <div onClick={()=>navigate(`/profile/${post.author._id}`)} className="hover:underline cursor-pointer text-xs text-gray-400 italic">
+        <div onClick={()=>navigate(`/profile/${post.author._id}`)} className="hover:underline cursor-pointer text-xs accent-text-mode italic opacity-70">
           By {post.author.firstName + " "+ post.author.lastName || "Anonymous"} •{" "}
          
           {getTimeAgo(post.createdAt)}
@@ -134,7 +134,7 @@ const HomePostCards = ({ post ,setLiked}) => {
           Read More...
         </button>
 
-        <div className="flex gap-3 items-center text-sm text-gray-500">
+        <div className="flex gap-3 items-center text-sm accent-text-mode">
           <button onClick={()=>handleLike()} className="flex items-center gap-1 hover:text-red-500 transition duration-200">
             {postsLikedByUser.includes(post._id) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> }
             {post.likes.length}

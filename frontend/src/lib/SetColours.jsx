@@ -61,11 +61,21 @@ const themePresets = {
 };
 
 export const applyMode = (mode)=>{
-  const selectedMode =mode;
-
   localStorage.setItem("accent-mode",mode)
-  
-  if(selectedMode === "Light"){
+
+  if(mode === "System"){
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if(prefersDark){
+      document.documentElement.style.setProperty("--accent-text-mode","#ebebeb")
+      document.documentElement.style.setProperty("--accent-bg-mode","#000717")
+    } else {
+      document.documentElement.style.setProperty("--accent-text-mode","rgb(0, 3, 14)")
+      document.documentElement.style.setProperty("--accent-bg-mode","#f5f6fa" )
+    }
+    return;
+  }
+
+  if(mode === "Light"){
     document.documentElement.style.setProperty("--accent-text-mode","rgb(0, 3, 14)")
     document.documentElement.style.setProperty("--accent-bg-mode","#f5f6fa" )
   }
@@ -74,6 +84,27 @@ export const applyMode = (mode)=>{
     document.documentElement.style.setProperty("--accent-bg-mode","#000717")
   }
 }
+
+let systemThemeListener = null;
+
+export const startSystemThemeListener = () => {
+  if (systemThemeListener) return;
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  systemThemeListener = (e) => {
+    const savedMode = localStorage.getItem("accent-mode");
+    if (savedMode === "System") {
+      applyMode("System");
+    }
+  };
+  mq.addEventListener("change", systemThemeListener);
+};
+
+export const stopSystemThemeListener = () => {
+  if (systemThemeListener) {
+    window.matchMedia("(prefers-color-scheme: dark)").removeEventListener("change", systemThemeListener);
+    systemThemeListener = null;
+  }
+};
 
 export const applyTheme = (themeName) => {
   const selectedTheme = themePresets[themeName];

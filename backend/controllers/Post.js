@@ -333,6 +333,25 @@ exports.getPostById = async (req, res) => {
       .sort({createdAt:-1})
       .exec();
 
+    if (!response) {
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+
+    // Count unique view per logged-in user
+    const viewerId = req.user?.user?._id;
+    if (viewerId) {
+      if (!response.viewedBy.some(id => id.toString() === viewerId.toString())) {
+        await Post.findByIdAndUpdate(postId, {
+          $inc: { views: 1 },
+          $addToSet: { viewedBy: viewerId },
+        });
+        response.views += 1;
+      }
+    }
+
     return res.status(200).json({
       success: true,
       message: " posts fetched by Id successfully",

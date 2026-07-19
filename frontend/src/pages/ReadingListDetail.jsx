@@ -29,7 +29,7 @@ const ReadingListDetail = () => {
   if (!currentList) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p className="text-gray-400">Reading list not found</p>
+        <p className="accent-text-mode">Reading list not found</p>
       </div>
     );
   }
@@ -53,9 +53,9 @@ const ReadingListDetail = () => {
             <div>
               <h1 className="text-2xl font-bold accent-text">{currentList.name}</h1>
               {currentList.description && (
-                <p className="text-sm text-gray-400">{currentList.description}</p>
+                <p className="text-sm accent-text-mode opacity-70">{currentList.description}</p>
               )}
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs accent-text-mode opacity-70 mt-1">
                 {currentList.posts?.length || 0} posts
               </p>
             </div>
@@ -70,7 +70,7 @@ const ReadingListDetail = () => {
                 <HomePostCards post={post} setLiked={setLiked} />
                 <button
                   onClick={() => handleRemovePost(post._id)}
-                  className="absolute top-3 right-3 text-xs text-red-500 bg-white dark:bg-gray-800 px-2 py-1 rounded-md shadow hover:bg-red-50 dark:hover:bg-red-900/20 transition z-10"
+                  className="absolute top-3 right-3 text-xs text-red-500 accent-bg px-2 py-1 rounded-md shadow hover:opacity-80 transition z-10"
                 >
                   Remove
                 </button>
@@ -78,10 +78,10 @@ const ReadingListDetail = () => {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+          <div className="flex flex-col items-center justify-center py-20 accent-text-mode">
             <BookOpen className="text-5xl opacity-40 mb-4" />
-            <p className="text-lg font-medium text-gray-500">This list is empty</p>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="text-lg font-medium accent-text-mode">This list is empty</p>
+            <p className="text-sm accent-text-mode mt-1 opacity-70">
               Add posts from the home feed to build your reading list
             </p>
           </div>

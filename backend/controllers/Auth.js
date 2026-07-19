@@ -1,5 +1,4 @@
 const User = require("../modals/user")
-const Post = require("../modals/post")
 const OTP = require("../modals/otp")
 const PasswordResetOTP = require("../modals/passwordResetOtp")
 const bcrypt = require("bcrypt")
@@ -107,7 +106,7 @@ exports.login = async(req,res)=>{
 
       if(!responseForSettings) await Settings.create({user:user._id});
 
-      const compared = bcrypt.compare(password,user.password);
+      const compared = await bcrypt.compare(password,user.password);
       if(compared){
          const payload={
             email:user.email,
@@ -125,12 +124,6 @@ exports.login = async(req,res)=>{
             expires:new Date(Date.now()+3*24*60*60*1000),
             httpOnly:true,
          }
-
-
-
-         const response = await Post.updateMany({},{$inc:{views:1}});
-      
-
 
          res.cookie("jwt",Token,{
             expires:new Date(Date.now()+3*24*60*60*1000),

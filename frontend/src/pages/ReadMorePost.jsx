@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Comment from "../components/Comment";
 import { usePostStore } from '../store/PostStore';
 import RelatedBlogs from '../components/RelatedBlogs';
+import ReadingProgress from '../components/ReadingProgress';
+import ImageLightbox from '../components/ImageLightbox';
 import { IoMdShare } from "react-icons/io";
 import { FaRegHeart } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
@@ -84,6 +86,29 @@ const ReadMorePost = () => {
         });
 
    const [liked,setLiked] = useState(false);
+   const [lightboxOpen, setLightboxOpen] = useState(false);
+   const [lightboxImages, setLightboxImages] = useState([]);
+   const [lightboxIndex, setLightboxIndex] = useState(0);
+
+   const openLightbox = useCallback((images, index = 0) => {
+      setLightboxImages(images);
+      setLightboxIndex(index);
+      setLightboxOpen(true);
+   }, []);
+
+   const closeLightbox = useCallback(() => {
+      setLightboxOpen(false);
+      setLightboxImages([]);
+      setLightboxIndex(0);
+   }, []);
+
+   const prevImage = useCallback(() => {
+      setLightboxIndex((prev) => (prev > 0 ? prev - 1 : lightboxImages.length - 1));
+   }, [lightboxImages.length]);
+
+   const nextImage = useCallback(() => {
+      setLightboxIndex((prev) => (prev < lightboxImages.length - 1 ? prev + 1 : 0));
+   }, [lightboxImages.length]);
 
    useEffect(()=>{
       if(liked === false) window.scrollTo({top:0,behavior:'smooth'});
@@ -124,6 +149,18 @@ const ReadMorePost = () => {
 
    return (
       <div className="relative px-4 md:px-12 pb-20 lg:px-24 transition-colors duration-300 accent-bg-mode accent-text-mode">
+         <ReadingProgress />
+         
+         {lightboxOpen && (
+            <ImageLightbox
+               images={lightboxImages}
+               currentIndex={lightboxIndex}
+               onClose={closeLightbox}
+               onPrev={prevImage}
+               onNext={nextImage}
+            />
+         )}
+         
          {loading && (
          <div className="absolute inset-0 flex justify-center items-cente z-10">
             <div >
@@ -148,7 +185,7 @@ const ReadMorePost = () => {
                   ))}
                </div>
 
-               <div className="text-sm text-gray-500 flex gap-4 flex-wrap">
+               <div className="text-sm accent-text-mode opacity-70 flex gap-4 flex-wrap">
                   <span onClick={()=>navigate(`/profile/${post.author._id}`)} className="cursor-pointer hover:underline accent-text">{post.author.firstName + " " + post.author.lastName}</span>
                   <span>• {getTimeAgo(post.createdAt)}</span>
                   <span>• {post.readTime} min read</span>
@@ -158,13 +195,24 @@ const ReadMorePost = () => {
                   <img
                      src={post.image}
                      alt="Post Banner"
-                     className="rounded-lg shadow-accent-box w-full"
+                     className="rounded-lg shadow-accent-box w-full cursor-pointer hover:opacity-90 transition-opacity"
+                     onClick={() => openLightbox([post.image], 0)}
                   />
                </div>
 
                <div className="h-[0.12rem] rounded-full min-w-full accent-bg-dark"></div>
 
-               <div className="leading-7 text-base text-justify prose-content" dangerouslySetInnerHTML={{ __html: post.content }} />
+               <div 
+                  className="leading-7 text-base text-justify prose-content" 
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                  onClick={(e) => {
+                     if (e.target.tagName === 'IMG') {
+                        const images = Array.from(e.currentTarget.querySelectorAll('img')).map(img => img.src);
+                        const index = images.indexOf(e.target.src);
+                        openLightbox(images, index >= 0 ? index : 0);
+                     }
+                  }}
+               />
 
                <div className="flex gap-10 transition-all duration-300 text-sm">
                   <span onClick={()=>handleLike()} className=" cursor-pointer hover:text-red-500">{postsLikedByUser.includes(post._id) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> } Like {post.likes.length}</span>
@@ -183,14 +231,14 @@ const ReadMorePost = () => {
                   ########## <h1 className='px-5 font-bold font-serif accent-text accent-underline'>END OF THE BLOG</h1> ##########
                </div>
 
-               <div className="block lg:hidden h-[0.12rem] w-full bg-gray-400 my-5"></div>
+               <div className="block lg:hidden h-[0.12rem] w-full accent-bg-dark my-5"></div>
 
                <div>
                   <RelatedBlogs />
                </div>
             </div>
 
-            <div className="hidden lg:block lg:min-h-screen w-[0.12rem] bg-gray-400 mx-5"></div>
+            <div className="hidden lg:block lg:min-h-screen w-[0.12rem] accent-bg-dark mx-5"></div>
 
             {/* RIGHT: Comment Section */}
             <div className="w-full lg:w-[25%]">

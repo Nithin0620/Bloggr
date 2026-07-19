@@ -30,13 +30,13 @@ Pagination	getAllPosts fetches everything — add cursor/offset pagination -->
 Post Scheduling	Schedule posts for future publishing
 Reading List	Curate personal collections of saved posts
 Tags System	Alongside categories — multi-tag support for better discovery -->
-Dark Mode Improvements	Fix theme persistence, add system theme detection
-UI/UX Improvements
+<!-- Dark Mode Improvements	Fix theme persistence, add system theme detection -->
+<!-- UI/UX Improvements
 Infinite Scroll	Replace pagination with smooth infinite scroll on Home
 Post Reading Progress	Progress bar at top of ReadMorePost page
 Mobile-First Polish	Better responsive layout, swipe gestures for chat
 Skeleton Loading	More skeleton screens (currently only chat has them)
-Image Lightbox	Click to enlarge images in posts
+Image Lightbox	Click to enlarge images in posts -->
 <!-- 404 Page	Custom not-found page -->
 Backend Improvements
 Improvement	What to Do

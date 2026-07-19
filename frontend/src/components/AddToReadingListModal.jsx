@@ -61,7 +61,7 @@ const AddToReadingListModal = ({ isOpen, onClose, postId }) => {
               >
                 <div className="flex-1 min-w-0">
                   <p className="font-medium accent-text truncate">{list.name}</p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs accent-text-mode opacity-70">
                     {list.posts?.length || 0} posts
                   </p>
                 </div>
@@ -70,14 +70,14 @@ const AddToReadingListModal = ({ isOpen, onClose, postId }) => {
                 ) : loading ? (
                   <Loader className="animate-spin w-4 h-4 flex-shrink-0" />
                 ) : (
-                  <Plus className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                  <Plus className="w-5 h-5 accent-text-mode opacity-70 flex-shrink-0" />
                 )}
               </div>
             );
           })}
 
           {lists.length === 0 && !showCreate && (
-            <p className="text-center text-gray-400 py-6 text-sm">
+            <p className="text-center accent-text-mode opacity-70 py-6 text-sm">
               No reading lists yet. Create one below.
             </p>
           )}

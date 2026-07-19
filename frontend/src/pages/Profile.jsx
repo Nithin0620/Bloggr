@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../store/AuthStore';
 import ProfilePostCard from '../components/ProfilePostCard';
+import ProfileSkeleton from '../components/skeletons/ProfileSkeleton';
 import { usePageStore } from "../store/PageStore";
 import UpdatePostHandler from "../components/UpdatePostHandler";
 import { IoMdClose } from "react-icons/io";
@@ -113,7 +114,13 @@ const Profile = () => {
 
   return (
     <div className="relative min-h-screen accent-bg-mode accent-text-mode">
-      {loading && (
+      {loading && !user && (
+        <div className="max-w-[66rem] mx-auto px-4 sm:px-6 py-10">
+          <ProfileSkeleton />
+        </div>
+      )}
+
+      {loading && user && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-black bg-opacity-5 backdrop-blur-sm">
           <Loader className="animate-spin" />
         </div>
@@ -121,11 +128,11 @@ const Profile = () => {
 
       <div className="max-w-[66rem] mx-auto px-4 sm:px-6 py-10 transition-colors duration-300">
         <div className="rounded-lg">
-          {!user ? (
+          {!user && !loading ? (
             <div className="text-center text-lg">Unable to load user profile.</div>
-          ) : (
+          ) : user ? (
             <>
-              <div className="rounded-xl p-6 flex flex-col md:flex-row items-start justify-between shadow-accent-box accent-border border gap-6">
+              <div className="rounded-xl p-6 flex flex-col md:flex-row items-start justify-between shadow-accent-box accent-border border gap-6 animate-fadeIn">
                 <div className="flex flex-col sm:flex-row sm:items-start gap-6 w-full md:w-auto">
                   <div className="relative w-24 h-24 sm:w-28 sm:h-28 mx-auto sm:mx-0">
                     <img
@@ -255,7 +262,7 @@ const Profile = () => {
                 </div>
               </div>
             </>
-          )}
+          ) : null}
         </div>
       </div>
 

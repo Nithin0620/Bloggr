@@ -270,7 +270,7 @@ const CreatePostHandler = () => {
                </div>
                <div className="flex flex-wrap gap-2 mt-2">
                   {selectedTags.map((tag, index) => (
-                     <div key={index} className="flex items-center bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full text-sm">
+                     <div key={index} className="flex items-center accent-bg-light accent-text px-3 py-1 rounded-full text-sm">
                         #{tag}
                         <button
                            onClick={() => setSelectedTags(selectedTags.filter((_, i) => i !== index))}
@@ -283,7 +283,7 @@ const CreatePostHandler = () => {
                </div>
                {allTags.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1">
-                     <span className="text-xs text-gray-400">Popular:</span>
+                     <span className="text-xs accent-text-mode opacity-70">Popular:</span>
                      {allTags.slice(0, 8).map((tag) => (
                         <button
                            key={tag._id}
@@ -342,7 +342,7 @@ const CreatePostHandler = () => {
                         min={new Date().toISOString().slice(0, 16)}
                         className="w-full px-4 py-2 border rounded-lg accent-border accent-bg-mode accent-text-mode text-sm"
                      />
-                     <p className="text-xs text-gray-400 mt-1">Post will be published automatically at this time</p>
+                      <p className="text-xs accent-text-mode opacity-70 mt-1">Post will be published automatically at this time</p>
                   </div>
                )}
             </div>

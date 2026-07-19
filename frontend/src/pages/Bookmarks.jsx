@@ -30,7 +30,7 @@ const Bookmarks = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold accent-text">Your Bookmarks</h1>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs accent-text-mode opacity-70">
                 {posts.length} saved {posts.length === 1 ? "post" : "posts"}
               </p>
             </div>
@@ -49,15 +49,15 @@ const Bookmarks = () => {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <Loader className="animate-spin accent-text" />
-            <p className="text-sm text-gray-400">Loading your bookmarks...</p>
+            <p className="text-sm accent-text-mode opacity-70">Loading your bookmarks...</p>
           </div>
         ) : posts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-            <div className="p-6 rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
+          <div className="flex flex-col items-center justify-center py-20 accent-text-mode">
+            <div className="p-6 rounded-full accent-bg-light mb-4">
               <FaBookmark className="text-5xl opacity-40" />
             </div>
-            <p className="text-lg font-medium text-gray-500">No bookmarks yet</p>
-            <p className="text-sm text-gray-400 mt-1 mb-4">
+            <p className="text-lg font-medium accent-text-mode">No bookmarks yet</p>
+            <p className="text-sm accent-text-mode mt-1 mb-4 opacity-70">
               Save posts you want to read later by tapping the bookmark icon
             </p>
             <button

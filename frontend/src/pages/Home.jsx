@@ -2,9 +2,10 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { IoSearch } from "react-icons/io5";
 import HeroCard from "../components/HeroCard";
 import HomePostCards from "../components/HomePostCards";
+import PostSkeleton from "../components/skeletons/PostSkeleton";
+import HeroSkeleton from "../components/skeletons/HeroSkeleton";
 import { useAuthStore } from "../store/AuthStore";
 import { usePostStore } from "../store/PostStore";
-import {Loader} from "lucide-react"
 import { useIntractionStore } from "../store/IntractionStore";
 import { usePageStore } from "../store/PageStore";
 import { FaPlus } from "react-icons/fa6";
@@ -113,15 +114,15 @@ const Home = () => {
     setAddCategoryOpen(true)
   }
 
-  return (
+   return (
     <div className="flex justify-center custom-scroll p-2 transition-colors duration-300 accent-bg-mode accent-text-mode">
       <div className="w-[85%] rounded-3xl flex flex-col items-center lg:px-12 px-4 py-2 min-h-screen shadow-accent-box border accent-border transition-colors duration-300 accent-bg-mode accent-text-mode">
-        <HeroCard />
+        {loading ? <HeroSkeleton /> : <HeroCard />}
 
         <div className="w-[98%] mx-auto rounded-xl shadow shadow-accent p-4 mt-6 mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-colors duration-300 accent-bg-mode accent-text-mode">
           <div className="flex items-center w-full md:w-[66%]  rounded-md px-4 py-2 shadow-inner accent-box-shadow border accent-border">
             <IoSearch className=" text-lg transition-colors duration-300 accent-bg-mode accent-text-mode" />
-            <div className="mx-2 h-6 w-[1.5px] ml-4 transition-colors duration-300 bg-gray-400 accent-text-mode" ></div>
+            <div className="mx-2 h-6 w-[1.5px] ml-4 transition-colors duration-300 accent-bg-dark accent-text-mode" ></div>
             <input
               type="search"
               value={searchTerm}
@@ -148,34 +149,53 @@ const Home = () => {
         </div>
 
        <div className="relative min-h-screen">
-        {
-          Post.length === 0 && !loading && (
-            <div className="absolute inset-0 flex justify-center items-center z-10">
-              <p className="flex justify-evenly text-center">
-                No Post Yet! why Don't you create One 😏.
-              </p>
-            </div>
-          )
-        }
-
-        <div
-          id="PostSection"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {Post.map((post, index) => {
-            const isLast = index === Post.length - 1;
-            return (
-              <div key={post._id || index} ref={isLast ? lastPostRef : null}>
-                <HomePostCards post={post} setLiked={setLiked} />
-              </div>
-            );
-          })}
-        </div>
-
-        {fetchPostLoading && (
-          <div className="flex justify-center py-6">
-            <Loader className="animate-spin" />
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <PostSkeleton count={6} />
           </div>
+        ) : (
+          <>
+            {
+              Post.length === 0 && !loading && (
+                <div className="absolute inset-0 flex justify-center items-center z-10">
+                  <p className="flex justify-evenly text-center">
+                    No Post Yet! why Don't you create One 😏.
+                  </p>
+                </div>
+              )
+            }
+
+            <div
+              id="PostSection"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {Post.map((post, index) => {
+                const isLast = index === Post.length - 1;
+                return (
+                  <div 
+                    key={post._id || index} 
+                    ref={isLast ? lastPostRef : null}
+                    className="animate-fadeInUp"
+                    style={{ animationDelay: `${(index % 12) * 50}ms` }}
+                  >
+                    <HomePostCards post={post} setLiked={setLiked} />
+                  </div>
+                );
+              })}
+            </div>
+
+            {fetchPostLoading && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                <PostSkeleton count={3} />
+              </div>
+            )}
+
+            {!hasMore && Post.length > 0 && (
+              <div className="text-center py-8 accent-text-mode opacity-70">
+                You've reached the end of the feed
+              </div>
+            )}
+          </>
         )}
       </div>
       </div>

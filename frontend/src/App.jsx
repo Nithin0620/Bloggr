@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom"
 import { useAuthStore } from './store/AuthStore'
 import { useNavigate } from 'react-router-dom'
 import LogoutModal from "./components/LogoutModal"
-import { applyMode, applyTheme } from './lib/SetColours'
+import { applyMode, applyTheme, startSystemThemeListener } from './lib/SetColours'
 import ShareModal from './components/ShareModal'
 import { useIntractionStore } from './store/IntractionStore'
 import { useBookmarkStore } from './store/BookmarkStore'
@@ -22,16 +22,15 @@ const App = () => {
     fetchBookmarkedIds();
     checkAuth();
     setnavigate(navigate);
-    const savedMode = localStorage.getItem("accent-mode");
-    if (!savedMode) localStorage.setItem("accent-mode", "Light");
-    const savedMode2 = localStorage.getItem("accent-mode");
-    if (savedMode || savedMode2) applyMode(savedMode || savedMode2);
-    const savedAccent = localStorage.getItem("accent-theme");
-    if (!savedAccent) localStorage.setItem("accent-theme", "Green");
-    const savedAccent2 = localStorage.getItem("accent-theme");
-    if (savedAccent || savedAccent2) {
-      applyTheme(savedAccent || savedAccent2);
-    }
+
+    // Apply saved theme immediately from localStorage (fast, no flash)
+    const savedMode = localStorage.getItem("accent-mode") || "Light";
+    const savedAccent = localStorage.getItem("accent-theme") || "Green";
+    applyMode(savedMode);
+    applyTheme(savedAccent);
+
+    // Listen for system theme changes (for "System" mode)
+    startSystemThemeListener();
   }, []);
 
 

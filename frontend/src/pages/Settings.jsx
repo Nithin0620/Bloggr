@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IoMdClose } from "react-icons/io";
 import { BiLogOut } from "react-icons/bi";
 import { CiSaveUp1 } from "react-icons/ci";
@@ -17,8 +17,6 @@ const Settings = () => {
       Beige: 'ring-orange-200',
       Yellow: 'ring-yellow-300',
    };
-
-   const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
    const {getSettings,setSettings,resetSettings} = useSettingsStore();
    const {fetchCategories, categoriesList} = usePostStore();
@@ -95,8 +93,8 @@ const Settings = () => {
             "aria-live": "polite",
          },
       });
-      if (value === "default") setMode(isDarkMode ? "Dark" : "Light");
-      else setMode(value);
+      setMode(value);
+      applyMode(value);
    };
 
    const handleThemeSelect = (Theme) => {
@@ -174,7 +172,7 @@ const Settings = () => {
             >
                <option value="Light">Light</option>
                <option value="Dark">Dark</option>
-               <option value="default">System Default</option>
+               <option value="System">System Default</option>
             </select>
          </div>
 
