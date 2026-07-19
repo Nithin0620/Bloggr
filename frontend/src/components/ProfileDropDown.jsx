@@ -23,13 +23,11 @@ const ProfileDropDown = ({ setOpenProfileDropDown }) => {
   const handleViewProfile = () => {
     setCurrentPage("ProfilePage")
     setOpenProfileDropDown(false);
-    navigate(`/profile/${authUser._id}`);
+    navigate(`/profile/${authUser?._id}`);
   };
 
   const handleShareProfile = () => {
-    // console.log(authUser._id)
-    openShareModal("profile" , {userId:authUser._id});
-    // navigator.clipboard.writeText(`https://yourapp.com/user/${authUser.username}`);
+    openShareModal("profile" , {userId:authUser?._id});
   };
 
   return (

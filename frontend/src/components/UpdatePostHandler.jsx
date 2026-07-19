@@ -152,7 +152,7 @@ const UpdatePostHandler = ({ post,setPostUpdated }) => {
                <input
                type="text"
                disabled
-               value={authUser.profile.name}
+               value={authUser?.profile?.name}
                className="w-full text px-4 py-2 accent-text-mode text-opacity-20 font-normal border rounded-lg accent-border"
                />
             </div>

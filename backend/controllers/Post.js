@@ -230,22 +230,36 @@ exports.deletePost = async (req, res) => {
 
 exports.getAllPosts = async (req, res) => {
   try {
-    const response = await Post.find()
-      .populate("author", "firstName lastName image")
+    const limit = parseInt(req.query.limit) || 12;
+    const cursor = req.query.cursor;
+
+    const query = {};
+    if (cursor) {
+      query.createdAt = { $lt: new Date(cursor) };
+    }
+
+    const response = await Post.find(query)
+      .populate("author", "firstName lastName image profilePic")
       .populate("categories", "name")
       .populate("likes", "firstName lastName createdAt")
       .populate({
         path: "comments",
         populate: { path: "user", select: "firstName lastName image" },
-      }).sort({ createdAt: -1 })
+      })
+      .sort({ createdAt: -1 })
+      .limit(limit + 1)
       .exec();
 
-    // const finalResponse = response.sort({ createdAt: -1 }); //jo naya, vo  pehle ayega
+    const hasMore = response.length > limit;
+    const posts = hasMore ? response.slice(0, limit) : response;
+    const nextCursor = hasMore ? posts[posts.length - 1].createdAt : null;
 
     return res.status(200).json({
       success: true,
       message: "All posts fetched successfully",
-      data: response,
+      data: posts,
+      nextCursor,
+      hasMore,
     });
   } catch (e) {
     console.log(e);

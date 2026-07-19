@@ -1,10 +1,8 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import Image from "@tiptap/extension-image";
-import Link from "@tiptap/extension-link";
-import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import {
    FaBold,
@@ -26,11 +24,21 @@ import {
 import { BsTypeH1, BsTypeH2, BsTypeH3, BsCodeSquare } from "react-icons/bs";
 
 const MenuBar = ({ editor }) => {
+   const fileInputRef = useRef(null);
+
    if (!editor) return null;
 
-   const addImage = () => {
-      const url = window.prompt("Enter image URL:");
-      if (url) editor.chain().focus().setImage({ src: url }).run();
+   const handleImageUpload = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith("image/")) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+         editor.chain().focus().setImage({ src: reader.result }).run();
+      };
+      reader.readAsDataURL(file);
+      e.target.value = "";
    };
 
    const setLink = () => {
@@ -188,9 +196,16 @@ const MenuBar = ({ editor }) => {
          <ToolBtn onClick={setLink} isActive={editor.isActive("link")} title="Add Link">
             <FaLink />
          </ToolBtn>
-         <ToolBtn onClick={addImage} title="Add Image">
+         <ToolBtn onClick={() => fileInputRef.current?.click()} title="Add Image">
             <FaImage />
          </ToolBtn>
+         <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
+         />
 
          <Separator />
 
@@ -215,6 +230,10 @@ const RichTextEditor = ({ content, onChange, placeholder }) => {
       extensions: [
          StarterKit.configure({
             heading: { levels: [1, 2, 3] },
+            link: {
+               openOnClick: false,
+               HTMLAttributes: { class: "editor-link" },
+            },
          }),
          Placeholder.configure({
             placeholder: placeholder || "Write your content here...",
@@ -223,11 +242,6 @@ const RichTextEditor = ({ content, onChange, placeholder }) => {
             inline: false,
             allowBase64: true,
          }),
-         Link.configure({
-            openOnClick: false,
-            HTMLAttributes: { class: "editor-link" },
-         }),
-         Underline,
          TextAlign.configure({
             types: ["heading", "paragraph"],
          }),

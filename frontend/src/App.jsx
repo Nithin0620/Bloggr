@@ -11,6 +11,7 @@ import ShareModal from './components/ShareModal'
 import { usePostStore } from './store/PostStore'
 import { usePageStore } from './store/PageStore'
 import { useIntractionStore } from './store/IntractionStore'
+import { useBookmarkStore } from './store/BookmarkStore'
 // import { usePageStore } from './store/PageStore'
 
 const App = () => {
@@ -18,6 +19,7 @@ const App = () => {
   const {setnavigate,authUser,token,checkAuth} = useAuthStore();
   const{fetchCategories,fetchPosts} = usePostStore();
   const {getAllPostLikedByCurrentUser} = useIntractionStore();
+  const {fetchBookmarkedIds} = useBookmarkStore();
   const {getSettings} = useSettingsStore();
   // const {getSettings,theme,mode} = useSettingsStore();
   // const {setNavigate} = usePageStore();
@@ -34,6 +36,7 @@ const App = () => {
     // getSettingsOnRender();
 
     getAllPostLikedByCurrentUser();
+    fetchBookmarkedIds();
     fetchPosts();
     fetchCategories();
     checkAuth();

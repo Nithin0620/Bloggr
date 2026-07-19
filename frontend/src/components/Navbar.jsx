@@ -1,14 +1,13 @@
 import { React, useEffect, useState, useRef } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { IoSettingsOutline } from "react-icons/io5";
-import { FaAngleDown } from "react-icons/fa";
+import { FaAngleDown, FaRegBookmark } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/AuthStore";
 import { usePageStore } from "../store/PageStore";
 import ProfileDropDown from "./ProfileDropDown";
 import { toast } from "react-hot-toast";
 import CreatePostHandler from "./CreatePostHandler";
-import { usePostStore } from "../store/PostStore";
 
 const Navbar = () => {
   const dropdownRef = useRef();
@@ -87,14 +86,24 @@ const Navbar = () => {
               Log in
             </div>
           ) : (
-            <IoSettingsOutline
-              onClick={() => handleOnClickForNavigate("settings")}
-              className={`cursor-pointer text-xl hover:scale-105 transition ${
-                currentPage === "settings"
-                  ? "accent-text rotate-90 ease-in-out transition-all duration-300"
-                  : ""
-              }`}
-            />
+            <div className="flex items-center gap-4">
+              <FaRegBookmark
+                onClick={() => handleOnClickForNavigate("bookmarks")}
+                className={`cursor-pointer text-xl hover:scale-105 transition ${
+                  currentPage === "bookmarks"
+                    ? "accent-text"
+                    : ""
+                }`}
+              />
+              <IoSettingsOutline
+                onClick={() => handleOnClickForNavigate("settings")}
+                className={`cursor-pointer text-xl hover:scale-105 transition ${
+                  currentPage === "settings"
+                    ? "accent-text rotate-90 ease-in-out transition-all duration-300"
+                    : ""
+                }`}
+              />
+            </div>
           )}
         </div>
 
@@ -115,7 +124,7 @@ const Navbar = () => {
               ref={dropdownRef}
             >
               <img
-                src={authUser.profilePic || "https://via.placeholder.com/32"}
+                src={authUser?.profilePic || "https://via.placeholder.com/32"}
                 alt="Profile"
                 className="w-8 h-8 rounded-full object-cover  border border-gray-400"
               />

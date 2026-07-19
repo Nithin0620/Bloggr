@@ -6,6 +6,7 @@ import { useIntractionStore } from "../store/IntractionStore";
 import {Loader} from "lucide-react"
 import { usePageStore } from "../store/PageStore";
 import Ripples from 'react-ripples';
+import { truncateContent } from '../lib/utils';
 
 
 const dummyNotifications = [
@@ -265,9 +266,7 @@ const Notification = () => {
                   />
                   <div>
                   <p className="text-sm">
-                    {notification.post.content.length > 150
-                      ? notification.post.content.substring(0, 150) + "..."
-                      : notification.post.content}
+                    {truncateContent(notification.post.content, 150)}
                   </p>
                   </div>
                 </div>

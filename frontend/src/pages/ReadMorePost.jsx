@@ -4,7 +4,9 @@ import { usePostStore } from '../store/PostStore';
 import RelatedBlogs from '../components/RelatedBlogs';
 import { IoMdShare } from "react-icons/io";
 import { FaRegHeart } from "react-icons/fa6";
-import { FaHeart } from "react-icons/fa";import { FaRegCommentDots } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
+import { FaRegCommentDots } from "react-icons/fa";
+import { FaRegBookmark, FaBookmark } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
 import { IoCaretBack } from "react-icons/io5";
 import { useNavigate, useParams } from 'react-router-dom';
@@ -12,11 +14,15 @@ import { usePageStore } from '../store/PageStore';
 import { useShareModalStore } from '../store/ShareModal';
 import { Loader } from 'lucide-react';
 import { useIntractionStore } from '../store/IntractionStore';
+import { useBookmarkStore } from '../store/BookmarkStore';
+import { useAuthStore } from '../store/AuthStore';
+import toast from 'react-hot-toast';
 
 
 const ReadMorePost = () => {
    const {LikeUnlikePost,postsLikedByUser} = useIntractionStore();
-   // console.log("posts liked by user",postsLikedByUser)
+   const {bookmarkedPostIds, toggleBookmark} = useBookmarkStore();
+   const {token} = useAuthStore();
    
 
    const getTimeAgo = (timestamp) => {
@@ -164,9 +170,13 @@ const ReadMorePost = () => {
                   <span onClick={()=>handleLike()} className=" cursor-pointer hover:text-red-500">{postsLikedByUser.includes(post._id) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> } Like {post.likes.length}</span>
                   <span onClick={()=>window.scrollTo({top:0,behavior:'smooth'})} className=" cursor-pointer hover:text-blue-500"> <FaRegCommentDots /> Comment {post.comments.length}</span>
                   <span className=" cursor-pointer hover:text-green-500"> <IoIosStats /> Views {post.views}</span>
-                  <span onClick={()=>openShareModal("post",{postId:post._id})} className=" cursor-pointer hover:text-yellow-500"><IoMdShare/> Share</span>
-             
-             
+                  <span onClick={()=>{
+                     if(!token){toast.error("Login to bookmark");return;}
+                     toggleBookmark(post._id);
+                  }} className=" cursor-pointer hover:text-yellow-500">
+                     {bookmarkedPostIds.includes(post._id) ? <FaBookmark className="text-yellow-500"/> : <FaRegBookmark/>} Save
+                  </span>
+                  <span onClick={()=>openShareModal("post",{postId:post._id})} className=" cursor-pointer hover:text-purple-500"><IoMdShare/> Share</span>
                </div>
 
                <div className='flex justify-center pt-14 pb-14 font-semibold'>

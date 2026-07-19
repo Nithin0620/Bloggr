@@ -14,6 +14,9 @@ export const usePostStore = create((get,set)=>({
   categoriesList: [],
 
   posts:[],
+  nextCursor: null,
+  hasMore: true,
+  fetchPostLoading: false,
 
   setPosts : async()=>{
 
@@ -91,19 +94,39 @@ export const usePostStore = create((get,set)=>({
     set({fetchPostLoading:true});
     try{
       const response =  await axios.get(`${BASE_URL}/post/getallposts`);
-      // console.log("response",response.data.data);
-      set({posts:response.data.data})
+      set({
+        posts: response.data.data,
+        nextCursor: response.data.nextCursor,
+        hasMore: response.data.hasMore,
+      })
       return response.data.data;
-      // console.log(get().posts);
     }
     catch(e){
-      // console.log(e);
-      toast.error(e.response.data.message)
+      toast.error(e.response?.data?.message)
       return [];
     }
     finally{
       set({fetchPostLoading:false});
+    }
+  },
 
+  fetchMorePosts : async()=>{
+    const { nextCursor, posts } = get();
+    if (!nextCursor) return;
+    set({fetchPostLoading:true});
+    try{
+      const response = await axios.get(`${BASE_URL}/post/getallposts?cursor=${encodeURIComponent(nextCursor)}&limit=12`);
+      set({
+        posts: [...posts, ...response.data.data],
+        nextCursor: response.data.nextCursor,
+        hasMore: response.data.hasMore,
+      });
+    }
+    catch(e){
+      toast.error("Failed to load more posts");
+    }
+    finally{
+      set({fetchPostLoading:false});
     }
   },
 

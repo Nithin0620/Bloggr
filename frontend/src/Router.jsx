@@ -10,6 +10,7 @@ import VerifyOtp from "./pages/VerifyOtp"
 import Message from "./pages/Message"
 import ReadMorePost from "./pages/ReadMorePost"
 import Explore from "./pages/Explore"
+import Bookmarks from "./pages/Bookmarks"
 import ProtectRoute from "./components/ProtectRoute"
 
 
@@ -56,6 +57,10 @@ export const router = createBrowserRouter([
          {
             path:"explore",
             element:<ProtectRoute><Explore/></ProtectRoute>
+         },
+         {
+            path:"bookmarks",
+            element:<ProtectRoute><Bookmarks/></ProtectRoute>
          },
       ]
    },

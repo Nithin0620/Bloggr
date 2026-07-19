@@ -9,6 +9,9 @@ import { FaRegHeart } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
 import { useAuthStore } from '../store/AuthStore';
 import toast from 'react-hot-toast';
+import { truncateContent } from '../lib/utils';
+import { FaRegBookmark, FaBookmark } from "react-icons/fa";
+import { useBookmarkStore } from '../store/BookmarkStore';
 
 
 const HomePostCards = ({ post ,setLiked}) => {
@@ -17,6 +20,7 @@ const HomePostCards = ({ post ,setLiked}) => {
   const {setCurrentPage} = usePageStore();
   const {token , authUser} = useAuthStore();
   const {LikeUnlikePost,postsLikedByUser} = useIntractionStore();
+  const {bookmarkedPostIds, toggleBookmark} = useBookmarkStore();
   
 
   const handleReadmoreClick = ()=>{
@@ -105,10 +109,8 @@ const HomePostCards = ({ post ,setLiked}) => {
          
           {getTimeAgo(post.createdAt)}
         </div>
-        <div>
-          {post.content.length <= 100
-            ? post.content
-            : post.content.substring(0, 100) + '...'}
+        <div className="text-sm accent-text-mode line-clamp-3">
+          {truncateContent(post.content, 100)}
         </div>
       </div>
 
@@ -121,21 +123,31 @@ const HomePostCards = ({ post ,setLiked}) => {
           Read More...
         </button>
 
-        <div className="flex gap-4 items-center text-sm text-gray-500">
+        <div className="flex gap-3 items-center text-sm text-gray-500">
           <button onClick={()=>handleLike()} className="flex items-center gap-1 hover:text-red-500 transition duration-200">
-            {post.likes.length }
             {postsLikedByUser.includes(post._id) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> }
+            {post.likes.length}
           </button>
 
           <button onClick={()=>handleReadmoreClick()} className="flex items-center gap-1 hover:text-blue-500 transition duration-200">
-            {post.comments.length}
             <FaRegCommentDots />
+            {post.comments.length}
           </button>
 
           <div className="flex items-center gap-1 hover:text-green-500 transition duration-200">
-            {post.views}
             <IoIosStats />
+            {post.views}
           </div>
+
+          <button
+            onClick={() => {
+              if (!token) { toast.error("Login to bookmark"); return; }
+              toggleBookmark(post._id);
+            }}
+            className="flex items-center hover:text-yellow-500 transition duration-200"
+          >
+            {bookmarkedPostIds.includes(post._id) ? <FaBookmark className="text-yellow-500" /> : <FaRegBookmark />}
+          </button>
         </div>
       </div>
     </div>

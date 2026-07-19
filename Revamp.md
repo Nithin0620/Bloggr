@@ -4,7 +4,7 @@ Here's my comprehensive revamp plan for Bloggr — organized into priority tiers
 #	Issue	Why
 1	bcrypt.compare missing await in Auth.js:109	Any password works to login — critical auth bypass
 2	View count inflating on every login (Auth.js:130)	Post.updateMany({}, {$inc: {views:1}}) runs on every login 
-3	OTP returned in API response (Auth.js:195)	Attacker can extract OTP without email access (Done)
+<!-- 3	OTP returned in API response (Auth.js:195)	Attacker can extract OTP without email access (Done) -->
 4	secure: false on cookie	Sessions not secure over HTTPS in production
 5	Weak JWT secret "Bloggr"	Trivially guessable
 6	.env with real creds likely in git history	Rotate all secrets before DevOps project
@@ -22,7 +22,7 @@ AI Search	Natural language search — "posts about React hooks for beginners" in
 AI Profile Bio Generator	"Generate a professional bio from my posts"
 Core Feature Improvements
 Feature	What to Build
-Rich Text Editor	Replace textarea with TipTap/BlockNote — headings, bold, code blocks, embeds, markdown (Done)
+<!-- Rich Text Editor	Replace textarea with TipTap/BlockNote — headings, bold, code blocks, embeds, markdown (Done) -->
 Bookmarks/Save Posts	Backend model + UI — the README mentions it but it's not implemented
 Pagination	getAllPosts fetches everything — add cursor/offset pagination
 Forgot Password	Button exists but does nothing — full OTP-based password reset flow

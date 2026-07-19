@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useIntractionStore } from '../store/IntractionStore';
 import {Loader} from "lucide-react"
 import { usePageStore } from '../store/PageStore';
+import { truncateContent } from '../lib/utils';
 
 const Trending = () => {
   const {posts,fetchPosts} = usePostStore();
@@ -108,9 +109,7 @@ const Trending = () => {
         
                 {/* Description */}
                 <p className="text-sm mt-1 line-clamp-2">
-                  {post.content.length <= 60
-                    ? post.content
-                    : post.content.substring(0, 50) + "..."}
+                  {truncateContent(post.content, 60)}
                 </p>
         
                 {/* Bottom Section */}

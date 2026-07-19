@@ -130,7 +130,7 @@ const CreatePostHandler = () => {
 
             <div>
                <label  className="accent-text block mb-1">Author</label>
-               <input type="text" disabled className="w-full text accent-bg-mode px-4 py-2 accent-text-mode text-opacity-20 font-normal border rounded-lg accent-border" value={authUser.profile.name} />
+               <input type="text" disabled className="w-full text accent-bg-mode px-4 py-2 accent-text-mode text-opacity-20 font-normal border rounded-lg accent-border" value={authUser?.profile?.name} />
             </div>
 
             <div>

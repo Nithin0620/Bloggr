@@ -9,6 +9,7 @@ import { useAuthStore } from "../store/AuthStore";
 import { useNavigate } from "react-router-dom";
 import { usePageStore } from "../store/PageStore";
 import { useIntractionStore } from "../store/IntractionStore";
+import { truncateContent } from "../lib/utils";
 
 const ProfilePostCard = ({
   post,
@@ -69,11 +70,9 @@ const ProfilePostCard = ({
               : post.title.substring(0, 50) + "..."}
           </h2>
 
-          <p className="text-sm mt-1 line-clamp-2">
-            {post.content.length <= 100
-              ? post.content
-              : post.content.substring(0, 100) + "..."}
-          </p>
+          <div className="text-sm mt-1 line-clamp-2">
+            {truncateContent(post.content, 100)}
+          </div>
 
           <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <button
