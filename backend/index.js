@@ -6,6 +6,8 @@ const cors = require("cors");
 
 const {dbConnect}  = require("./configuration/dataBase")
 const{cloudinaryConnect} = require("./configuration/cloudinary")
+const logger = require("./configuration/logger")
+const errorHandler = require("./middlewares/errorHandler")
 
 const {app,server} = require("./configuration/socket")
 
@@ -23,7 +25,6 @@ const tagRoutes = require("./routes/Tag.routes")
 const path = require("path")
 
 const PORT  = process.env.PORT || 5000;
-
 
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' ,parameterLimit: 10000 }));
@@ -58,14 +59,17 @@ const routePairs = [
   ["/tags", tagRoutes],
 ];
 
-routePairs.forEach(([path, router]) => {
-  app.use(`${v1}${path}`, router);
-  app.use(`${legacy}${path}`, router);
+routePairs.forEach(([routePath, router]) => {
+  app.use(`${v1}${routePath}`, router);
+  app.use(`${legacy}${routePath}`, router);
 });
+
+// Global error handler (must be after all routes)
+app.use(errorHandler);
 
 
 server.listen(PORT,()=>{
-   console.log(`Server started at port No:- ${PORT} `);
+   logger.info(`Server started on port ${PORT}`);
    dbConnect();
    cloudinaryConnect();
 })

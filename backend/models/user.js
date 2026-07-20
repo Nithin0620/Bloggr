@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
-const {welcomeMailTemplate} = require('../tamplets/OnboardingEmail.js')
+const {welcomeMailTemplate} = require('../templates/OnboardingEmail.js')
 const {sendEmail} = require("../utility/mailSender.js")
+const logger = require("../configuration/logger");
 
 
 const userSchema = new mongoose.Schema({
@@ -46,8 +47,8 @@ const sendOnboardingEmail = async(email,firstName) =>{
       )
    }
    catch(e){
-      console.log("error in calling the mailSender function inside the user.js modal")
-      console.log(e);
+      logger.error("error in calling the mailSender function inside the user.js modal")
+      logger.error(e);
    }
 }
 

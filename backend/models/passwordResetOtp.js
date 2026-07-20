@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
-const {passwordResetMailTamplet} = require('../tamplets/emailVerificationTamplet.js')
+const {passwordResetMailTamplet} = require('../templates/emailVerificationTamplet.js')
 const {sendEmail} = require("../utility/mailSender.js")
+const logger = require("../configuration/logger");
 
 const passwordResetOtpSchema = new mongoose.Schema({
    email:{
@@ -27,8 +28,8 @@ const sendResetPasswordEmail = async(email,otp) =>{
       )
    }
    catch(e){
-      console.log("error in sending reset password email")
-      console.log(e);
+      logger.error("error in sending reset password email")
+      logger.error(e);
    }
 }
 

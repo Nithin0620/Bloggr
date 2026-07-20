@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../modals/user");
+const User = require("../models/user");
 require("dotenv").config();
 
 exports.protectRoute = async (req, res, next) => {

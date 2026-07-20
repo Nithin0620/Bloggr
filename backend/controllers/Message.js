@@ -1,9 +1,11 @@
-const Message  = require("../modals/message")
-const User = require("../modals/user");
+const Message  = require("../models/message")
+const User = require("../models/user");
 
 const {cloudinaryInstance } = require("../configuration/cloudinary"); // or correct relative path
 
 const {getReceiverSocketId , io} = require("../configuration/socket");
+
+const logger = require("../configuration/logger");
 
 
 exports.getUsersForSidebar = async(req,res)=>{
@@ -14,7 +16,7 @@ exports.getUsersForSidebar = async(req,res)=>{
       res.status(200).json({success:true,message:"Users fetched successfully" , data:filteredUsers});
    }
    catch(e){
-      console.error("Error in getUsersForSidebar: ", error.message);
+      logger.error("Error in getUsersForSidebar: ", { error: error.message });
       res.status(500).json({ error: "Internal server error occured in the getUserforsidebar controller" });
    }
 }
@@ -37,7 +39,7 @@ exports.getMessages = async(req,res)=>{
       return res.status(200).json({success:true,message:"Messages fetched Successfully",data:messages});
    }
    catch(e){
-      console.log(e);
+      logger.error(e);
       return res.status(500).json({success:false,message:"Error occured in the Get messages controller"});
    }
 }
@@ -77,7 +79,7 @@ exports.sendMessage = async(req,res)=>{
       return res.status(200).json({success:true,message:"Message sent successfully",data:newMessage});
    }
    catch(e){
-      console.log(e);
+      logger.error(e);
       return res.status(500).json({success:false,message:"Error occured in the send messages controller"});
    }
 }

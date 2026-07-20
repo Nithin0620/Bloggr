@@ -1,4 +1,5 @@
-const Bookmark = require("../modals/bookmark");
+const Bookmark = require("../models/bookmark");
+const logger = require("../configuration/logger");
 
 exports.toggleBookmark = async (req, res) => {
   try {
@@ -23,7 +24,7 @@ exports.toggleBookmark = async (req, res) => {
       message: "Post bookmarked",
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({
       success: false,
       message: "Error toggling bookmark",
@@ -58,7 +59,7 @@ exports.getBookmarks = async (req, res) => {
       data: posts,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({
       success: false,
       message: "Error fetching bookmarks",
@@ -77,7 +78,7 @@ exports.getBookmarkedPostIds = async (req, res) => {
       data: postIds,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({
       success: false,
       message: "Error fetching bookmarked post IDs",

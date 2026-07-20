@@ -1,4 +1,5 @@
-const ReadingList = require("../modals/readingList");
+const ReadingList = require("../models/readingList");
+const logger = require("../configuration/logger");
 
 exports.createReadingList = async (req, res) => {
   try {
@@ -21,7 +22,7 @@ exports.createReadingList = async (req, res) => {
       data: list,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({ success: false, message: "Error creating reading list" });
   }
 };
@@ -43,7 +44,7 @@ exports.getMyReadingLists = async (req, res) => {
       data: lists,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({ success: false, message: "Error fetching reading lists" });
   }
 };
@@ -76,7 +77,7 @@ exports.getReadingListById = async (req, res) => {
       data: list,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({ success: false, message: "Error fetching reading list" });
   }
 };
@@ -102,7 +103,7 @@ exports.updateReadingList = async (req, res) => {
       data: list,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({ success: false, message: "Error updating reading list" });
   }
 };
@@ -122,7 +123,7 @@ exports.deleteReadingList = async (req, res) => {
       message: "Reading list deleted",
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({ success: false, message: "Error deleting reading list" });
   }
 };
@@ -150,7 +151,7 @@ exports.addPostToList = async (req, res) => {
       data: list,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({ success: false, message: "Error adding post to list" });
   }
 };
@@ -174,7 +175,7 @@ exports.removePostFromList = async (req, res) => {
       data: list,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({ success: false, message: "Error removing post from list" });
   }
 };

@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer")
 require("dotenv").config();
+const logger = require("../configuration/logger");
 
 exports.sendEmail = async(email,title,body)=>{
    try{
@@ -22,6 +23,6 @@ exports.sendEmail = async(email,title,body)=>{
       return response ;
    }
    catch(e){
-      console.log("Error occured in sending the mail in mailsender utility folder");
+      logger.error("Error occurred in sending the mail in mailsender utility folder");
    }
 }

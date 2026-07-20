@@ -1,6 +1,7 @@
-const Tag = require("../modals/tag");
-const Post = require("../modals/post");
+const Tag = require("../models/tag");
+const Post = require("../models/post");
 const { flushCache } = require("../middlewares/cache");
+const logger = require("../configuration/logger");
 
 exports.createTag = async (req, res) => {
   try {
@@ -26,7 +27,7 @@ exports.createTag = async (req, res) => {
       data: tag,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({ success: false, message: "Error creating tag" });
   }
 };
@@ -39,7 +40,7 @@ exports.getAllTags = async (req, res) => {
       data: tags,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({ success: false, message: "Error fetching tags" });
   }
 };
@@ -72,7 +73,7 @@ exports.getPostsByTag = async (req, res) => {
       data: { tag, posts },
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({ success: false, message: "Error fetching posts by tag" });
   }
 };
@@ -95,7 +96,7 @@ exports.deleteTag = async (req, res) => {
       message: "Tag deleted",
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({ success: false, message: "Error deleting tag" });
   }
 };

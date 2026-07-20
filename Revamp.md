@@ -42,13 +42,13 @@ Backend Improvements
 Improvement	What to Do
 <!-- Rate Limiting	express-rate-limit on auth endpoints -->
 <!-- Input Validation	express-validator or zod on all endpoints -->
-Database Indexing	Index on post.author, notification.receiver, text search index
+<!-- Database Indexing	Index on post.author, notification.receiver, text search index
 Caching	Redis for hot posts/settings
 Health Check	Proper /health endpoint for DevOps
-API Versioning	/api/v1/... for future-proofing
-Error Handling	Global error handler middleware, consistent error response format
-Logging	Winston/Pino structured logging
-Rename misspelled dirs	modals/ → models/, tamplets/ → templates/
+API Versioning	/api/v1/... for future-proofing -->
+<!-- Error Handling	Global error handler middleware, consistent error response format -->
+<!-- Logging	Winston/Pino structured logging -->
+<!-- Rename misspelled dirs	modals/ → models/, tamplets/ → templates/ -->
 ---
 🟢 DevOps Prep (so the next phase is smoother)
 Item	Why

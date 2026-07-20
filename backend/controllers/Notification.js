@@ -1,7 +1,8 @@
-const Notification = require("../modals/notification")
-const User = require("../modals/user")
+const Notification = require("../models/notification")
+const User = require("../models/user")
 const {getReceiverSocketId} = require("../configuration/socket")
-const Post = require("../modals/post")
+const Post = require("../models/post")
+const logger = require("../configuration/logger");
 
 
 exports.createNotification = async (req, res) => {
@@ -48,8 +49,8 @@ exports.createNotification = async (req, res) => {
       return res.status(200).json({ success: true, message: "Notification created",data:response });
 
    } 
-   catch (e) {
-      console.log(e);
+       catch (e) {
+      logger.error(e);
       return res.status(500).json({ success: false, message: "Error occurred in creating new notification" });
    }
 };
@@ -76,7 +77,7 @@ exports.clearAllNotification = async (req, res) => {
       });
 
    } catch (e) {
-      console.error("Error clearing notifications:", e);
+      logger.error("Error clearing notifications:", e);
       return res.status(500).json({
          success: false,
          message: "Error occurred while clearing notifications",
@@ -104,7 +105,7 @@ exports.getAllNotification = async (req, res) => {
       });
 
    } catch (e) {
-      console.error("Error fetching notifications:", e);
+      logger.error("Error fetching notifications:", e);
       return res.status(500).json({
          success: false,
          message: "Error occurred while fetching notifications",
@@ -142,7 +143,7 @@ exports.markAllAsRead = async(req,res)=>{
       });
 
    } catch (e) {
-      console.error("Error fetching notifications:", e);
+      logger.error("Error fetching notifications:", e);
       return res.status(500).json({
          success: false,
          message: "Error occurred while marking notifications ad read",
@@ -171,7 +172,7 @@ exports.deleteaNotification = async(req,res)=>{
       return res.status(200).json({success:true,message:"Notification deleted successfully",data:deletedNotification});
    }
    catch(e){
-      console.log(e)
+      logger.error(e)
       return res.status(500).json({success:false,message:"Error occured in deleteing this notification"});
    }
 }
@@ -197,7 +198,7 @@ exports.setNotificationAsRead = async(req,res)=>{
       return res.status(200).json({success:true,message:"Notification marked as read successfully",data:updatedNotification});
    }
    catch(e){
-      console.log(e)
+      logger.error(e)
       return res.status(500).json({success:false,message:"Error occured in marking this notification as read"});
    }
 }

@@ -1,10 +1,11 @@
-const User = require("../modals/user");
-const Post = require("../modals/post");
-const Profile = require("../modals/profile")
-const Category = require("../modals/category");
-const Tag = require("../modals/tag");
+const User = require("../models/user");
+const Post = require("../models/post");
+const Profile = require("../models/profile")
+const Category = require("../models/category");
+const Tag = require("../models/tag");
 const {cloudinaryInstance } = require("../configuration/cloudinary");
 const { flushCache } = require("../middlewares/cache");
+const logger = require("../configuration/logger");
 
 
 exports.createPost = async (req, res) => {
@@ -109,7 +110,7 @@ exports.createPost = async (req, res) => {
       data: response,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({
       success: false,
       message: "Error in creating the post on db",
@@ -217,7 +218,7 @@ exports.updatePost = async (req, res) => {
       data: updatedPost,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({
       success: false,
       message: "Error updating the post in the database",
@@ -266,7 +267,7 @@ exports.deletePost = async (req, res) => {
       data: response,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res
       .status(500)
       .json({ success: false, message: "error in deleting the post" });
@@ -313,7 +314,7 @@ exports.getAllPosts = async (req, res) => {
       hasMore,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({
       success: false,
       message: "error in fetching all the posts",
@@ -362,7 +363,7 @@ exports.getPostById = async (req, res) => {
       data: response,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({
       success: false,
       message: "error in fetching all the posts",
@@ -402,8 +403,8 @@ exports.getPostByCategory = async (req, res) => {
          data: category,
       });
    }
-   catch (e) {
-      console.log(e);
+       catch (e) {
+      logger.error(e);
       return res.status(500).json({
          success: false,
          message: "Error in fetching the posts by category",
@@ -432,7 +433,7 @@ exports.getScheduledPosts = async (req, res) => {
       data: response,
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return res.status(500).json({
       success: false,
       message: "Error fetching scheduled posts",
@@ -475,8 +476,8 @@ exports.getPostByUser = async(req,res)=>{
          data: response,
       });
    }
-   catch (e) {
-      console.log(e);
+    catch (e) {
+      logger.error(e);
       return res.status(500).json({
          success: false,
          message: "Error in fetching the posts by User Id",

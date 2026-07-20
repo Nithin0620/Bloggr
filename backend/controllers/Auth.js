@@ -1,12 +1,13 @@
-const User = require("../modals/user")
-const OTP = require("../modals/otp")
-const PasswordResetOTP = require("../modals/passwordResetOtp")
+const User = require("../models/user")
+const OTP = require("../models/otp")
+const PasswordResetOTP = require("../models/passwordResetOtp")
 const bcrypt = require("bcrypt")
 const gravatar = require('gravatar');
 const otpGenerator = require("otp-generator");
-const Profile = require("../modals/profile")
+const Profile = require("../models/profile")
 const jwt = require("jsonwebtoken");
-const Settings = require("../modals/settings");
+const Settings = require("../models/settings");
+const logger = require("../configuration/logger");
 
 exports.signup = async(req,res)=>{
    try{
@@ -73,8 +74,8 @@ exports.signup = async(req,res)=>{
          data:response,
       })      
    }
-   catch(e){
-      console.log(e);
+       catch(e){
+      logger.error(e);
       return res.status(500).json({
          error:e,
          success:false,
@@ -142,8 +143,8 @@ exports.login = async(req,res)=>{
             message: "Password is incorrect",
          });
       }
-   } catch (e) {
-      console.log(e);
+       } catch (e) {
+      logger.error(e);
       return res.status(500).json({
          success: false,
          message: "Error occured in login controller",
@@ -189,8 +190,8 @@ exports.sendOtp = async(req,res)=>{
          message:"Otp sent successfully",
       })
    }
-   catch (e) {
-      console.log(e);
+       catch (e) {
+      logger.error(e);
       return res.status(500).json({
          success: false,
          message: e.message,
@@ -203,8 +204,8 @@ exports.logout = (req, res) => {
       res.cookie("jwt", "", { maxAge: 0 });
       res.status(200).json({ success:true,message: "Logged out successfully" });
    }
-   catch (error) {
-      console.log("Error in logout controller", error.message);
+       catch (error) {
+      logger.error("Error in logout controller", { error: error.message });
       res.status(500).json({success:false, message: "Internal Server Error" });
    }
 };
@@ -233,7 +234,7 @@ exports.checkAuth = async (req, res) => {
          data: payload,
       });
    } catch (error) {
-      console.log("Error in checkAuth controller", error.message);
+      logger.error("Error in checkAuth controller", { error: error.message });
       res.status(500).json({ message: "Internal Server Error" });
    }
 };
@@ -281,8 +282,8 @@ exports.sendResetOtp = async(req,res)=>{
          data:{email},
       })
    }
-   catch(e){
-      console.log(e);
+       catch(e){
+      logger.error(e);
       return res.status(500).json({
          success:false,
          message:"Error sending reset OTP",
@@ -326,8 +327,8 @@ exports.verifyResetOtp = async(req,res)=>{
          data:{email},
       })
    }
-   catch(e){
-      console.log(e);
+       catch(e){
+      logger.error(e);
       return res.status(500).json({
          success:false,
          message:"Error verifying OTP",
@@ -389,8 +390,8 @@ exports.resetPassword = async(req,res)=>{
          message:"Password reset successful. Please login with your new password.",
       })
    }
-   catch(e){
-      console.log(e);
+    catch(e){
+      logger.error(e);
       return res.status(500).json({
          success:false,
          message:"Error resetting password",

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
-const {verificationMailTamplet} = require('../tamplets/emailVerificationTamplet.js')
+const {verificationMailTamplet} = require('../templates/emailVerificationTamplet.js')
 const {sendEmail} = require("../utility/mailSender.js")
+const logger = require("../configuration/logger");
 
 const otpSchema = new mongoose.Schema({
    email:{
@@ -28,8 +29,8 @@ const sendVerificationEmail = async(email,otp) =>{
       )
    }
    catch(e){
-      console.log("error in calling the mailSender function inside the otp.js modal")
-      console.log(e);
+      logger.error("error in calling the mailSender function inside the otp.js modal")
+      logger.error(e);
    }
 }
 

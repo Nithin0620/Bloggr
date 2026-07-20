@@ -1,12 +1,13 @@
 const {cloudinaryInstance } = require("../configuration/cloudinary"); // or correct relative path
 const bcrypt = require("bcrypt")
-const User = require("../modals/user")
-const Profile = require("../modals/profile")
-const Notification = require("../modals/notification")
+const User = require("../models/user")
+const Profile = require("../models/profile")
+const Notification = require("../models/notification")
 const {io,getReceiverSocketId} = require("../configuration/socket")
-const {notificationMailTemplate} = require("../tamplets/EmailNotificationTamplet");
+const {notificationMailTemplate} = require("../templates/EmailNotificationTamplet");
 const {sendEmail} = require("../utility/mailSender.js")
-const Settings = require("../modals/settings.js")
+const Settings = require("../models/settings.js")
+const logger = require("../configuration/logger");
 
 
 exports.viewUserProfile = async(req,res)=>{
@@ -15,7 +16,7 @@ exports.viewUserProfile = async(req,res)=>{
 
       if(!Id) return res.status(401).json({success:false,message:"id not found on the link"});
 
-      console.log(Id);
+      logger.info(Id);
 
       // const user = await User.findById(Id);
       // console.log("User without populate:", user);
@@ -47,8 +48,8 @@ exports.viewUserProfile = async(req,res)=>{
          data:user
       })
    }
-   catch(e){
-      console.log(e)
+    catch(e){
+      logger.error(e)
       return res.status(500).json({success:false,message:"Error occured in fetching the user Details"});
    }  
 }
@@ -102,8 +103,8 @@ exports.updateProfileInfo = async (req, res) => {
          }
       });
    } 
-   catch (error) {
-      console.error("Error in updateProfileInfo:", error.message);
+       catch (error) {
+      logger.error("Error in updateProfileInfo:", { error: error.message });
       return res.status(500).json({ success: false, message: "Server Error" });
    }
 };
@@ -119,7 +120,7 @@ exports.uploadProfilePic = async(req,res)=>{
       }
 
       const image = req.file.path;
-      console.log("image",image)
+      logger.info("image",image)
       
 
       if(!image) return res.status(400).json({success:false,message:"image not found"});
@@ -136,8 +137,8 @@ exports.uploadProfilePic = async(req,res)=>{
       });
 
    } 
-   catch (error) {
-      console.error("Error in updateProfilePic:", error.message);
+       catch (error) {
+      logger.error("Error in updateProfilePic:", { error: error.message });
       return res.status(500).json({ success: false, message: "Server Error" });
    }
 };
@@ -162,8 +163,8 @@ exports.deleteProfilePic = async(req,res)=>{
       });
 
    } 
-   catch (error) {
-      console.error("Error in delete profilepic:", error.message);
+       catch (error) {
+      logger.error("Error in delete profilepic:", { error: error.message });
       return res.status(500).json({ success: false, message: "Server Error" });
    }
 };
@@ -226,7 +227,7 @@ exports.followUser = async (req, res) => {
                 );
             })
          } catch (e) {
-         console.log("Error sending notification email:", e);
+         logger.error("Error sending notification email:", e);
          }
       }
 
@@ -249,7 +250,7 @@ exports.followUser = async (req, res) => {
       });
 
    } catch (e) {
-      console.error("Follow user error:", e);
+      logger.error("Follow user error:", e);
       return res.status(500).json({
          success: false,
          message: "An error occurred while following the user",
@@ -302,7 +303,7 @@ exports.unfollowUser = async (req, res) => {
          message: "User unfollowed successfully",
       });
    } catch (e) {
-      console.error(e);
+      logger.error(e);
       return res.status(500).json({
          success: false,
          message: "An error occurred while unfollowing the user",
@@ -331,8 +332,8 @@ exports.getFollowersList = async(req,res)=>{
          data:followersList,
       })
    }
-   catch(e){
-      console.log(e)
+       catch(e){
+      logger.error(e)
       return res.status(500).json({
          success:false,
          message:"error occured in getFollowersList",
@@ -360,8 +361,8 @@ exports.getFollowingList = async(req,res)=>{
          data:followingsList,
       })
    }
-   catch(e){
-      console.log(e)
+    catch(e){
+      logger.error(e)
       return res.status(500).json({
          success:false,
          message:"error occured in getFollowingList",

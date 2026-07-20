@@ -1,4 +1,5 @@
 const Redis = require("ioredis");
+const logger = require("./logger");
 
 let redisClient = null;
 
@@ -19,19 +20,19 @@ function getRedisClient() {
 
     redisClient.on("error", (err) => {
       if (!err.message.includes("ECONNRESET")) {
-        console.error("Redis error:", err.message);
+        logger.error("Redis error", { error: err.message });
       }
     });
 
     redisClient.on("connect", () => {
-      console.log("✓ Redis connected");
+      logger.info("Redis connected");
     });
 
     redisClient.on("close", () => {
-      console.warn("⚠ Redis connection lost");
+      logger.warn("Redis connection lost");
     });
   } catch (err) {
-    console.warn("⚠ Redis unavailable:", err.message);
+    logger.warn("Redis unavailable", { error: err.message });
     redisClient = null;
   }
 

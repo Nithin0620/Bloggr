@@ -1,6 +1,7 @@
-const Category = require("../modals/category")
-const User = require("../modals/user");
+const Category = require("../models/category")
+const User = require("../models/user");
 const { flushCache } = require("../middlewares/cache");
+const logger = require("../configuration/logger");
 
 
 exports.createCategory = async(req,res)=>{
@@ -19,8 +20,8 @@ exports.createCategory = async(req,res)=>{
 
       return res.status(200).json({success:true,message:"New category created successfully",data:newCategory});
    }
-   catch(e){
-      console.log(e)
+       catch(e){
+      logger.error(e)
       return res.status(500).json({success:false,message:"Error occired in creating new category"});
    }
 }
@@ -34,8 +35,8 @@ exports.getAllCategory = async(req,res)=>{
 
       return res.status(200).json({success:true,message:"Categories fetched Successfully",data:categories});
    }
-   catch(e){
-      console.log(e)
+       catch(e){
+      logger.error(e)
       return res.status(500).json({success:false,message:"Error occired in fetching categories"});
    }
 }
@@ -71,8 +72,8 @@ exports.getPostsByCategory = async (req, res) => {
          data: categoryDoc.posts,
       });
    } 
-   catch (e) {
-      console.error("Error fetching posts by category:", e);
+    catch (e) {
+      logger.error("Error fetching posts by category:", e);
       return res.status(500).json({
          success: false,
          message: "Server error while fetching posts by category",

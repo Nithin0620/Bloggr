@@ -1,11 +1,12 @@
-const User = require("../modals/user")
-const Post = require("../modals/post")
-const Comment = require("../modals/comment")
-const Notification = require("../modals/notification")
+const User = require("../models/user")
+const Post = require("../models/post")
+const Comment = require("../models/comment")
+const Notification = require("../models/notification")
 const {io,getReceiverSocketId} = require("../configuration/socket")
-const {notificationMailTemplate} = require("../tamplets/EmailNotificationTamplet");
+const {notificationMailTemplate} = require("../templates/EmailNotificationTamplet");
 const {sendEmail} = require("../utility/mailSender.js")
-const Settings = require("../modals/settings.js")
+const Settings = require("../models/settings.js")
+const logger = require("../configuration/logger");
 
 exports.addComment = async (req, res) => {
    try {
@@ -66,7 +67,7 @@ exports.addComment = async (req, res) => {
                );
             })
          } catch (e) {
-         console.log("Error sending notification email:", e);
+         logger.error("Error sending notification email:", e);
          }
       }
 
@@ -96,7 +97,7 @@ exports.addComment = async (req, res) => {
          data: newComment,
       });
    } catch (e) {
-      console.log(e);
+      logger.error(e);
       return res.status(500).json({
          success: false,
          message: "Error occurred while creating comment",
@@ -148,7 +149,7 @@ exports.deleteComment = async(req,res)=>{
       })
    }  
    catch(e){
-      console.log(e)
+      logger.error(e)
       return res.status(500).json({
          success:false,
          message:"Error occured in deleting the comment from the post"
@@ -173,7 +174,7 @@ exports.getComments = async(req,res)=>{
       
    }
    catch(e){
-      console.log(e)
+      logger.error(e)
       return res.status(500).json({success:false,message:"error occured in retriving the comments from the posts"});
    }
 }

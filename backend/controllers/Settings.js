@@ -1,5 +1,6 @@
-const Settings = require("../modals/settings");
-const User = require("../modals/user");
+const Settings = require("../models/settings");
+const User = require("../models/user");
+const logger = require("../configuration/logger");
 
 exports.setSettings = async (req, res) => {
    try {
@@ -36,7 +37,7 @@ exports.setSettings = async (req, res) => {
       });
    } 
    catch (e) {
-      console.log(e);
+      logger.error(e);
       return res.status(500).json({
          success: false,
          message: "Error occurred in setSettings Controller",
@@ -62,7 +63,7 @@ exports.getSettings = async (req, res) => {
          data: settingsResponse,
          });
    } catch (e) {
-      console.log(e);
+      logger.error(e);
       return res
          .status(500)
          .json({
@@ -88,7 +89,7 @@ exports.resetSettings = async (req, res) => {
          data: newSettings,
          });
    } catch (e) {
-      console.log(e);
+      logger.error(e);
       return res
          .status(500)
          .json({

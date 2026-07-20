@@ -1,10 +1,11 @@
-const User = require("../modals/user");
-const Post = require("../modals/post");
-const Notification = require("../modals/notification")
+const User = require("../models/user");
+const Post = require("../models/post");
+const Notification = require("../models/notification")
 const {io,getReceiverSocketId} = require("../configuration/socket")
-const Settings = require("../modals/settings")
-const {notificationMailTemplate} = require("../tamplets/EmailNotificationTamplet");
+const Settings = require("../models/settings")
+const {notificationMailTemplate} = require("../templates/EmailNotificationTamplet");
 const {sendEmail} = require("../utility/mailSender.js")
+const logger = require("../configuration/logger");
 
 // const {io} = require("socket.io")
 exports.likeUnlikeAPost = async (req, res) => {
@@ -56,7 +57,7 @@ exports.likeUnlikeAPost = async (req, res) => {
                );
               })
             } catch (e) {
-               console.log("Error sending notification email:", e);
+               logger.error("Error sending notification email:", e);
             }
          }
 
@@ -81,7 +82,7 @@ exports.likeUnlikeAPost = async (req, res) => {
 
    } 
    catch (e) {
-      console.error(e);
+      logger.error(e);
       return res.status(500).json({
          success: false,
          message: "Error occurred in like/unlike post controller",
@@ -103,7 +104,7 @@ exports.haveCurrentUserLiked = async(req,res)=>{
       if(likes.includes(userId)) return res.status(200).json({success:true,message:"Yes the user have liked this post",data:true});
    }
    catch(e){
-      console.log(e)
+      logger.error(e)
       return res.status(500).json({success:false,message:"Error occured in isCurrentUserLiked controller"});
    }
 }
@@ -121,7 +122,7 @@ exports.getAllLikedPostsByCurrentUser = async (req, res) => {
          data: likedPosts,
       });
    } catch (error) {
-      console.error("Error fetching liked posts:", error);
+      logger.error("Error fetching liked posts:", error);
       return res.status(500).json({
          success: false,
          message: "Internal server error while fetching liked posts",
