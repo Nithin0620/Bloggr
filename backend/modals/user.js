@@ -37,9 +37,6 @@ const userSchema = new mongoose.Schema({
    timestamps:true
 })
 
-
-
-
 const sendOnboardingEmail = async(email,firstName) =>{
    try{
       const mailresponse = await sendEmail(

@@ -9,6 +9,7 @@ const{cloudinaryConnect} = require("./configuration/cloudinary")
 
 const {app,server} = require("./configuration/socket")
 
+const healthRoutes = require("./routes/Health.routes")
 const authRoutes = require("./routes/Auth.routes");
 const categoryRoutes = require("./routes/Category.routes");
 const interactionRoutes = require("./routes/Interactions.routes");
@@ -38,17 +39,29 @@ app.use(cors({
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 
-//Mounting API's
-app.use("/api/auth",authRoutes);
-app.use("/api/category",categoryRoutes);
-app.use("/api/interactions",interactionRoutes);
-app.use("/api/messages",messageRoutes);
-app.use("/api/post",postRoutes);
-app.use("/api/profile",profileRoutes);
-app.use("/api/settings",settingsRoutes)
-app.use("/api/bookmarks",bookmarkRoutes);
-app.use("/api/readinglists",readingListRoutes);
-app.use("/api/tags",tagRoutes);
+// Health check (no /api prefix — used by load balancers, k8s, etc.)
+app.use("/health", healthRoutes);
+
+// API v1 routes
+const v1 = "/api/v1";
+const legacy = "/api";
+const routePairs = [
+  ["/auth", authRoutes],
+  ["/category", categoryRoutes],
+  ["/interactions", interactionRoutes],
+  ["/messages", messageRoutes],
+  ["/post", postRoutes],
+  ["/profile", profileRoutes],
+  ["/settings", settingsRoutes],
+  ["/bookmarks", bookmarkRoutes],
+  ["/readinglists", readingListRoutes],
+  ["/tags", tagRoutes],
+];
+
+routePairs.forEach(([path, router]) => {
+  app.use(`${v1}${path}`, router);
+  app.use(`${legacy}${path}`, router);
+});
 
 
 server.listen(PORT,()=>{
@@ -61,6 +74,6 @@ app.get("/" , (req,res)=>{
   res.send(`<h1> This is homepage, response from server hance the server is up and running <h1/>`)
 })
 
-app.get(/^\/(?!api).*/, (req, res) => {
+app.get(/^\/(?!api|health).*/, (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend", "build", "index.html"));
 });

@@ -1,44 +1,14 @@
 const rateLimit = require("express-rate-limit");
 const { ipKeyGenerator } = rateLimit;
 const { RedisStore } = require("rate-limit-redis");
-const Redis = require("ioredis");
-
-// ─── Redis client setup ─────────────────────────────────
-let redisClient = undefined;
-
-if (process.env.REDIS_URL) {
-  try {
-    redisClient = new Redis(process.env.REDIS_URL, {
-      maxRetriesPerRequest: 3,
-      enableOfflineQueue: true,
-      retryStrategy(times) {
-        if (times > 5) return null;
-        return Math.min(times * 200, 3000);
-      },
-    });
-
-    redisClient.on("error", (err) => {
-      if (!err.message.includes("ECONNRESET")) {
-        console.error("Redis rate-limit error:", err.message);
-      }
-    });
-
-    redisClient.on("close", () => {
-      console.warn("⚠ Redis connection lost, falling back to in-memory store");
-    });
-
-    console.log("✓ Redis rate-limit client initialized");
-  } catch (err) {
-    console.warn("⚠ Redis unavailable, using in-memory rate-limit store");
-    redisClient = undefined;
-  }
-}
+const { getRedisClient } = require("../configuration/redis");
 
 // ─── Factory: create a store per limiter ────────────────
 function createStore(prefix) {
-  if (!redisClient) return undefined;
+  const client = getRedisClient();
+  if (!client) return undefined;
   return new RedisStore({
-    sendCommand: (...args) => redisClient.call(...args),
+    sendCommand: (...args) => client.call(...args),
     prefix: `rl:${prefix}:`,
   });
 }

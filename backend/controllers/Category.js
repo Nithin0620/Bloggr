@@ -1,5 +1,6 @@
 const Category = require("../modals/category")
 const User = require("../modals/user");
+const { flushCache } = require("../middlewares/cache");
 
 
 exports.createCategory = async(req,res)=>{
@@ -13,6 +14,8 @@ exports.createCategory = async(req,res)=>{
       if(!categoryName) return res.status(400).json({success:false,message:"Category Name required"});
 
       const newCategory = await Category.create({name:categoryName});
+
+      flushCache("categories").catch(() => {});
 
       return res.status(200).json({success:true,message:"New category created successfully",data:newCategory});
    }

@@ -1,5 +1,6 @@
 const Tag = require("../modals/tag");
 const Post = require("../modals/post");
+const { flushCache } = require("../middlewares/cache");
 
 exports.createTag = async (req, res) => {
   try {
@@ -16,6 +17,8 @@ exports.createTag = async (req, res) => {
     }
 
     const tag = await Tag.create({ name: name.toLowerCase().trim(), slug });
+
+    flushCache("tags").catch(() => {});
 
     return res.status(201).json({
       success: true,
@@ -84,6 +87,8 @@ exports.deleteTag = async (req, res) => {
 
     // Remove tag from all posts
     await Post.updateMany({ tags: id }, { $pull: { tags: id } });
+
+    flushCache("tags").catch(() => {});
 
     return res.status(200).json({
       success: true,

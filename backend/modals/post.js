@@ -65,8 +65,11 @@ const postSchema = new mongoose.Schema({
    }
 },{
    timestamps:true
-}
-)
+})
 
+postSchema.index({ author: 1, createdAt: -1 });
+postSchema.index({ status: 1, scheduledAt: 1 });
+postSchema.index({ createdAt: -1 });
+postSchema.index({ title: "text", content: "text" }, { weights: { title: 10, content: 5 } });
 
 module.exports = mongoose.model("Post" , postSchema);

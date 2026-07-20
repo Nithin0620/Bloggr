@@ -40,8 +40,8 @@ Image Lightbox	Click to enlarge images in posts -->
 <!-- 404 Page	Custom not-found page -->
 Backend Improvements
 Improvement	What to Do
-Rate Limiting	express-rate-limit on auth endpoints
-Input Validation	express-validator or zod on all endpoints
+<!-- Rate Limiting	express-rate-limit on auth endpoints -->
+<!-- Input Validation	express-validator or zod on all endpoints -->
 Database Indexing	Index on post.author, notification.receiver, text search index
 Caching	Redis for hot posts/settings
 Health Check	Proper /health endpoint for DevOps

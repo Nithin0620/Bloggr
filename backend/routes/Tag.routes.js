@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router();
 const {protectRoute} = require("../middlewares/auth.middleware")
 const { writeLimiter, generalLimiter } = require("../middlewares/rateLimiter")
+const { cacheMiddleware } = require("../middlewares/cache")
 const {
   createTagValidation,
   mongoIdParamValidation,
@@ -15,7 +16,7 @@ const {
 } = require("../controllers/Tag")
 
 router.post("/create", protectRoute, writeLimiter, createTagValidation, createTag);
-router.get("/getall", generalLimiter, getAllTags);
+router.get("/getall", generalLimiter, cacheMiddleware("tags", 120), getAllTags);
 router.get("/getpostsbytag/:tagId", generalLimiter, mongoIdParamValidation("tagId"), getPostsByTag);
 router.delete("/:id", protectRoute, writeLimiter, mongoIdParamValidation("id"), deleteTag);
 

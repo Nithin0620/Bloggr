@@ -17,8 +17,8 @@ const ForgotPassword = () => {
   const { setnavigate } = useAuthStore();
   const BASE_URL =
     process.env.REACT_APP_MODE === "development"
-      ? "http://localhost:4000/api"
-      : "/api";
+      ? "http://localhost:4000/api/v1"
+      : "/api/v1";
 
   const handleSendOtp = async (e) => {
     e.preventDefault();

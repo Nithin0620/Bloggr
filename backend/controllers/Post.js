@@ -4,6 +4,7 @@ const Profile = require("../modals/profile")
 const Category = require("../modals/category");
 const Tag = require("../modals/tag");
 const {cloudinaryInstance } = require("../configuration/cloudinary");
+const { flushCache } = require("../middlewares/cache");
 
 
 exports.createPost = async (req, res) => {
@@ -100,6 +101,8 @@ exports.createPost = async (req, res) => {
       });
     }
 
+    flushCache("posts").catch(() => {});
+
     return res.status(200).json({
       success: true,
       message: "Post created Successfully",
@@ -117,7 +120,6 @@ exports.createPost = async (req, res) => {
 exports.updatePost = async (req, res) => {
   try {
     const author = req.user.user._id;
-    console.log(req.body)
     const { title, content, readTime } = req.body;
     const categories = req.body.categories;
     const postId = req.params.id;
@@ -207,6 +209,8 @@ exports.updatePost = async (req, res) => {
       new: true,
     });
 
+    flushCache("posts").catch(() => {});
+
     return res.status(200).json({
       success: true,
       message: "Post updated successfully",
@@ -225,7 +229,6 @@ exports.updatePost = async (req, res) => {
 exports.deletePost = async (req, res) => {
   try {
     const postId  = req.params.id;
-    console.log("postId",postId)
     const userId = req.user.user._id;
 
     if (!postId) {
@@ -243,7 +246,6 @@ exports.deletePost = async (req, res) => {
     });
 
     const post = await Post.findById(postId);
-    console.log(post);
     const categories = post.categories;
 
     await Promise.all(
@@ -255,6 +257,8 @@ exports.deletePost = async (req, res) => {
     );
 
     const response = await Post.findByIdAndDelete(postId);
+
+    flushCache("posts").catch(() => {});
 
     return res.status(200).json({
       success: true,
