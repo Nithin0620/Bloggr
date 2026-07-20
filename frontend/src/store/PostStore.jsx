@@ -270,6 +270,24 @@ export const usePostStore = create((set, get) => ({
       console.error("deletePost error:", e.response?.data || e.message);
       toast.error(e.response?.data?.message || "Failed to delete post")
     }
-  }
+  },
+
+  aiGenerateMeta: async (content) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/ai/generate-meta`,
+        { content },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        return response.data.data;
+      }
+      return null;
+    } catch (e) {
+      console.error("aiGenerateMeta error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Failed to generate title and summary");
+      return null;
+    }
+  },
 
 }))

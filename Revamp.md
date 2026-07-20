@@ -12,8 +12,8 @@ Here's my comprehensive revamp plan for Bloggr — organized into priority tiers
 🟡 Feature Revamp
 AI-Powered Features (the big ones)
 Feature	What It Does
-AI Writing Assistant	In the post editor — "Help me write", "Improve this paragraph", "Fix grammar", "Make it shorter/longer" using OpenAI/Gemini API
-AI Auto-Title & Summary	Generate a catchy title and auto-generated read-time summary from post content
+<!-- AI Writing Assistant	In the post editor — "Help me write", "Improve this paragraph", "Fix grammar", "Make it shorter/longer" using OpenAI/Gemini API -->
+<!-- AI Auto-Title & Summary	Generate a catchy title and auto-generated read-time summary from post content -->
 Smart Auto-Categorization	AI suggests categories when creating a post based on content
 AI Post Summarizer	Auto-generate TL;DR for long posts shown on cards
 Sentiment-Based Trending	Score posts by positive engagement sentiment, not just raw likes
@@ -49,13 +49,15 @@ API Versioning	/api/v1/... for future-proofing -->
 <!-- Error Handling	Global error handler middleware, consistent error response format -->
 <!-- Logging	Winston/Pino structured logging -->
 <!-- Rename misspelled dirs	modals/ → models/, tamplets/ → templates/ -->
+More Similar Blog's you may like.
+
 ---
 🟢 DevOps Prep (so the next phase is smoother)
 Item	Why
 Add Dockerfile + docker-compose.yml	Containerize for local dev + deploy
-Add .env.example	Document all required env vars
-Add health check endpoint	Container/orchestrator readiness probe
-Separate frontend/backend into services	Clean microservice boundary
+<!-- Add .env.example	Document all required env vars -->
+<!-- Add health check endpoint	Container/orchestrator readiness probe -->
+<!-- Separate frontend/backend into services	Clean microservice boundary -->
 Add CORS configuration per environment	Dev vs prod origins
 ---
 My Recommendation: Revamp Order

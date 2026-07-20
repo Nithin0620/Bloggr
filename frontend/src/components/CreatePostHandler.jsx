@@ -7,16 +7,16 @@ import { usePageStore } from "../store/PageStore";
 import { useNavigate } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
 import {toast} from "react-hot-toast"
-import {Loader, Clock, Send, Tag} from "lucide-react"
+import {Loader, Clock, Send, Tag, Sparkles} from "lucide-react"
 import RichTextEditor from "./RichTextEditor";
 import { useTagStore } from "../store/TagStore";
 
 
 const CreatePostHandler = () => {
    const {isCreatePostOpen, setIsCreatePostOpen,setCurrentPage} = usePageStore();
-  const { createPost,fetchCategories,createPostLoading ,fetchPosts} = usePostStore();
+   const { createPost,fetchCategories,createPostLoading ,fetchPosts, aiGenerateMeta} = usePostStore();
   const { authUser } = useAuthStore();
-   const { register, handleSubmit, reset ,setValue} = useForm();
+   const { register, handleSubmit, reset ,setValue, getValues} = useForm();
    const [selectedCategories, setSelectedCategories] = useState([]);
     const [previewURL,setPreviewUrl] = useState(null)
     const [editorContent, setEditorContent] = useState("");
@@ -40,8 +40,9 @@ const CreatePostHandler = () => {
    }, []);
    
 
-  const imageref = useRef()
-  const [loading,setLoading] = useState(false);
+   const imageref = useRef()
+   const [loading,setLoading] = useState(false);
+   const [metaLoading, setMetaLoading] = useState(false);
 
    const onSubmit = async(data) => {
       if (selectedCategories.length === 0) {
@@ -125,6 +126,29 @@ const CreatePostHandler = () => {
       setValue("image",null);
       setPreviewUrl(null);
    }
+
+   const handleGenerateMeta = async () => {
+      if (!editorContent || editorContent === "<p></p>" || editorContent.length < 30) {
+         toast.error("Write some content first before generating title and summary");
+         return;
+      }
+      setMetaLoading(true);
+      try {
+         const meta = await aiGenerateMeta(editorContent);
+         if (meta) {
+            if (!getValues("title")) {
+               setValue("title", meta.title);
+            }
+            const plainText = editorContent.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+            const wordCount = plainText.split(/\s+/).length;
+            const readTimeMin = Math.max(1, Math.ceil(wordCount / 200));
+            setValue("readTime", readTimeMin);
+            toast.success("Title generated and read time calculated!");
+         }
+      } finally {
+         setMetaLoading(false);
+      }
+   };
    if (!isCreatePostOpen) return null;
 
    return (
@@ -141,7 +165,23 @@ const CreatePostHandler = () => {
 
          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-               <label className="accent-text block mb-1">Title</label>
+               <div className="flex items-center justify-between mb-1">
+                  <label className="accent-text">Title</label>
+                  <button
+                     type="button"
+                     onClick={handleGenerateMeta}
+                     disabled={metaLoading}
+                     className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg border accent-border hover:accent-bg-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                     title="Generate title and summary from content"
+                  >
+                     {metaLoading ? (
+                        <Loader className="w-3.5 h-3.5 animate-spin" />
+                     ) : (
+                        <Sparkles className="w-3.5 h-3.5" />
+                     )}
+                     {metaLoading ? "Generating..." : "AI Generate"}
+                  </button>
+               </div>
                <input
                type="text"
                {...register("title", { required: true })}

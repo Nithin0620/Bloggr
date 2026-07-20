@@ -22,6 +22,7 @@ const settingsRoutes = require("./routes/Settings.routes")
 const bookmarkRoutes = require("./routes/Bookmark.routes")
 const readingListRoutes = require("./routes/ReadingList.routes")
 const tagRoutes = require("./routes/Tag.routes")
+const aiRoutes = require("./routes/AI.routes")
 const path = require("path")
 
 const PORT  = process.env.PORT || 5000;
@@ -57,6 +58,7 @@ const routePairs = [
   ["/bookmarks", bookmarkRoutes],
   ["/readinglists", readingListRoutes],
   ["/tags", tagRoutes],
+  ["/ai", aiRoutes],
 ];
 
 routePairs.forEach(([routePath, router]) => {

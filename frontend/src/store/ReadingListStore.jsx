@@ -97,6 +97,13 @@ export const useReadingListStore = create((set, get) => ({
       );
       if (res.data.success) {
         toast.success("Post added to list");
+        set((state) => ({
+          lists: state.lists.map((l) =>
+            l._id === listId
+              ? { ...l, posts: [...(l.posts || []), { _id: postId }] }
+              : l
+          ),
+        }));
         return true;
       }
       return false;
