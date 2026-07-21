@@ -14,7 +14,7 @@ import { useTagStore } from "../store/TagStore";
 
 const CreatePostHandler = () => {
    const {isCreatePostOpen, setIsCreatePostOpen,setCurrentPage} = usePageStore();
-   const { createPost,fetchCategories,createPostLoading ,fetchPosts, aiGenerateMeta} = usePostStore();
+   const { createPost,fetchCategories,createPostLoading ,fetchPosts, aiGenerateMeta, aiSuggestCategories} = usePostStore();
   const { authUser } = useAuthStore();
    const { register, handleSubmit, reset ,setValue, getValues} = useForm();
    const [selectedCategories, setSelectedCategories] = useState([]);
@@ -43,6 +43,7 @@ const CreatePostHandler = () => {
    const imageref = useRef()
    const [loading,setLoading] = useState(false);
    const [metaLoading, setMetaLoading] = useState(false);
+   const [categorySuggesting, setCategorySuggesting] = useState(false);
 
    const onSubmit = async(data) => {
       if (selectedCategories.length === 0) {
@@ -147,6 +148,30 @@ const CreatePostHandler = () => {
          }
       } finally {
          setMetaLoading(false);
+      }
+   };
+
+   const handleSuggestCategories = async () => {
+      if (!editorContent || editorContent === "<p></p>" || editorContent.length < 30) {
+         toast.error("Write some content first before suggesting categories");
+         return;
+      }
+      if (!categories || categories.length === 0) {
+         toast.error("No categories available to suggest from");
+         return;
+      }
+      setCategorySuggesting(true);
+      try {
+         const suggested = await aiSuggestCategories(editorContent, categories);
+         if (suggested && suggested.length > 0) {
+            const newCats = [...new Set([...selectedCategories, ...suggested])];
+            setSelectedCategories(newCats);
+            toast.success(`AI suggested ${suggested.length} categor${suggested.length === 1 ? 'y' : 'ies'}!`);
+         } else {
+            toast("No matching categories found for this content");
+         }
+      } finally {
+         setCategorySuggesting(false);
       }
    };
    if (!isCreatePostOpen) return null;
@@ -254,7 +279,23 @@ const CreatePostHandler = () => {
             </div>
 
             <div className="accent-text-mode accent-bg-mode">
-               <label className="accent-text block mb-1">Categories</label>
+               <div className="flex items-center justify-between mb-1">
+                  <label className="accent-text">Categories</label>
+                  <button
+                     type="button"
+                     onClick={handleSuggestCategories}
+                     disabled={categorySuggesting}
+                     className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg border accent-border hover:accent-bg-light transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                     title="AI suggests categories based on content"
+                  >
+                     {categorySuggesting ? (
+                        <Loader className="w-3.5 h-3.5 animate-spin" />
+                     ) : (
+                        <Sparkles className="w-3.5 h-3.5" />
+                     )}
+                     {categorySuggesting ? "Suggesting..." : "AI Suggest"}
+                  </button>
+               </div>
                <select
                onChange={handleCategorySelect}
                className="w-full px-4 py-2 border accent-text-mode accent-bg-mode rounded-lg accent-border"

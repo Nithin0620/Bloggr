@@ -62,6 +62,10 @@ const postSchema = new mongoose.Schema({
    scheduledAt:{
       type:Date,
       default:null,
+   },
+   summary:{
+      type:String,
+      default:null,
    }
 },{
    timestamps:true

@@ -471,3 +471,30 @@
   border-top: 2px solid var(--accent-border);
   margin: 1.5rem 0;
 }
+
+/* TL;DR Animated Gradient Border */
+@keyframes gradient-rotate {
+  0% { --angle: 0deg; }
+  100% { --angle: 360deg; }
+}
+
+@keyframes border-dance {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.tldr-container {
+  background: linear-gradient(
+    135deg,
+    #ff6b6b, #feca57, #48dbfb, #ff9ff3,
+    #54a0ff, #5f27cd, #01a3a4, #ff6b6b
+  );
+  background-size: 400% 400%;
+  animation: border-dance 4s ease infinite;
+}
+
+.tldr-inner {
+  background-color: var(--acent-bg-mode, rgb(255, 255, 255));
+  color: var(--accent-text-mode);
+}

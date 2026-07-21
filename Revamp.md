@@ -14,10 +14,10 @@ AI-Powered Features (the big ones)
 Feature	What It Does
 <!-- AI Writing Assistant	In the post editor — "Help me write", "Improve this paragraph", "Fix grammar", "Make it shorter/longer" using OpenAI/Gemini API -->
 <!-- AI Auto-Title & Summary	Generate a catchy title and auto-generated read-time summary from post content -->
-Smart Auto-Categorization	AI suggests categories when creating a post based on content
-AI Post Summarizer	Auto-generate TL;DR for long posts shown on cards
+<!-- Smart Auto-Categorization	AI suggests categories when creating a post based on content -->
+<!-- AI Post Summarizer	Auto-generate TL;DR for long posts shown on cards -->
 Sentiment-Based Trending	Score posts by positive engagement sentiment, not just raw likes
-AI Comment Reply Suggestions	Suggest smart replies when someone comments on your post
+<!-- AI Comment Reply Suggestions	Suggest smart replies when someone comments on your post -->
 AI Search	Natural language search — "posts about React hooks for beginners" instead of keyword matching
 AI Profile Bio Generator	"Generate a professional bio from my posts"
 Core Feature Improvements

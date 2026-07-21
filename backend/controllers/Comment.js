@@ -12,9 +12,9 @@ exports.addComment = async (req, res) => {
    try {
       const userId = req.user.user._id;
       const postId = req.params.id;
-      const { comment } = req.body;
+      const commentText = req.body.comment || req.body.text;
 
-      if (!comment)
+      if (!commentText)
          return res.status(400).json({
          success: false,
          message: "Comment data is required",
@@ -37,7 +37,7 @@ exports.addComment = async (req, res) => {
       const newComment = await Comment.create({
          post: postId,
          user: userId,
-         text: comment,
+         text: commentText,
       });
 
       const responseNotification = await Notification.create({
@@ -60,7 +60,7 @@ exports.addComment = async (req, res) => {
                      actionType: "comment",
                      actorName: user.firstName,     
                      postTitle: post.title,
-                     commentContent: comment,   
+                     commentContent: commentText,   
                      link:`   https://bloggr-y7gx.onrender.com/readmore/${postId}`
          
                   })

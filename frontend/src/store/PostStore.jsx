@@ -290,4 +290,57 @@ export const usePostStore = create((set, get) => ({
     }
   },
 
+  aiSuggestCategories: async (content, categories) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/ai/suggest-categories`,
+        { content, categories },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        return response.data.data.categories;
+      }
+      return [];
+    } catch (e) {
+      console.error("aiSuggestCategories error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Failed to suggest categories");
+      return [];
+    }
+  },
+
+  aiSummarize: async (content, postId) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/ai/summarize`,
+        { content, postId },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        return response.data.data.summary;
+      }
+      return null;
+    } catch (e) {
+      console.error("aiSummarize error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Failed to generate summary");
+      return null;
+    }
+  },
+
+  aiSuggestComment: async (postTitle, postContent) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/ai/suggest-comment`,
+        { postTitle, postContent },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        return response.data.data.comments;
+      }
+      return [];
+    } catch (e) {
+      console.error("aiSuggestComment error:", e.response?.data || e.message);
+      return [];
+    }
+  },
+
 }))

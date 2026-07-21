@@ -49,6 +49,11 @@ const Separator = () => (
    <div className="w-px h-6 accent-bg-dark mx-1" />
 );
 
+const AI_BASE_URL =
+   process.env.REACT_APP_MODE === "development"
+      ? "http://localhost:4000/api/v1"
+      : "/api/v1";
+
 const AI_ACTIONS = [
    { label: "Help me write", prompt: "Continue writing from where the text left off. Match the tone and style." },
    { label: "Improve writing", prompt: "Improve the writing quality of this text. Fix awkward phrasing, improve flow, and make it more engaging. Keep the original meaning." },
@@ -108,7 +113,7 @@ const AIAssistant = ({ editor, onLoadingChange }) => {
       try {
          const isReplacement = editor.state.selection.from !== editor.state.selection.to;
 
-         const response = await fetch("/api/v1/ai/write", {
+         const response = await fetch(`${AI_BASE_URL}/ai/write`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",

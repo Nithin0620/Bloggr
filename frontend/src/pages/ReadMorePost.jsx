@@ -14,7 +14,7 @@ import { IoCaretBack } from "react-icons/io5";
 import { useNavigate, useParams } from 'react-router-dom';
 import { usePageStore } from '../store/PageStore';
 import { useShareModalStore } from '../store/ShareModal';
-import { Loader } from 'lucide-react';
+import { Loader, Sparkles } from 'lucide-react';
 import { useIntractionStore } from '../store/IntractionStore';
 import { useBookmarkStore } from '../store/BookmarkStore';
 import { useAuthStore } from '../store/AuthStore';
@@ -24,7 +24,7 @@ import toast from 'react-hot-toast';
 const ReadMorePost = () => {
    const {LikeUnlikePost,postsLikedByUser} = useIntractionStore();
    const {bookmarkedPostIds, toggleBookmark} = useBookmarkStore();
-   const {token} = useAuthStore();
+   const {token, authUser} = useAuthStore();
    
 
    const getTimeAgo = (timestamp) => {
@@ -45,8 +45,10 @@ const ReadMorePost = () => {
       return `${diffInDays} day${diffInDays === 1 ? "" : "s"} ago`;
    };
 
-   const {getPostByID } = usePostStore();
+   const {getPostByID, aiSummarize } = usePostStore();
    const [loading,setLoading] = useState(false);
+   const [summaryLoading, setSummaryLoading] = useState(false);
+   const [postSummary, setPostSummary] = useState(null);
 
    const {postId} = useParams();
    const [post,setPost] =useState({
@@ -121,6 +123,21 @@ const ReadMorePost = () => {
       fetchReadMorePost();
       setLiked(false);
    },[liked, getPostByID, postId]);
+
+   useEffect(() => {
+      if (!post || !post._id || !post.content) return;
+      if (post.summary) {
+         setPostSummary(post.summary);
+         return;
+      }
+      const generateSummary = async () => {
+         setSummaryLoading(true);
+         const summary = await aiSummarize(post.content, post._id);
+         if (summary) setPostSummary(summary);
+         setSummaryLoading(false);
+      };
+      generateSummary();
+   }, [post?._id, post?.content]);
 
    const {setCurrentPage} = usePageStore();
    const {openShareModal} = useShareModalStore();
@@ -200,6 +217,27 @@ const ReadMorePost = () => {
                   />
                </div>
 
+               {(summaryLoading || postSummary) && (
+                  <div className="tldr-container rounded-xl p-[2px]">
+                     <div className="tldr-inner rounded-xl px-5 py-4">
+                        <div className="flex items-center gap-2 mb-2">
+                           <Sparkles className="w-4 h-4 accent-text" />
+                           <span className="text-xs font-bold uppercase tracking-wider accent-text">
+                              {summaryLoading ? "Generating TL;DR..." : "TL;DR"}
+                           </span>
+                        </div>
+                        {summaryLoading ? (
+                           <div className="flex items-center gap-2 text-sm opacity-60">
+                              <Loader className="w-4 h-4 animate-spin" />
+                              <span>Generating summary...</span>
+                           </div>
+                        ) : (
+                           <p className="text-sm leading-relaxed">{postSummary}</p>
+                        )}
+                     </div>
+                  </div>
+               )}
+
                <div className="h-[0.12rem] rounded-full min-w-full accent-bg-dark"></div>
 
                <div 
@@ -241,8 +279,8 @@ const ReadMorePost = () => {
             <div className="hidden lg:block lg:min-h-screen w-[0.12rem] accent-bg-dark mx-5"></div>
 
             {/* RIGHT: Comment Section */}
-            <div className="w-full lg:w-[25%]">
-               <Comment post={post._id} />
+               <div className="w-full lg:w-[25%]">
+                  <Comment post={post._id} postTitle={post.title} postContent={post.content} />
             </div>
          </div>
       </div>
