@@ -20,13 +20,13 @@ export const useIntractionStore = create((set, get) => ({
           : [...likedPosts, postId];
 
         set({ postsLikedByUser: updatedPosts });
-        return true;
+        return { liked: !alreadyLiked, likesCount: response.data.likesCount };
       } else {
-        return false;
+        return null;
       }
     } catch (e) {
       console.error("LikeUnlikePost error:", e.response?.data || e.message);
-      return false;
+      return null;
     }
   },
 

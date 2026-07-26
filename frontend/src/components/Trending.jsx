@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { usePostStore } from '../store/PostStore'
 import { FaRegHeart, FaHeart, FaRegBookmark, FaBookmark } from "react-icons/fa";
 import { FaRegCommentDots } from "react-icons/fa";
@@ -21,6 +21,19 @@ const Trending = () => {
   const [Post,setPost] = useState([]);
   const [liked,setLiked] = useState(false);
   const [loading,setLoading] = useState(false);
+  const [likeCounts, setLikeCounts] = useState({});
+  const [likedPosts, setLikedPosts] = useState({});
+
+  useEffect(() => {
+    const counts = {};
+    const liked = {};
+    Post.forEach(p => {
+      counts[p._id] = p.likes.length;
+      liked[p._id] = postsLikedByUser.includes(p._id);
+    });
+    setLikeCounts(counts);
+    setLikedPosts(liked);
+  }, [Post, postsLikedByUser]);
 
   useEffect(()=>{
     if(liked === false) window.scrollTo({top:0,behavior:'smooth'});
@@ -43,8 +56,11 @@ const Trending = () => {
   }
 
   const handleLike = async(postId)=>{
-    await LikeUnlikePost(postId);
-    setLiked(true);
+    const result = await LikeUnlikePost(postId);
+    if (result) {
+      setLikeCounts(prev => ({ ...prev, [postId]: result.likesCount }));
+      setLikedPosts(prev => ({ ...prev, [postId]: result.liked }));
+    }
   }
 
   if(loading) return(
@@ -105,8 +121,8 @@ const Trending = () => {
                       </span>
                     )}
                     <button onClick={()=>handleLike(post._id)} className="flex items-center gap-1 hover:text-red-500 transition duration-200">
-                      {post.likes.length }
-                      {postsLikedByUser.includes(post._id) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> }
+                      {likeCounts[post._id] ?? post.likes.length }
+                      {likedPosts[post._id] ? <FaHeart className='text-red-500'/> : <FaRegHeart/> }
                     </button>
                     <span onClick={()=>handleReadmoreClick(post._id)} className="flex items-center gap-1 transition-all duration-300 hover:text-green-500">
                       {post.comments.length}

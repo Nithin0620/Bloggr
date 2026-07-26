@@ -130,14 +130,15 @@ const AIAssistant = ({ editor, onLoadingChange }) => {
             throw new Error(data.message || "AI request failed");
          }
 
-         const result = data.data.result;
+          const result = data.data.result;
 
-         if (isReplacement) {
-            const { from, to } = editor.state.selection;
-            editor.chain().focus().deleteRange({ from, to }).insertContent(result).run();
-         } else {
-            editor.chain().focus().insertContent("<br>" + result).run();
-         }
+          if (isReplacement) {
+             const { from, to } = editor.state.selection;
+             editor.chain().focus().deleteRange({ from, to }).insertContent(result).run();
+          } else {
+             const totalChars = editor.state.doc.content.size;
+             editor.chain().focus().deleteRange({ from: 0, to: totalChars }).insertContent(result).run();
+          }
       } catch (err) {
          console.error("AI assistant error:", err);
          toast.error(err.message || "AI assistant failed. Check your Groq API key in .env");

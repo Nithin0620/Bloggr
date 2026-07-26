@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaRegCommentDots } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
 import { usePageStore } from '../store/PageStore';
@@ -23,6 +23,12 @@ const HomePostCards = ({ post ,setLiked}) => {
   const {LikeUnlikePost,postsLikedByUser} = useIntractionStore();
   const {bookmarkedPostIds, toggleBookmark} = useBookmarkStore();
   const [showReadingListModal, setShowReadingListModal] = useState(false);
+  const [likeCount, setLikeCount] = useState(post.likes.length);
+  const [isLiked, setIsLiked] = useState(postsLikedByUser.includes(post._id));
+
+  useEffect(() => {
+    setIsLiked(postsLikedByUser.includes(post._id));
+  }, [postsLikedByUser, post._id]);
   
 
   const handleReadmoreClick = ()=>{
@@ -59,12 +65,11 @@ const HomePostCards = ({ post ,setLiked}) => {
       toast.error("Please login first to intract with the post");
       return ;
     }
-    const response = await LikeUnlikePost(post._id);
-   
-    setLiked(true);
-    // setTimeout(()=>{
-    //   setLiked(false)
-    // },4000)
+    const result = await LikeUnlikePost(post._id);
+    if (result) {
+      setLikeCount(result.likesCount);
+      setIsLiked(result.liked);
+    }
   };
 
 
@@ -136,8 +141,8 @@ const HomePostCards = ({ post ,setLiked}) => {
 
         <div className="flex gap-3 items-center text-sm accent-text-mode">
           <button onClick={()=>handleLike()} className="flex items-center gap-1 hover:text-red-500 transition duration-200">
-            {postsLikedByUser.includes(post._id) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> }
-            {post.likes.length}
+            {(isLiked || postsLikedByUser.includes(post._id)) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> }
+            {likeCount}
           </button>
 
           <button onClick={()=>handleReadmoreClick()} className="flex items-center gap-1 hover:text-blue-500 transition duration-200">

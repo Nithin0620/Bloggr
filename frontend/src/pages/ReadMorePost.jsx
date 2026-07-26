@@ -88,6 +88,8 @@ const ReadMorePost = () => {
         });
 
    const [liked,setLiked] = useState(false);
+   const [likeCount, setLikeCount] = useState(post.likes.length);
+   const [isLiked, setIsLiked] = useState(postsLikedByUser.includes(post._id));
    const [lightboxOpen, setLightboxOpen] = useState(false);
    const [lightboxImages, setLightboxImages] = useState([]);
    const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -148,8 +150,11 @@ const ReadMorePost = () => {
    }
 
    const handleLike = async()=>{
-      await LikeUnlikePost(post._id);
-      setLiked(true);
+      const result = await LikeUnlikePost(post._id);
+      if (result) {
+         setLikeCount(result.likesCount);
+         setIsLiked(result.liked);
+      }
    }
 
    // if(loading || !post) return (
@@ -253,7 +258,7 @@ const ReadMorePost = () => {
                />
 
                <div className="flex gap-10 transition-all duration-300 text-sm">
-                  <span onClick={()=>handleLike()} className=" cursor-pointer hover:text-red-500">{postsLikedByUser.includes(post._id) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> } Like {post.likes.length}</span>
+                  <span onClick={()=>handleLike()} className=" cursor-pointer hover:text-red-500">{(isLiked || postsLikedByUser.includes(post._id)) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> } Like {likeCount}</span>
                   <span onClick={()=>window.scrollTo({top:0,behavior:'smooth'})} className=" cursor-pointer hover:text-blue-500"> <FaRegCommentDots /> Comment {post.comments.length}</span>
                   <span className=" cursor-pointer hover:text-green-500"> <IoIosStats /> Views {post.views}</span>
                   <span onClick={()=>{
