@@ -441,6 +441,176 @@ exports.getScheduledPosts = async (req, res) => {
   }
 };
 
+exports.getTrendingPosts = async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 10;
+
+    const posts = await Post.find({ status: "published" })
+      .populate("author", "firstName lastName image profilePic")
+      .populate("categories", "name")
+      .populate("tags", "name slug")
+      .populate("likes", "firstName lastName createdAt")
+      .populate({
+        path: "comments",
+        populate: { path: "user", select: "firstName lastName image" },
+      })
+      .sort({ sentimentScore: -1, createdAt: -1 })
+      .limit(limit)
+      .lean();
+
+    const scored = posts.map((p) => ({
+      ...p,
+      trendingScore:
+        p.sentimentScore > 0
+          ? p.sentimentScore
+          : (p.likes?.length || 0) + (p.views || 0) + (p.comments?.length || 0),
+    }));
+
+    scored.sort((a, b) => b.trendingScore - a.trendingScore);
+
+    return res.status(200).json({
+      success: true,
+      message: "Trending posts fetched successfully",
+      data: scored,
+    });
+  } catch (e) {
+    logger.error(e);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching trending posts",
+    });
+  }
+};
+
+exports.getRelatedPosts = async (req, res) => {
+  try {
+    const postId = req.params.id;
+
+    const post = await Post.findById(postId)
+      .populate("categories", "name")
+      .populate("tags", "name slug");
+
+    if (!post) {
+      return res.status(404).json({ success: false, message: "Post not found" });
+    }
+
+    const categoryIds = post.categories.map((c) => c._id);
+    const tagIds = post.tags.map((t) => t._id);
+    const titleWords = post.title
+      .replace(/[^a-zA-Z0-9\s]/g, "")
+      .split(/\s+/)
+      .filter((w) => w.length > 3)
+      .join(" ");
+
+    const pipeline = [
+      { $match: { _id: { $ne: post._id }, status: "published" } },
+      {
+        $addFields: {
+          categoryOverlap: {
+            $size: { $setIntersection: ["$categories", categoryIds] },
+          },
+          tagOverlap: {
+            $size: { $setIntersection: ["$tags", tagIds] },
+          },
+        },
+      },
+      {
+        $addFields: {
+          relevanceScore: {
+            $add: [
+              { $multiply: ["$categoryOverlap", 3] },
+              { $multiply: ["$tagOverlap", 2] },
+            ],
+          },
+        },
+      },
+      { $match: { relevanceScore: { $gt: 0 } } },
+      { $sort: { relevanceScore: -1, createdAt: -1 } },
+      { $limit: 10 },
+      {
+        $lookup: {
+          from: "users",
+          localField: "author",
+          foreignField: "_id",
+          as: "authorData",
+        },
+      },
+      { $unwind: "$authorData" },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categories",
+          foreignField: "_id",
+          as: "categoryData",
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          image: 1,
+          readTime: 1,
+          createdAt: 1,
+          views: 1,
+          relevanceScore: 1,
+          "authorData.firstName": 1,
+          "authorData.lastName": 1,
+          "authorData.profilePic": 1,
+          categoryData: { name: 1 },
+        },
+      },
+    ];
+
+    let related = await Post.aggregate(pipeline);
+
+    if (related.length < 5 && titleWords.length > 0) {
+      try {
+        const textResults = await Post.find(
+          { _id: { $ne: post._id }, status: "published", $text: { $search: titleWords } },
+          { score: { $meta: "textScore" } }
+        )
+          .populate("author", "firstName lastName profilePic")
+          .populate("categories", "name")
+          .sort({ score: { $meta: "textScore" } })
+          .limit(5)
+          .lean();
+
+        const existingIds = new Set(related.map((r) => r._id.toString()));
+        for (const r of textResults) {
+          if (!existingIds.has(r._id.toString()) && related.length < 5) {
+            related.push({
+              _id: r._id,
+              title: r.title,
+              image: r.image,
+              readTime: r.readTime,
+              createdAt: r.createdAt,
+              views: r.views,
+              relevanceScore: r.score || 1,
+              authorData: { firstName: r.author.firstName, lastName: r.author.lastName, profilePic: r.author.profilePic },
+              categoryData: r.categories,
+            });
+          }
+        }
+      } catch (e) {
+        // text search may fail if no text index, ignore
+      }
+    }
+
+    related = related.slice(0, 5);
+
+    return res.status(200).json({
+      success: true,
+      message: "Related posts fetched successfully",
+      data: related,
+    });
+  } catch (e) {
+    logger.error(e);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching related posts",
+    });
+  }
+};
+
 exports.getPostByUser = async(req,res)=>{
    try{
       const userId = req.params.id;

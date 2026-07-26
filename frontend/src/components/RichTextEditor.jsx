@@ -6,6 +6,7 @@ import Image from "@tiptap/extension-image";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
+import toast from "react-hot-toast";
 import {
    FaBold,
    FaItalic,
@@ -31,6 +32,9 @@ const ToolBtn = ({ onClick, isActive, children, title }) => (
    <button
       type="button"
       onMouseDown={(e) => {
+         e.preventDefault();
+      }}
+      onClick={(e) => {
          e.preventDefault();
          onClick();
       }}
@@ -136,7 +140,7 @@ const AIAssistant = ({ editor, onLoadingChange }) => {
          }
       } catch (err) {
          console.error("AI assistant error:", err);
-         alert(err.message || "AI assistant failed. Check your Groq API key in .env");
+         toast.error(err.message || "AI assistant failed. Check your Groq API key in .env");
       } finally {
          setIsGenerating(false);
          onLoadingChange?.(false);
@@ -164,7 +168,11 @@ const AIAssistant = ({ editor, onLoadingChange }) => {
          {showMenu && (
             <>
                <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
-               <div className="absolute z-50 w-72 accent-bg-mode accent-border border rounded-lg shadow-lg overflow-hidden" style={dropdownStyle}>
+               <div
+                  className="absolute z-50 w-72 accent-bg-mode accent-border border rounded-lg shadow-lg overflow-hidden"
+                  style={dropdownStyle}
+                  onMouseDown={(e) => e.stopPropagation()}
+               >
                   <div className="p-2 border-b accent-border">
                      <p className="text-xs font-semibold accent-text mb-1">AI Writing Assistant</p>
                      <p className="text-xs text-gray-400">Select text first, or leave empty to continue writing</p>
@@ -175,8 +183,13 @@ const AIAssistant = ({ editor, onLoadingChange }) => {
                         <button
                            key={action.label}
                            type="button"
-                           onClick={() => handleAction(action.prompt)}
-                           className="w-full text-left px-3 py-2 text-sm hover:accent-bg-light transition-colors flex items-center gap-2"
+                           disabled={isGenerating}
+                           onMouseDown={(e) => e.preventDefault()}
+                           onClick={(e) => {
+                              e.stopPropagation();
+                              handleAction(action.prompt);
+                           }}
+                           className="w-full text-left px-3 py-2 text-sm hover:accent-bg-light transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                            <FaMagic className="text-xs accent-text" />
                            {action.label}
@@ -197,6 +210,7 @@ const AIAssistant = ({ editor, onLoadingChange }) => {
                         <button
                            type="submit"
                            disabled={!customPrompt.trim() || isGenerating}
+                           onMouseDown={(e) => e.preventDefault()}
                            className="px-2 py-1.5 rounded accent-bg text-white text-sm disabled:opacity-50"
                         >
                            Go

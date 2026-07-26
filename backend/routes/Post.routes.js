@@ -18,7 +18,9 @@ const {
    getPostById,
    getPostByCategory,
    getPostByUser,
-   getScheduledPosts
+   getScheduledPosts,
+   getRelatedPosts,
+   getTrendingPosts
 } = require("../controllers/Post")
 
 router.post("/createpost", protectRoute, writeLimiter, upload.single("image"), createPostValidation, createPost);
@@ -29,5 +31,7 @@ router.get("/getscheduledposts", protectRoute, generalLimiter, getScheduledPosts
 router.get("/getpostbyid/:id", generalLimiter, mongoIdParamValidation("id"), getPostById);
 router.get("/getpostbycategory/:category", generalLimiter, cacheMiddleware("posts:category", 30), getPostByCategory);
 router.get("/getpostbyuser/:id", generalLimiter, mongoIdParamValidation("id"), getPostByUser);
+router.get("/related/:id", generalLimiter, mongoIdParamValidation("id"), getRelatedPosts);
+router.get("/trending", generalLimiter, getTrendingPosts);
 
 module.exports = router;

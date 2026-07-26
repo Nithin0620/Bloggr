@@ -66,6 +66,14 @@ const postSchema = new mongoose.Schema({
    summary:{
       type:String,
       default:null,
+   },
+   sentimentScore:{
+      type:Number,
+      default:0,
+   },
+   sentimentUpdatedAt:{
+      type:Date,
+      default:null,
    }
 },{
    timestamps:true

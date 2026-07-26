@@ -5,64 +5,47 @@ import { FaRegCommentDots } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
 import { useIntractionStore } from '../store/IntractionStore';
-import {Loader} from "lucide-react"
+import {Loader, Sparkles} from "lucide-react"
 import { usePageStore } from '../store/PageStore';
 import { truncateContent } from '../lib/utils';
 import { useBookmarkStore } from '../store/BookmarkStore';
 import { useAuthStore } from '../store/AuthStore';
 
 const Trending = () => {
-  const {posts,fetchPosts} = usePostStore();
+  const {fetchTrendingPosts} = usePostStore();
   const {LikeUnlikePost,postsLikedByUser} = useIntractionStore();
   const {setCurrentPage} = usePageStore();
   const {bookmarkedPostIds, toggleBookmark} = useBookmarkStore();
   const {token} = useAuthStore();
 
-
   const [Post,setPost] = useState([]);
-
   const [liked,setLiked] = useState(false);
-
-
   const [loading,setLoading] = useState(false);
 
   useEffect(()=>{
     if(liked === false) window.scrollTo({top:0,behavior:'smooth'});
 
-    // console.log(postsLikedByUser)
-
     setLoading(true);
     const getposts = async()=>{
-      
-      const PostArray = await fetchPosts();
+      const PostArray = await fetchTrendingPosts();
       setPost(PostArray);
       setLoading(false);
     }
     
     getposts();
     setLiked(false);
-  },[liked])
+  },[liked, fetchTrendingPosts])
   const navigate = useNavigate();
 
   const handleReadmoreClick = (postId)=>{
     setCurrentPage("ReadMore");
-    setPost(postId)
     navigate(`/readmore/${postId}`)
   }
 
-  
-
-  const TrendingPostsWhole = Post.sort(
-    (a, b) => (b.likes.length + b.views + b.comments.length) - (a.likes.length + a.views + a.comments.length)
-  );
-
-  const TrendingPostsFinal = TrendingPostsWhole.slice(0,5);
-
-
-    const handleLike = async(postId)=>{
-      const response = await LikeUnlikePost(postId);
-      setLiked(true);
-    }
+  const handleLike = async(postId)=>{
+    await LikeUnlikePost(postId);
+    setLiked(true);
+  }
 
   if(loading) return(
     <div className='min-h-screen flex justify-center mt-40'><Loader className='animate-spin h-9'/></div>
@@ -72,15 +55,8 @@ const Trending = () => {
   return (
     <div className="relative min-h-screen">        
       {
-        TrendingPostsFinal.map((post,index)=> (
+        Post.map((post,index)=> (
           <div key={index} className='relative'>
-            {loading && (
-              <div className="absolute inset-0 flex justify-center items-cente z-10">
-                <div >
-                  <Loader className="animate-spin" />
-                </div>
-              </div>
-            )}
 
             <div className="flex rounded-2xl shadow-md border accent-border overflow-hidden w-full h-36 my-4 hover:scale-[1.01] transition-all duration-200 accent-bg-mode accent-text-mode">
               {/* Image Section */}
@@ -122,6 +98,12 @@ const Trending = () => {
                   </button>
         
                   <div className="flex items-center gap-[0.6rem]  text-[0.820rem]">
+                    {post.trendingScore > 0 && (
+                      <span className="flex items-center gap-0.5 text-amber-500 font-semibold text-[0.7rem]">
+                        <Sparkles className="w-3 h-3" />
+                        {Math.round(post.trendingScore)}
+                      </span>
+                    )}
                     <button onClick={()=>handleLike(post._id)} className="flex items-center gap-1 hover:text-red-500 transition duration-200">
                       {post.likes.length }
                       {postsLikedByUser.includes(post._id) ? <FaHeart className='text-red-500'/> : <FaRegHeart/> }
@@ -148,7 +130,6 @@ const Trending = () => {
               </div>
             </div>
             
-        
         
           </div>
         ))

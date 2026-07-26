@@ -7,9 +7,9 @@ import UpdatePostHandler from "../components/UpdatePostHandler";
 import { IoMdClose } from "react-icons/io";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useProfileStore } from '../store/ProfileStore';
-import { Loader } from 'lucide-react';
-import { toast } from "react-hot-toast";
 import { usePostStore } from '../store/PostStore';
+import { Loader, Sparkles } from 'lucide-react';
+import { toast } from "react-hot-toast";
 import { truncateContent } from "../lib/utils";
 import EditProfile from '../components/EditProfile';
 import FollowListModal from "../components/FollowListModal";
@@ -29,6 +29,7 @@ const Profile = () => {
   const [editProfile, setEditProfile] = useState(false);
   const navigate = useNavigate();
   const { fetchUserProfile, editProfileInfo, Followuser, unFollowUser, getFollowers, getFollowings } = useProfileStore();
+  const { aiGenerateBio } = usePostStore();
   const { userId } = useParams();
   const [loading, setLoading] = useState(false);
   const [Followers, setFollowers] = useState([]);
@@ -40,6 +41,8 @@ const Profile = () => {
   const [liked, setLiked] = useState(false);
   const [profilePicOpen, setProfilePicOpen] = useState(false);
   const [scheduledPosts, setScheduledPosts] = useState([]);
+  const [bioLoading, setBioLoading] = useState(false);
+  const [generatedBio, setGeneratedBio] = useState(null);
   const isOwnProfile = authUser && user && authUser._id === user._id;
 
   useEffect(() => {
@@ -112,6 +115,23 @@ const Profile = () => {
     setLoading(false);
   };
 
+  const handleGenerateBio = async () => {
+    setBioLoading(true);
+    const bio = await aiGenerateBio(userId);
+    if (bio) {
+      setGeneratedBio(bio);
+    }
+    setBioLoading(false);
+  };
+
+  const handleAcceptBio = async () => {
+    setLoading(true);
+    await editProfileInfo({ bio: generatedBio });
+    setGeneratedBio(null);
+    setLiked(true);
+    setLoading(false);
+  };
+
   return (
     <div className="relative min-h-screen accent-bg-mode accent-text-mode">
       {loading && !user && (
@@ -153,6 +173,42 @@ const Profile = () => {
                       day: "numeric",
                     })}</p>
                     <p className="mt-2 text-sm">{user.profile.bio}</p>
+                    {isOwnProfile && (
+                      <div className="mt-2">
+                        {bioLoading ? (
+                          <div className="flex items-center gap-2 text-xs text-amber-500">
+                            <Loader className="w-3 h-3 animate-spin" />
+                            <span>Generating bio...</span>
+                          </div>
+                        ) : generatedBio ? (
+                          <div className="mt-2 p-3 rounded-lg border border-amber-500/30 bg-amber-500/5">
+                            <p className="text-sm italic mb-2">"{generatedBio}"</p>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={handleAcceptBio}
+                                className="text-xs px-3 py-1 rounded-md bg-amber-500 text-white hover:opacity-80 transition-all"
+                              >
+                                Accept
+                              </button>
+                              <button
+                                onClick={() => setGeneratedBio(null)}
+                                className="text-xs px-3 py-1 rounded-md border accent-border hover:opacity-80 transition-all"
+                              >
+                                Discard
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={handleGenerateBio}
+                            className="flex items-center gap-1.5 text-xs text-amber-500 hover:text-amber-400 transition-colors mt-1"
+                          >
+                            <Sparkles className="w-3 h-3" />
+                            Generate AI Bio
+                          </button>
+                        )}
+                      </div>
+                    )}
                     <button
                       onClick={handleFollowEdit}
                       className="mt-4 accent-bg hover:accent-bg-dark text-sm font-medium py-1.5 px-4 rounded-md transition-all duration-150"

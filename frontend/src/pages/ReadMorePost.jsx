@@ -272,7 +272,7 @@ const ReadMorePost = () => {
                <div className="block lg:hidden h-[0.12rem] w-full accent-bg-dark my-5"></div>
 
                <div>
-                  <RelatedBlogs />
+                  <RelatedBlogs postId={post._id} />
                </div>
             </div>
 

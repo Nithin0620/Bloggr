@@ -343,4 +343,79 @@ export const usePostStore = create((set, get) => ({
     }
   },
 
+  getRelatedPosts: async (postId) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/post/related/${postId}`);
+      if (response.data.success) {
+        return response.data.data;
+      }
+      return [];
+    } catch (e) {
+      console.error("getRelatedPosts error:", e.response?.data || e.message);
+      return [];
+    }
+  },
+
+  fetchTrendingPosts: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/post/trending`);
+      if (response.data.success) {
+        return response.data.data;
+      }
+      return [];
+    } catch (e) {
+      console.error("fetchTrendingPosts error:", e.response?.data || e.message);
+      return [];
+    }
+  },
+
+  triggerSentimentScoring: async () => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/ai/sentiment-score`,
+        {},
+        { withCredentials: true }
+      );
+      return response.data.success;
+    } catch (e) {
+      console.error("triggerSentimentScoring error:", e.response?.data || e.message);
+      return false;
+    }
+  },
+
+  aiSearchPosts: async (query) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/ai/search`,
+        { query },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        return response.data.data;
+      }
+      return null;
+    } catch (e) {
+      console.error("aiSearchPosts error:", e.response?.data || e.message);
+      return null;
+    }
+  },
+
+  aiGenerateBio: async (userId) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/ai/generate-bio`,
+        { userId },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        return response.data.data.bio;
+      }
+      return null;
+    } catch (e) {
+      console.error("aiGenerateBio error:", e.response?.data || e.message);
+      toast.error(e.response?.data?.message || "Failed to generate bio");
+      return null;
+    }
+  },
+
 }))

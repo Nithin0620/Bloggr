@@ -10,6 +10,7 @@ import { useIntractionStore } from "../store/IntractionStore";
 import { usePageStore } from "../store/PageStore";
 import { FaPlus } from "react-icons/fa6";
 import AddCategoryModal from "../components/AddCategoryModal ";
+import { Sparkles, Loader } from "lucide-react";
 import toast from "react-hot-toast";
 
 const Home = () => {
@@ -17,7 +18,7 @@ const Home = () => {
   const {token,authUser} = useAuthStore();
   const {isCreatePostOpen} = usePageStore();
   const {getAllPostLikedByCurrentUser} = useIntractionStore();
-  const { fetchCategories, posts, fetchPosts, fetchPostsByCategories, fetchMorePosts, hasMore, fetchPostLoading } = usePostStore();
+  const { fetchCategories, posts, fetchPosts, fetchPostsByCategories, fetchMorePosts, hasMore, fetchPostLoading, aiSearchPosts } = usePostStore();
   const [categories, setCategories] = useState([]);
   const [Post, setPost] = useState([]);
   const [PostCopy, setPostCopy] = useState([]);
@@ -26,7 +27,10 @@ const Home = () => {
   const [categorySelected, setCategorySelected] = useState("");
   const [addCategoryOpen, setAddCategoryOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [aiSearchMeta, setAiSearchMeta] = useState(null);
+  const [aiSearchLoading, setAiSearchLoading] = useState(false);
   const observerRef = useRef(null);
+  const searchDebounceRef = useRef(null);
 
   const fetchCategoryAndPostfromStore = async()=>{
       setLoading(true);
@@ -82,20 +86,25 @@ const Home = () => {
 
   const handleSearch = (e) => {
     const value = e.target.value;
-    const query = value.toLowerCase();
     setSearchTerm(value);
+    setAiSearchMeta(null);
 
-    if (query === "") {
+    if (searchDebounceRef.current) {
+      clearTimeout(searchDebounceRef.current);
+    }
+
+    if (value.trim() === "") {
       setPost(PostCopy);
+      setAiSearchMeta(null);
       return;
     }
 
-    const filteredPost = PostCopy.filter((post) => {
+    const localFiltered = PostCopy.filter((post) => {
       const title = typeof post.title === "string" ? post.title.toLowerCase() : "";
       const content = typeof post.content === "string" ? post.content.toLowerCase() : "";
       const authorFirstName = typeof post.author.firstName === "string" ? post.author.firstName.toLowerCase() : "" ;
       const authorLastName = typeof post.author.lastName === "string" ? post.author.lastName.toLowerCase() : "" ;
-
+      const query = value.toLowerCase();
       return (
         authorFirstName.includes(query) ||
         authorLastName.includes(query) ||
@@ -103,7 +112,20 @@ const Home = () => {
         content.includes(query)
       );
     });
-    setPost(filteredPost);
+
+    setPost(localFiltered);
+
+    if (value.trim().length >= 3) {
+      searchDebounceRef.current = setTimeout(async () => {
+        setAiSearchLoading(true);
+        const result = await aiSearchPosts(value);
+        if (result && result.posts && result.posts.length > 0) {
+          setPost(result.posts);
+          setAiSearchMeta(result.meta);
+        }
+        setAiSearchLoading(false);
+      }, 800);
+    }
   };
 
   const handleAddCategory = ()=>{
@@ -121,15 +143,25 @@ const Home = () => {
 
         <div className="w-[98%] mx-auto rounded-xl shadow shadow-accent p-4 mt-6 mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-colors duration-300 accent-bg-mode accent-text-mode">
           <div className="flex items-center w-full md:w-[66%]  rounded-md px-4 py-2 shadow-inner accent-box-shadow border accent-border">
-            <IoSearch className=" text-lg transition-colors duration-300 accent-bg-mode accent-text-mode" />
+            {aiSearchMeta ? (
+              <Sparkles className="text-lg text-amber-500" />
+            ) : (
+              <IoSearch className=" text-lg transition-colors duration-300 accent-bg-mode accent-text-mode" />
+            )}
             <div className="mx-2 h-6 w-[1.5px] ml-4 transition-colors duration-300 accent-bg-dark accent-text-mode" ></div>
             <input
               type="search"
               value={searchTerm}
               onChange={handleSearch}
-              placeholder="Search posts or authors ..."
+              placeholder="Search posts, authors, or ask anything..."
               className="ml-3 w-full bg-transparent text-sm outline-none placeholder-gray-500"
             />
+            {aiSearchLoading && <Loader className="w-4 h-4 animate-spin text-amber-500 ml-2" />}
+            {aiSearchMeta && !aiSearchLoading && (
+              <span className="ml-2 text-[0.6rem] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 font-semibold whitespace-nowrap">
+                AI
+              </span>
+            )}
           </div>
 
           <div className="w-full flex md:w-[38%] transition-colors gap-3 duration-300 accent-bg-mode accent-text-mode">
