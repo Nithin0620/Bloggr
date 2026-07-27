@@ -18,7 +18,7 @@ const Home = () => {
   const {token,authUser} = useAuthStore();
   const {isCreatePostOpen} = usePageStore();
   const {getAllPostLikedByCurrentUser} = useIntractionStore();
-  const { fetchCategories, posts, fetchPosts, fetchPostsByCategories, fetchMorePosts, hasMore, fetchPostLoading, aiSearchPosts } = usePostStore();
+  const { fetchCategories, posts, fetchPosts, fetchPostsByCategories, fetchMorePosts, hasMore, fetchPostLoading, aiSearchPosts, semanticVectorSearch } = usePostStore();
   const [categories, setCategories] = useState([]);
   const [Post, setPost] = useState([]);
   const [PostCopy, setPostCopy] = useState([]);
@@ -118,13 +118,24 @@ const Home = () => {
     if (value.trim().length >= 3) {
       searchDebounceRef.current = setTimeout(async () => {
         setAiSearchLoading(true);
-        const result = await aiSearchPosts(value);
-        if (result && result.posts && result.posts.length > 0) {
-          setPost(result.posts);
-          setAiSearchMeta(result.meta);
+        const vectorResults = await semanticVectorSearch(value);
+        if (vectorResults && vectorResults.length > 0) {
+          const vectorPosts = vectorResults.map((r) => ({
+            ...r.post,
+            matchScore: r.score,
+            matchedSnippet: r.matchedSnippet,
+          }));
+          setPost(vectorPosts);
+          setAiSearchMeta({ query: value, count: vectorResults.length, type: "vector" });
+        } else {
+          const result = await aiSearchPosts(value);
+          if (result && result.posts && result.posts.length > 0) {
+            setPost(result.posts);
+            setAiSearchMeta(result.meta);
+          }
         }
         setAiSearchLoading(false);
-      }, 800);
+      }, 500);
     }
   };
 

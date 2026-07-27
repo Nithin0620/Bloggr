@@ -74,6 +74,33 @@ const postSchema = new mongoose.Schema({
    sentimentUpdatedAt:{
       type:Date,
       default:null,
+   },
+   embeddingStatus: {
+      type: String,
+      enum: ["pending", "processing", "completed", "failed"],
+      default: "pending",
+   },
+   difficulty: {
+      level: { type: String, enum: ["beginner", "intermediate", "advanced"] },
+      readingGrade: Number,
+      vocabularyComplexity: String,
+      technicalDensity: String,
+   },
+   seo: {
+      score: Number,
+      metaTitle: String,
+      metaDescription: String,
+      keywords: [String],
+   },
+   summaries: {
+      tldr: String,
+      bulletPoints: [String],
+      summary100: String,
+      oneLiner: String,
+   },
+   trendingScore: {
+      type: Number,
+      default: 0,
    }
 },{
    timestamps:true
@@ -81,6 +108,7 @@ const postSchema = new mongoose.Schema({
 
 postSchema.index({ author: 1, createdAt: -1 });
 postSchema.index({ status: 1, scheduledAt: 1 });
+postSchema.index({ trendingScore: -1 });
 postSchema.index({ createdAt: -1 });
 postSchema.index({ title: "text", content: "text" }, { weights: { title: 10, content: 5 } });
 

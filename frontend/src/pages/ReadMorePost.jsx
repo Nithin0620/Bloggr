@@ -4,6 +4,9 @@ import { usePostStore } from '../store/PostStore';
 import RelatedBlogs from '../components/RelatedBlogs';
 import ReadingProgress from '../components/ReadingProgress';
 import ImageLightbox from '../components/ImageLightbox';
+import ArticleInsights from '../components/ArticleInsights';
+import ReaderAssistant from '../components/ReaderAssistant';
+import PodcastPlayer from '../components/PodcastPlayer';
 import { IoMdShare } from "react-icons/io";
 import { FaRegHeart } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
@@ -196,7 +199,7 @@ const ReadMorePost = () => {
             <div className="w-full lg:w-[70%] space-y-6">
                <h1 className="text-3xl font-bold accent-text">{post.title}</h1>
 
-               <div className="flex flex-wrap gap-2 transition-colors duration-300 accent-bg-mode accent-box-shadow accent-text-mode">
+               <div className="flex flex-wrap gap-2 items-center transition-colors duration-300 accent-bg-mode accent-box-shadow accent-text-mode">
                   {post.categories.map((category, index) => (
                      <span
                         key={index}
@@ -205,6 +208,14 @@ const ReadMorePost = () => {
                         {category.name}
                      </span>
                   ))}
+                  {post.embeddingStatus === "completed" && (
+                     <span
+                        className="text-xs px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 font-medium flex items-center gap-1.5"
+                        title="Vector embedded for AI semantic search & RAG assistant"
+                     >
+                        ✨ Vector Indexed
+                     </span>
+                  )}
                </div>
 
                <div className="text-sm accent-text-mode opacity-70 flex gap-4 flex-wrap">
@@ -221,6 +232,9 @@ const ReadMorePost = () => {
                      onClick={() => openLightbox([post.image], 0)}
                   />
                </div>
+
+               <ArticleInsights post={post} />
+               <PodcastPlayer articleId={post._id} articleTitle={post.title} />
 
                {(summaryLoading || postSummary) && (
                   <div className="tldr-container rounded-xl p-[2px]">
@@ -288,6 +302,7 @@ const ReadMorePost = () => {
                   <Comment post={post._id} postTitle={post.title} postContent={post.content} />
             </div>
          </div>
+         <ReaderAssistant articleId={post._id} articleTitle={post.title} />
       </div>
    );
 };

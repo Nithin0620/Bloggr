@@ -82,6 +82,7 @@ const CreatePostHandler = () => {
       const success = await createPost(formData);
       if(success){
           setLoading(false);
+          toast.success("Post published! AI Vector embedding process started ✨");
           reset();
           setSelectedCategories([]);
           setEditorContent("");

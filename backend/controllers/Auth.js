@@ -398,3 +398,27 @@ exports.resetPassword = async(req,res)=>{
       })
    }
 }
+
+exports.handleOAuthCallback = (req, res) => {
+  if (!req.user) {
+    return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/login?error=oauth_failed`);
+  }
+
+  const payload = {
+    email: req.user.email,
+    userId: req.user._id,
+  };
+
+  const Token = jwt.sign(payload, process.env.JWT_SECRET || "Bloggr", {
+    expiresIn: "2h",
+  });
+
+  res.cookie("jwt", Token, {
+    expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+  });
+
+  return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/`);
+};

@@ -400,6 +400,22 @@ export const usePostStore = create((set, get) => ({
     }
   },
 
+  semanticVectorSearch: async (query) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/search/semantic?q=${encodeURIComponent(query)}`,
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        return response.data.data;
+      }
+      return [];
+    } catch (e) {
+      console.error("semanticVectorSearch error:", e.response?.data || e.message);
+      return [];
+    }
+  },
+
   aiGenerateBio: async (userId) => {
     try {
       const response = await axios.post(

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/AuthStore";
 import { usePageStore } from "../store/PageStore";
 import ProfileDropDown from "./ProfileDropDown";
+import { Sparkles, BarChart3 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import CreatePostHandler from "./CreatePostHandler";
 
@@ -88,6 +89,30 @@ const Navbar = () => {
             </div>
           ) : (
             <div className="flex items-center gap-4">
+              <div className="relative group">
+                <BarChart3
+                  onClick={() => handleOnClickForNavigate("analytics")}
+                  className={`cursor-pointer text-xl hover:scale-105 transition text-green-500 ${
+                    currentPage === "analytics" ? "accent-text" : ""
+                  }`}
+                />
+                <div className="absolute -bottom-9 left-1/2 -translate-x-1/2 px-3 py-1 rounded-lg bg-gray-900 text-white text-[0.65rem] font-medium whitespace-nowrap shadow-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  Analytics
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 -mb-1" />
+                </div>
+              </div>
+              <div className="relative group">
+                <Sparkles
+                  onClick={() => handleOnClickForNavigate("rag-chat")}
+                  className={`cursor-pointer text-xl hover:scale-105 transition text-purple-500 ${
+                    currentPage === "rag-chat" ? "accent-text" : ""
+                  }`}
+                />
+                <div className="absolute -bottom-9 left-1/2 -translate-x-1/2 px-3 py-1 rounded-lg bg-gray-900 text-white text-[0.65rem] font-medium whitespace-nowrap shadow-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  AI RAG Assistant
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 -mb-1" />
+                </div>
+              </div>
               <div className="relative group">
                 <FaRegBookmark
                   onClick={() => handleOnClickForNavigate("bookmarks")}

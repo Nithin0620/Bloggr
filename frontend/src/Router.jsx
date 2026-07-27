@@ -14,6 +14,8 @@ import Bookmarks from "./pages/Bookmarks"
 import ForgotPassword from "./pages/ForgotPassword"
 import ReadingLists from "./pages/ReadingLists"
 import ReadingListDetail from "./pages/ReadingListDetail"
+import RagChat from "./pages/RagChat"
+import Analytics from "./pages/Analytics"
 import ProtectRoute from "./components/ProtectRoute"
 import GuestOnlyRoute from "./components/GuestOnlyRoute"
 import NotFound from "./pages/NotFound"
@@ -54,6 +56,14 @@ export const router = createBrowserRouter([
          {
             path:"message",
             element:<ProtectRoute><Message/></ProtectRoute>
+         },
+         {
+            path:"rag-chat",
+            element:<ProtectRoute><RagChat/></ProtectRoute>
+         },
+         {
+            path:"analytics",
+            element:<ProtectRoute><Analytics/></ProtectRoute>
          },
          {
             path:"/readmore/:postId",

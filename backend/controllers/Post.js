@@ -6,6 +6,10 @@ const Tag = require("../models/tag");
 const {cloudinaryInstance } = require("../configuration/cloudinary");
 const { flushCache } = require("../middlewares/cache");
 const logger = require("../configuration/logger");
+const { addEmbeddingJob } = require("../queues/embeddingQueue");
+const { addPipelineJob } = require("../queues/pipelineQueue");
+const { getVectorRelatedPosts } = require("../services/recommendationService");
+const { calculateTrendingScore } = require("../services/trendCalculator");
 
 
 exports.createPost = async (req, res) => {
@@ -103,6 +107,25 @@ exports.createPost = async (req, res) => {
     }
 
     flushCache("posts").catch(() => {});
+
+    // Trigger background embedding queue (Phase 1)
+    addEmbeddingJob({
+      postId: response._id,
+      title: response.title,
+      content: response.content,
+      authorName: user ? user.name : "Anonymous",
+      tags: tagNames,
+      categories: categories,
+    }).catch((err) => console.error("Failed to queue embedding job:", err.message));
+
+    // Trigger background AI enrichment pipeline (Phase 2)
+    addPipelineJob({
+      postId: response._id,
+      title: response.title,
+      content: response.content,
+      tags: tagNames,
+      categories: categories,
+    }).catch((err) => console.error("Failed to queue pipeline job:", err.message));
 
     return res.status(200).json({
       success: true,
@@ -458,13 +481,13 @@ exports.getTrendingPosts = async (req, res) => {
       .limit(limit)
       .lean();
 
-    const scored = posts.map((p) => ({
-      ...p,
-      trendingScore:
-        p.sentimentScore > 0
-          ? p.sentimentScore
-          : (p.likes?.length || 0) + (p.views || 0) + (p.comments?.length || 0),
-    }));
+    const scored = posts.map((p) => {
+      const score = calculateTrendingScore(p);
+      return {
+        ...p,
+        trendingScore: score,
+      };
+    });
 
     scored.sort((a, b) => b.trendingScore - a.trendingScore);
 
@@ -485,6 +508,16 @@ exports.getTrendingPosts = async (req, res) => {
 exports.getRelatedPosts = async (req, res) => {
   try {
     const postId = req.params.id;
+
+    // 1. Attempt Vector Similarity Recommendations (Phase 3)
+    const vectorRelated = await getVectorRelatedPosts(postId, 5);
+    if (vectorRelated && vectorRelated.length > 0) {
+      return res.status(200).json({
+        success: true,
+        data: vectorRelated,
+        source: "vector_similarity",
+      });
+    }
 
     const post = await Post.findById(postId)
       .populate("categories", "name")

@@ -23,13 +23,21 @@ const bookmarkRoutes = require("./routes/Bookmark.routes")
 const readingListRoutes = require("./routes/ReadingList.routes")
 const tagRoutes = require("./routes/Tag.routes")
 const aiRoutes = require("./routes/AI.routes")
+const searchRoutes = require("./routes/Search.routes")
+const readerAssistantRoutes = require("./routes/ReaderAssistant.routes")
+const ragChatRoutes = require("./routes/RagChat.routes")
+const analyticsRoutes = require("./routes/Analytics.routes")
+const podcastRoutes = require("./routes/Podcast.routes")
 const path = require("path")
 
 const PORT  = process.env.PORT || 5000;
 
+const passport = require("./configuration/passport");
+
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' ,parameterLimit: 10000 }));
 app.use(cookieParser());
+app.use(passport.initialize());
 app.use(cors({
   origin:`${process.env.ENVIRONMENT === "development"? "http://localhost:3000" : "https://bloggr-y7gx.onrender.com/"}`,
   credentials: true,
@@ -59,6 +67,11 @@ const routePairs = [
   ["/readinglists", readingListRoutes],
   ["/tags", tagRoutes],
   ["/ai", aiRoutes],
+  ["/search", searchRoutes],
+  ["/reader", readerAssistantRoutes],
+  ["/ragchat", ragChatRoutes],
+  ["/analytics", analyticsRoutes],
+  ["/podcast", podcastRoutes],
 ];
 
 routePairs.forEach(([routePath, router]) => {
@@ -70,10 +83,17 @@ routePairs.forEach(([routePath, router]) => {
 app.use(errorHandler);
 
 
+const { initQdrantCollection } = require("./configuration/qdrant");
+const { startEmbeddingWorker } = require("./workers/embeddingWorker");
+const { startPipelineWorker } = require("./workers/pipelineWorker");
+
 server.listen(PORT,()=>{
    logger.info(`Server started on port ${PORT}`);
    dbConnect();
    cloudinaryConnect();
+   initQdrantCollection().catch((err) => console.warn("Qdrant init warning:", err.message));
+   try { startEmbeddingWorker(); } catch (err) { console.warn("Embedding worker warning:", err.message); }
+   try { startPipelineWorker(); } catch (err) { console.warn("Pipeline worker warning:", err.message); }
 })
 
 app.get("/" , (req,res)=>{

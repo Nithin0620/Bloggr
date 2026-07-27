@@ -99,6 +99,22 @@ const HomePostCards = ({ post ,setLiked}) => {
               #{typeof tag === "string" ? tag : tag.name}
             </span>
           ))}
+          {post.matchScore !== undefined && (
+            <span
+              className="px-2 py-[1px] text-[11px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-md flex items-center gap-1"
+              title={`Semantic match score: ${post.matchScore}%`}
+            >
+              🎯 {post.matchScore}% Match
+            </span>
+          )}
+          {post.embeddingStatus === "completed" && (
+            <span
+              className="px-2 py-[1px] text-[11px] font-medium bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 rounded-md flex items-center gap-1"
+              title="Vector embedded for AI semantic search"
+            >
+              ✨ AI Indexed
+            </span>
+          )}
           <span className="font-extrabold opacity-60">•</span>
           <span className='text-xs'>{post.readTime} min read</span>
         </div>

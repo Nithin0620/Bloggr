@@ -114,10 +114,12 @@ const Trending = () => {
                   </button>
         
                   <div className="flex items-center gap-[0.6rem]  text-[0.820rem]">
-                    {post.trendingScore > 0 && (
-                      <span className="flex items-center gap-0.5 text-amber-500 font-semibold text-[0.7rem]">
-                        <Sparkles className="w-3 h-3" />
-                        {Math.round(post.trendingScore)}
+                    {post.trendingScore !== undefined && (
+                      <span 
+                        className="flex items-center gap-0.5 text-amber-500 font-bold text-[0.7rem] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20"
+                        title="Multi-signal AI Trending Score"
+                      >
+                        🔥 {post.trendingScore}
                       </span>
                     )}
                     <button onClick={()=>handleLike(post._id)} className="flex items-center gap-1 hover:text-red-500 transition duration-200">
