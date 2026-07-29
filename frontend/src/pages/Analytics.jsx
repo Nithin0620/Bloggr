@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BarChart3, Eye, Heart, MessageSquare, FileText, Sparkles, TrendingUp, Award, Loader } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import StatCard from "../components/StatCard";
+import InsightCard from "../components/InsightCard";
+import EngagementChart from "../components/EngagementChart";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:4000/api/v1";
 
@@ -56,34 +59,16 @@ const Analytics = () => {
 
         {/* Metric Cards Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="p-4 rounded-2xl border accent-border accent-bg-mode shadow-sm space-y-1">
-            <span className="text-xs font-bold text-gray-400 flex items-center gap-1.5">
-              <FileText className="w-3.5 h-3.5 text-blue-500" /> Total Posts
-            </span>
-            <p className="text-2xl font-extrabold accent-text">{stats?.totalPosts || 0}</p>
-          </div>
-
-          <div className="p-4 rounded-2xl border accent-border accent-bg-mode shadow-sm space-y-1">
-            <span className="text-xs font-bold text-gray-400 flex items-center gap-1.5">
-              <Eye className="w-3.5 h-3.5 text-green-500" /> Total Views
-            </span>
-            <p className="text-2xl font-extrabold accent-text">{stats?.totalViews || 0}</p>
-          </div>
-
-          <div className="p-4 rounded-2xl border accent-border accent-bg-mode shadow-sm space-y-1">
-            <span className="text-xs font-bold text-gray-400 flex items-center gap-1.5">
-              <Heart className="w-3.5 h-3.5 text-red-500" /> Total Likes
-            </span>
-            <p className="text-2xl font-extrabold accent-text">{stats?.totalLikes || 0}</p>
-          </div>
-
-          <div className="p-4 rounded-2xl border accent-border accent-bg-mode shadow-sm space-y-1">
-            <span className="text-xs font-bold text-gray-400 flex items-center gap-1.5">
-              <MessageSquare className="w-3.5 h-3.5 text-amber-500" /> Comments
-            </span>
-            <p className="text-2xl font-extrabold accent-text">{stats?.totalComments || 0}</p>
-          </div>
+          <StatCard icon={FileText} label="Total Posts" value={stats?.totalPosts} color="text-blue-500" />
+          <StatCard icon={Eye} label="Total Views" value={stats?.totalViews} color="text-green-500" />
+          <StatCard icon={Heart} label="Total Likes" value={stats?.totalLikes} color="text-red-500" />
+          <StatCard icon={MessageSquare} label="Comments" value={stats?.totalComments} color="text-amber-500" />
         </div>
+
+        {/* Engagement Chart */}
+        {topPosts && topPosts.length > 0 && (
+          <EngagementChart topPosts={topPosts} />
+        )}
 
         {/* AI Content Insights Box */}
         {insights && insights.length > 0 && (
@@ -94,10 +79,7 @@ const Analytics = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {insights.map((insight, idx) => (
-                <div key={idx} className="p-3 rounded-xl accent-bg-mode border accent-border text-xs leading-relaxed accent-text-mode shadow-sm flex items-start gap-2">
-                  <TrendingUp className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
-                  <span>{insight}</span>
-                </div>
+                <InsightCard key={idx} insight={insight} />
               ))}
             </div>
           </div>

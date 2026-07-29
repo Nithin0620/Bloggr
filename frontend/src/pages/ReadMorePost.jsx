@@ -208,6 +208,48 @@ const ReadMorePost = () => {
                         {category.name}
                      </span>
                   ))}
+                  {post.grammar?.score !== undefined && (
+                     <span
+                        className={`text-xs px-2.5 py-1 rounded-full font-semibold border ${
+                           post.grammar.score >= 80
+                              ? "text-green-500 border-green-500/30 bg-green-500/10"
+                              : post.grammar.score >= 60
+                              ? "text-amber-500 border-amber-500/30 bg-amber-500/10"
+                              : "text-red-500 border-red-500/30 bg-red-500/10"
+                        }`}
+                        title="Grammar Score"
+                     >
+                        Grammar: {post.grammar.score}
+                     </span>
+                  )}
+                  {post.seo?.score !== undefined && (
+                     <span
+                        className={`text-xs px-2.5 py-1 rounded-full font-semibold border ${
+                           post.seo.score >= 80
+                              ? "text-green-500 border-green-500/30 bg-green-500/10"
+                              : post.seo.score >= 60
+                              ? "text-amber-500 border-amber-500/30 bg-amber-500/10"
+                              : "text-red-500 border-red-500/30 bg-red-500/10"
+                        }`}
+                        title="SEO Score"
+                     >
+                        SEO: {post.seo.score}
+                     </span>
+                  )}
+                  {post.difficulty?.level && (
+                     <span
+                        className={`text-xs px-2.5 py-1 rounded-full font-medium border capitalize ${
+                           post.difficulty.level === "beginner"
+                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                              : post.difficulty.level === "advanced"
+                              ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20"
+                              : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
+                        }`}
+                        title="Difficulty Level"
+                     >
+                        {post.difficulty.level}
+                     </span>
+                  )}
                   {post.embeddingStatus === "completed" && (
                      <span
                         className="text-xs px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 font-medium flex items-center gap-1.5"

@@ -16,6 +16,7 @@ import ReadingLists from "./pages/ReadingLists"
 import ReadingListDetail from "./pages/ReadingListDetail"
 import RagChat from "./pages/RagChat"
 import Analytics from "./pages/Analytics"
+import Podcast from "./pages/Podcast"
 import ProtectRoute from "./components/ProtectRoute"
 import GuestOnlyRoute from "./components/GuestOnlyRoute"
 import NotFound from "./pages/NotFound"
@@ -89,10 +90,14 @@ export const router = createBrowserRouter([
             path:"readinglist/:id",
             element:<ProtectRoute><ReadingListDetail/></ProtectRoute>
          },
-         {
+          {
+            path:"podcast/:articleId",
+            element:<ProtectRoute><Podcast/></ProtectRoute>
+          },
+          {
             path:"*",
             element:<NotFound/>
-         },
+          },
       ]
    },
 ])

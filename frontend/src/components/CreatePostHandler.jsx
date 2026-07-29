@@ -44,6 +44,7 @@ const CreatePostHandler = () => {
    const [loading,setLoading] = useState(false);
    const [metaLoading, setMetaLoading] = useState(false);
    const [categorySuggesting, setCategorySuggesting] = useState(false);
+   const [pipelineProcessing, setPipelineProcessing] = useState(false);
 
    const onSubmit = async(data) => {
       if (selectedCategories.length === 0) {
@@ -82,14 +83,17 @@ const CreatePostHandler = () => {
       const success = await createPost(formData);
       if(success){
           setLoading(false);
-          toast.success("Post published! AI Vector embedding process started ✨");
-          reset();
-          setSelectedCategories([]);
-          setEditorContent("");
-          setIsScheduled(false);
-          setScheduledAt("");
-          setIsCreatePostOpen(false);
-          fetchPosts();
+          setPipelineProcessing(true);
+          setTimeout(() => {
+             setPipelineProcessing(false);
+             reset();
+             setSelectedCategories([]);
+             setEditorContent("");
+             setIsScheduled(false);
+             setScheduledAt("");
+             setIsCreatePostOpen(false);
+             fetchPosts();
+          }, 4000);
       } else {
           setLoading(false);
       }
@@ -176,6 +180,37 @@ const CreatePostHandler = () => {
       }
    };
    if (!isCreatePostOpen) return null;
+
+   if (pipelineProcessing) {
+      return (
+         <div className="fixed inset-0 z-40 flex items-center justify-center backdrop-blur-[1px] bg-opacity-40">
+            <div className="md:w-96 sm:w-2/3 rounded-xl p-8 accent-bg-mode shadow-accent-box relative text-center space-y-5">
+               <div className="flex justify-center">
+                  <div className="relative w-20 h-20">
+                     <div className="absolute inset-0 rounded-full border-4 border-purple-500/20"></div>
+                     <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-500 animate-spin"></div>
+                     <Sparkles className="absolute inset-0 m-auto w-8 h-8 text-purple-500" />
+                  </div>
+               </div>
+               <div>
+                  <h3 className="text-lg font-semibold accent-text">Publishing your article...</h3>
+                  <p className="text-sm accent-text-mode opacity-70 mt-2 leading-relaxed">
+                     Your article is being processed by the AI Publishing Pipeline — grammar analysis, SEO optimization, summary generation, and difficulty scoring.
+                  </p>
+               </div>
+               <div className="flex items-center justify-center gap-2 text-xs accent-text-mode opacity-60">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Grammar Agent
+                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse delay-200"></span>
+                  SEO Agent
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse delay-500"></span>
+                  Embedding
+               </div>
+               <p className="text-xs accent-text-mode opacity-50">This window will close automatically once processing begins.</p>
+            </div>
+         </div>
+      );
+   }
 
    return (
       <div className="fixed  inset-0 z-40 flex custom-scroll items-center justify-center backdrop-blur-[1px] bg-opacity-40">

@@ -50,7 +50,7 @@ const Comment = ({ post:id, postTitle, postContent }) => {
   }
 
   const handleDeleteComment = async(comment)=>{
-    if(comment.user._id !== authUser._id){
+    if (!comment?.user || comment.user._id !== authUser._id){
       toast.error("you are not the author of this comment.")
       return;
     }
@@ -186,7 +186,9 @@ const Comment = ({ post:id, postTitle, postContent }) => {
         {/* Comments */}
         <div className="space-y-4 mt-4">
           {comments.length > 0 ? (
-            comments.map((comment) => (
+            comments.filter(Boolean).map((comment) => {
+              if (!comment || !comment.user) return null;
+              return (
               <div key={comment._id} className="p-3 border border-gray-200 rounded-lg shadow-accent-box">
                 <div className="flex items-start gap-2">
                   <div className='flex flex-col items-center gap-2'>
@@ -214,7 +216,8 @@ const Comment = ({ post:id, postTitle, postContent }) => {
                   </div>
                 </div>
               </div>
-            ))
+              );
+            })
           ) : (
             <div className="text-center text-sm text-gray-500">No comments to show</div>
           )}

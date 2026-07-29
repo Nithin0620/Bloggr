@@ -120,6 +120,15 @@ const HomePostCards = ({ post ,setLiked}) => {
         </div>
       </div>
 
+      {post.matchedSnippet && (
+        <div className="mb-2 px-3 py-2 rounded-lg bg-amber-500/5 border border-amber-500/20">
+          <p className="text-[11px] leading-relaxed accent-text-mode opacity-80 line-clamp-3">
+            <span className="font-semibold text-amber-600 dark:text-amber-400">Matched: </span>
+            &ldquo;{post.matchedSnippet}&rdquo;
+          </p>
+        </div>
+      )}
+
       {/* Image */}
       <div className="mb-2">
         <img

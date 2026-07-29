@@ -1,14 +1,10 @@
-const Groq = require("groq-sdk");
-const { generateEmbedding } = require("../services/embedder");
-const { searchSimilarChunks } = require("../services/vectorStore");
+const { askRagChat } = require("../services/ragService");
+const ChatHistory = require("../models/chatHistory");
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
-
-exports.askRagChat = async (req, res) => {
+exports.ask = async (req, res) => {
   try {
-    const { question, history = [] } = req.body;
+    const { question, sessionId } = req.body;
+    const userId = req.user._id;
 
     if (!question || !question.trim()) {
       return res.status(400).json({
@@ -17,66 +13,46 @@ exports.askRagChat = async (req, res) => {
       });
     }
 
-    // 1. Embed user question & retrieve top 8 relevant vector chunks across platform
-    const queryVector = await generateEmbedding(question.trim());
-    const matches = await searchSimilarChunks(queryVector, 8);
+    let chat = null;
+    let sessionIndex = -1;
 
-    const citationsMap = new Map();
-    let contextBlocks = [];
-
-    if (matches && matches.length > 0) {
-      matches.forEach((m, idx) => {
-        const payload = m.payload || {};
-        const title = payload.title || "Untitled Article";
-        const articleId = payload.articleId || "";
-        const chunkText = payload.chunkText || "";
-
-        if (articleId && !citationsMap.has(articleId)) {
-          citationsMap.set(articleId, {
-            articleId,
-            articleTitle: title,
-            chunkText: chunkText.substring(0, 150) + "...",
-            score: m.score ? Math.round(m.score * 100) : 0,
-          });
-        }
-
-        contextBlocks.push(`[Source ${idx + 1}: "${title}"]\n${chunkText}`);
-      });
+    if (sessionId) {
+      chat = await ChatHistory.findOne({ user: userId });
+      if (chat) {
+        sessionIndex = chat.sessions.findIndex(
+          (s) => s._id.toString() === sessionId
+        );
+      }
     }
 
-    const contextText = contextBlocks.join("\n\n---\n\n");
-    const citationsList = Array.from(citationsMap.values());
+    if (!chat) {
+      chat = new ChatHistory({ user: userId, sessions: [{ title: question.substring(0, 60) }] });
+      sessionIndex = 0;
+    }
 
-    const systemPrompt = `You are Bloggr AI, an intelligent knowledge assistant for the Bloggr platform.
-Answer the user's question accurately using the provided article contexts from published blog posts.
+    if (sessionIndex < 0) {
+      chat.sessions.push({ title: question.substring(0, 60) });
+      sessionIndex = chat.sessions.length - 1;
+    }
 
-CONTEXT SOURCES:
-${contextText || "No relevant articles found in vector index."}
+    const session = chat.sessions[sessionIndex];
 
-Instructions:
-- Base your response primarily on the provided context sources.
-- Mention article titles when attributing information.
-- Be concise, professional, and helpful.
-- If the sources do not contain enough information to answer, answer based on general knowledge but state that no specific Bloggr article was matched.`;
+    const history = session.messages.map((m) => ({
+      role: m.role,
+      content: m.content,
+    }));
 
-    const messages = [
-      { role: "system", content: systemPrompt },
-      ...history.slice(-4), // Include last few turns of context
-      { role: "user", content: question.trim() },
-    ];
+    const { answer, citations } = await askRagChat({ question, history });
 
-    const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
-      messages,
-      temperature: 0.3,
-    });
-
-    const answer = completion.choices[0]?.message?.content || "I couldn't generate an answer.";
+    session.messages.push({ role: "user", content: question.trim() });
+    session.messages.push({ role: "assistant", content: answer, citations });
+    await chat.save();
 
     return res.status(200).json({
       success: true,
       answer,
-      citations: citationsList,
+      citations,
+      sessionId: session._id.toString(),
     });
   } catch (error) {
     console.error("RAG chat error:", error.message);
@@ -84,5 +60,36 @@ Instructions:
       success: false,
       message: "Failed to process RAG chat request",
     });
+  }
+};
+
+exports.getSessions = async (req, res) => {
+  try {
+    const chat = await ChatHistory.findOne({ user: req.user._id }).select("sessions._id sessions.title sessions.createdAt");
+    if (!chat) {
+      return res.status(200).json({ success: true, sessions: [] });
+    }
+    return res.status(200).json({ success: true, sessions: chat.sessions });
+  } catch (error) {
+    console.error("Get sessions error:", error.message);
+    return res.status(500).json({ success: false, message: "Failed to fetch sessions" });
+  }
+};
+
+exports.getSessionHistory = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const chat = await ChatHistory.findOne({ user: req.user._id });
+    if (!chat) {
+      return res.status(404).json({ success: false, message: "No chat history found" });
+    }
+    const session = chat.sessions.id(sessionId);
+    if (!session) {
+      return res.status(404).json({ success: false, message: "Session not found" });
+    }
+    return res.status(200).json({ success: true, session });
+  } catch (error) {
+    console.error("Get session history error:", error.message);
+    return res.status(500).json({ success: false, message: "Failed to fetch session history" });
   }
 };

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Sparkles, Send, Bot, User, BookOpen, ExternalLink, Loader } from "lucide-react";
+import { Sparkles, Send, Bot, User, BookOpen, Loader } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import CitationCard from "../components/CitationCard";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:4000/api/v1";
 
@@ -10,6 +11,7 @@ const RagChat = () => {
   const navigate = useNavigate();
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
+  const [sessionId, setSessionId] = useState(null);
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -30,14 +32,12 @@ const RagChat = () => {
     try {
       const response = await axios.post(
         `${BASE_URL}/ragchat/ask`,
-        {
-          question: q,
-          history: messages.slice(-4).map((m) => ({ role: m.role, content: m.content })),
-        },
+        { question: q, sessionId },
         { withCredentials: true }
       );
 
       if (response.data.success) {
+        if (response.data.sessionId) setSessionId(response.data.sessionId);
         setMessages((prev) => [
           ...prev,
           {
@@ -97,30 +97,14 @@ const RagChat = () => {
                   {msg.content}
                 </div>
 
-                {/* Render Citations if available */}
                 {msg.citations && msg.citations.length > 0 && (
                   <div className="p-3 rounded-xl border accent-border accent-bg-light/60 space-y-2">
                     <span className="text-xs font-bold text-purple-500 uppercase tracking-wider flex items-center gap-1">
                       <BookOpen className="w-3.5 h-3.5" /> Source Citations ({msg.citations.length})
                     </span>
-
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {msg.citations.map((cite, cIdx) => (
-                        <div
-                          key={cIdx}
-                          onClick={() => navigate(`/readmore/${cite.articleId}`)}
-                          className="p-2.5 rounded-lg border accent-border accent-bg-mode hover:accent-bg-light cursor-pointer transition-all flex items-start justify-between group"
-                        >
-                          <div className="space-y-0.5 pr-2">
-                            <h4 className="text-xs font-semibold group-hover:text-purple-500 transition-colors line-clamp-1">
-                              {cite.articleTitle}
-                            </h4>
-                            <p className="text-[11px] opacity-70 line-clamp-1">{cite.chunkText}</p>
-                          </div>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-600 font-mono shrink-0">
-                            {cite.score}% match
-                          </span>
-                        </div>
+                        <CitationCard key={cIdx} citation={cite} />
                       ))}
                     </div>
                   </div>

@@ -1,10 +1,6 @@
 const Post = require("../models/post");
-const Groq = require("groq-sdk");
-const { stripHtml } = require("../services/chunker");
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+const { generatePodcast } = require("../services/podcastGenerator");
+const logger = require("../configuration/logger");
 
 exports.generatePodcast = async (req, res) => {
   try {
@@ -14,53 +10,96 @@ exports.generatePodcast = async (req, res) => {
       return res.status(400).json({ success: false, message: "articleId is required" });
     }
 
-    const post = await Post.findById(articleId);
+    const post = await Post.findById(articleId).select("title content summary podcast");
     if (!post) {
       return res.status(404).json({ success: false, message: "Article not found" });
     }
 
-    const plainText = stripHtml(post.content).substring(0, 4000);
-
-    const prompt = `You are a podcast producer. Convert the following article into an engaging 2-person dialogue script between a Host (Alex) and a Guest Expert (Sam).
-
-ARTICLE TITLE: "${post.title}"
-ARTICLE CONTENT:
-${plainText}
-
-Generate a natural, conversational, 6-8 turn podcast discussion discussing the main points from the article.
-
-Return ONLY a JSON object with this structure:
-{
-  "title": "Podcast: ${post.title}",
-  "script": [
-    { "speaker": "Host", "text": "Welcome to today's episode! Today we are discussing..." },
-    { "speaker": "Guest", "text": "Thanks for having me, Alex! This is a fascinating topic..." }
-  ]
-}`;
-
-    const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.4,
-      response_format: { type: "json_object" },
-    });
-
-    const responseText = completion.choices[0]?.message?.content?.trim();
-    if (!responseText) {
-      return res.status(500).json({ success: false, message: "Failed to generate script" });
+    if (post.podcast?.status === "completed" && post.podcast?.script?.length > 0) {
+      return res.status(200).json({
+        success: true,
+        podcast: {
+          title: `Podcast: ${post.title}`,
+          script: post.podcast.script,
+          duration: post.podcast.duration,
+        },
+      });
     }
 
-    const podcastData = JSON.parse(responseText);
+    await Post.findByIdAndUpdate(articleId, { "podcast.status": "processing" });
+
+    const result = await generatePodcast({
+      title: post.title,
+      content: post.content,
+      summary: post.summary,
+    });
+
+    await Post.findByIdAndUpdate(articleId, {
+      "podcast.status": "completed",
+      "podcast.script": result.script,
+      "podcast.audioUrl": result.audioUrl,
+      "podcast.duration": result.duration,
+    });
 
     return res.status(200).json({
       success: true,
-      podcast: podcastData,
+      podcast: {
+        title: `Podcast: ${post.title}`,
+        script: result.script,
+        duration: result.duration,
+      },
     });
   } catch (error) {
-    console.error("Podcast generation error:", error.message);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to generate AI podcast script",
+    logger.error(`Podcast generate error: ${error.message}`);
+    return res.status(500).json({ success: false, message: "Failed to generate podcast" });
+  }
+};
+
+exports.getPodcastStatus = async (req, res) => {
+  try {
+    const { articleId } = req.params;
+    const post = await Post.findById(articleId).select("podcast title");
+    if (!post) {
+      return res.status(404).json({ success: false, message: "Article not found" });
+    }
+    return res.status(200).json({
+      success: true,
+      status: post.podcast?.status || "pending",
     });
+  } catch (error) {
+    logger.error(`Podcast status error: ${error.message}`);
+    return res.status(500).json({ success: false, message: "Failed to get podcast status" });
+  }
+};
+
+exports.getPodcast = async (req, res) => {
+  try {
+    const { articleId } = req.params;
+    const post = await Post.findById(articleId).select("podcast title");
+    if (!post) {
+      return res.status(404).json({ success: false, message: "Article not found" });
+    }
+
+    if (post.podcast?.status !== "completed") {
+      return res.status(200).json({
+        success: true,
+        status: post.podcast?.status || "pending",
+        podcast: null,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      status: "completed",
+      podcast: {
+        title: `Podcast: ${post.title}`,
+        script: post.podcast.script,
+        audioUrl: post.podcast.audioUrl,
+        duration: post.podcast.duration,
+      },
+    });
+  } catch (error) {
+    logger.error(`Get podcast error: ${error.message}`);
+    return res.status(500).json({ success: false, message: "Failed to get podcast" });
   }
 };

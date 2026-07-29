@@ -86,6 +86,10 @@ app.use(errorHandler);
 const { initQdrantCollection } = require("./configuration/qdrant");
 const { startEmbeddingWorker } = require("./workers/embeddingWorker");
 const { startPipelineWorker } = require("./workers/pipelineWorker");
+const { startTrendWorker } = require("./workers/trendWorker");
+const { addTrendJob } = require("./queues/trendQueue");
+const { startInsightWorker } = require("./workers/insightWorker");
+const { addInsightJob } = require("./queues/insightQueue");
 
 server.listen(PORT,()=>{
    logger.info(`Server started on port ${PORT}`);
@@ -94,6 +98,9 @@ server.listen(PORT,()=>{
    initQdrantCollection().catch((err) => console.warn("Qdrant init warning:", err.message));
    try { startEmbeddingWorker(); } catch (err) { console.warn("Embedding worker warning:", err.message); }
    try { startPipelineWorker(); } catch (err) { console.warn("Pipeline worker warning:", err.message); }
+   try { startTrendWorker(); addTrendJob(); } catch (err) { console.warn("Trend worker warning:", err.message); }
+   try { startInsightWorker(); addInsightJob(); } catch (err) { console.warn("Insight worker warning:", err.message); }
+   try { const { startPodcastWorker } = require("./workers/podcastWorker"); startPodcastWorker(); } catch (err) { console.warn("Podcast worker warning:", err.message); }
 })
 
 app.get("/" , (req,res)=>{

@@ -101,7 +101,13 @@ const postSchema = new mongoose.Schema({
    trendingScore: {
       type: Number,
       default: 0,
-   }
+   },
+   podcast: {
+      status: { type: String, enum: ["pending", "processing", "completed", "failed"], default: "pending" },
+      script: [{ speaker: String, text: String }],
+      audioUrl: String,
+      duration: Number,
+   },
 },{
    timestamps:true
 })
