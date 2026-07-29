@@ -45,7 +45,7 @@ const ReadingLists = () => {
         {/* Header */}
         <div className="w-full flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-xl accent-bg accent-text">
+            <div className="p-3 rounded-xl accent-bg text-white">
               <BookOpen className="text-xl" />
             </div>
             <div>
@@ -57,7 +57,7 @@ const ReadingLists = () => {
           </div>
           <button
             onClick={() => setShowCreate(true)}
-            className="flex items-center gap-1 text-sm font-medium accent-bg accent-text px-3 py-1.5 rounded-lg hover:opacity-90 transition"
+            className="flex items-center gap-1 text-sm font-medium accent-bg text-white px-3 py-1.5 rounded-lg hover:opacity-90 transition"
           >
             <Plus className="w-4 h-4" />
             New List
@@ -81,7 +81,7 @@ const ReadingLists = () => {
             </p>
             <button
               onClick={() => setShowCreate(true)}
-              className="px-4 py-2 rounded-full accent-bg accent-text text-sm font-medium hover:opacity-90 transition"
+              className="px-4 py-2 rounded-full accent-bg text-white text-sm font-medium hover:opacity-90 transition"
             >
               Create Your First List
             </button>
@@ -103,7 +103,7 @@ const ReadingLists = () => {
                   </div>
                   <button
                     onClick={(e) => handleDelete(list._id, e)}
-                    className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition p-1"
+                    className="opacity-0 group-hover:opacity-100 accent-text-mode hover:text-red-500 transition p-1"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -142,7 +142,7 @@ const ReadingLists = () => {
           <div className="accent-bg-mode rounded-2xl shadow-accent-box max-w-md w-full p-6 relative">
             <button
               onClick={() => setShowCreate(false)}
-              className="absolute top-4 right-4 text-2xl text-red-500 hover:rotate-90 transition-all duration-300"
+              className="absolute top-4 right-4 text-2xl accent-text-mode hover:rotate-90 transition-all duration-300"
             >
               <IoMdClose />
             </button>

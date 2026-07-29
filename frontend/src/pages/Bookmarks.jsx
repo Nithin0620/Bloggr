@@ -25,7 +25,7 @@ const Bookmarks = () => {
         {/* Header */}
         <div className="w-full flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-xl accent-bg accent-text">
+            <div className="p-3 rounded-xl accent-bg text-white">
               <FaBookmark className="text-xl" />
             </div>
             <div>
@@ -62,7 +62,7 @@ const Bookmarks = () => {
             </p>
             <button
               onClick={() => navigate("/")}
-              className="px-4 py-2 rounded-full accent-bg accent-text text-sm font-medium hover:opacity-90 transition"
+              className="px-4 py-2 rounded-full accent-bg text-white text-sm font-medium hover:opacity-90 transition"
             >
               Explore Posts
             </button>

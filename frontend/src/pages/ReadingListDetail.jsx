@@ -20,7 +20,7 @@ const ReadingListDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-screen accent-bg-mode accent-text-mode">
         <Loader className="animate-spin accent-text" />
       </div>
     );
@@ -28,7 +28,7 @@ const ReadingListDetail = () => {
 
   if (!currentList) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-screen accent-bg-mode accent-text-mode">
         <p className="accent-text-mode">Reading list not found</p>
       </div>
     );
@@ -47,7 +47,7 @@ const ReadingListDetail = () => {
             Back to lists
           </button>
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-xl accent-bg accent-text">
+            <div className="p-3 rounded-xl accent-bg text-white">
               <BookOpen className="text-xl" />
             </div>
             <div>
@@ -70,7 +70,7 @@ const ReadingListDetail = () => {
                 <HomePostCards post={post} setLiked={setLiked} />
                 <button
                   onClick={() => handleRemovePost(post._id)}
-                  className="absolute top-3 right-3 text-xs text-red-500 accent-bg px-2 py-1 rounded-md shadow hover:opacity-80 transition z-10"
+                  className="absolute top-3 right-3 text-xs accent-text-mode accent-bg px-2 py-1 rounded-md shadow hover:opacity-80 transition z-10"
                 >
                   Remove
                 </button>
