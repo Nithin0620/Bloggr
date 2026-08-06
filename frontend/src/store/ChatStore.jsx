@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "./AuthStore";
 
 
-const BASE_URL = process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api/v1" : "/api/v1";
+const BASE_URL = process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api/v1" : "https://bloggr-y7gx.onrender.com/api/v1";
 
 export const useChatStore = create((set,get)=>({
    messages: [],
