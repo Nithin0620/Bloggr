@@ -126,11 +126,13 @@ exports.login = async(req,res)=>{
             httpOnly:true,
          }
 
+         const isProduction = process.env.ENVIRONMENT === "production";
+
          res.cookie("jwt",Token,{
             expires:new Date(Date.now()+3*24*60*60*1000),
             httpOnly:true,
-            secure:false,
-            sameSite:"lax",
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
          }).status(200).json({
             success:true,
             Token,
@@ -201,7 +203,13 @@ exports.sendOtp = async(req,res)=>{
 
 exports.logout = (req, res) => {
   try {
-      res.cookie("jwt", "", { maxAge: 0 });
+      const isProduction = process.env.ENVIRONMENT === "production";
+      res.cookie("jwt", "", {
+        maxAge: 0,
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+      });
       res.status(200).json({ success:true,message: "Logged out successfully" });
    }
        catch (error) {
@@ -413,11 +421,13 @@ exports.handleOAuthCallback = (req, res) => {
     expiresIn: "2h",
   });
 
+  const isProduction = process.env.ENVIRONMENT === "production";
+
   res.cookie("jwt", Token, {
     expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
   });
 
   return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/`);
