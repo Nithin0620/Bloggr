@@ -23,6 +23,9 @@ spec:
         - name: bloggingapp
           image: nithin0620/bloggr:latest
           imagePullPolicy: Always
+          envFrom:
+          - secretRef:
+              name: bloggr-secrets
           ports:
             - containerPort: 4000
 
