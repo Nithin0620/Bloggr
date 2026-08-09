@@ -2,12 +2,14 @@ pipeline {
     agent any
 
     tools {
+        jdk "jdk"                    // JDK 17+ (sonar-scanner 8.x requires it)
         nodejs "nodejs"              // NodeJS tool configured in Jenkins (v20)
     }
 
     environment {
-        SCANNER_HOME = tool 'sonar-scanner'
-        DOCKER_IMAGE = 'your-dockerhub-user/bloggr'   // change to your Docker Hub username
+        SCANNER_HOME = tool 'sonarqubescanner'
+        DOCKER_IMAGE = 'nithin0620/bloggr'   // change to your Docker Hub username
+        DOCKER_TAG = "build-${BUILD_NUMBER}"
     }
 
     stages {
@@ -56,7 +58,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'dockerhub-cred', url: 'https://index.docker.io/v1/') {
-                        sh "docker build -t ${DOCKER_IMAGE}:latest -f backend/Dockerfile ."
+                        sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} -t ${DOCKER_IMAGE}:latest -f backend/Dockerfile ."
                     }
                 }
             }
@@ -64,7 +66,7 @@ pipeline {
 
         stage('Trivy Image Scan') {
             steps {
-                sh "trivy image --format table -o image.html ${DOCKER_IMAGE}:latest"
+                sh "trivy image --format table -o image.html ${DOCKER_IMAGE}:${DOCKER_TAG}"
             }
         }
 
@@ -72,6 +74,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'dockerhub-cred', url: 'https://index.docker.io/v1/') {
+                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                         sh "docker push ${DOCKER_IMAGE}:latest"
                     }
                 }
