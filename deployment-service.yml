@@ -3,36 +3,47 @@ kind: Deployment
 metadata:
   name: bloggingapp-deployment
   namespace: webapps
+
 spec:
   replicas: 2
+
   selector:
     matchLabels:
       app: bloggingapp
+
   template:
     metadata:
       labels:
         app: bloggingapp
+
     spec:
+      serviceAccountName: bloggr-sa
+
       containers:
         - name: bloggingapp
           image: nithin0620/bloggr:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 4000
+
       imagePullSecrets:
         - name: regcred
 
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
   name: bloggingapp-service
   namespace: webapps
+
 spec:
   selector:
     app: bloggingapp
+
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 8080
+      targetPort: 4000
+
   type: LoadBalancer
