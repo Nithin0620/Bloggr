@@ -19,6 +19,7 @@ const Settings = () => {
    };
 
    const {getSettings,setSettings,resetSettings} = useSettingsStore();
+   // eslint-disable-next-line no-unused-vars
    const {fetchCategories, categoriesList} = usePostStore();
 
 
@@ -43,6 +44,7 @@ const Settings = () => {
    const [loading,setLoading] = useState(false);
    const [resetLoading,setResetLoading] = useState(false);
 
+   // eslint-disable-next-line no-unused-vars
    const {logout ,setIsLogoutModalOpen} = useAuthStore();
 
     const getSettingsOnRender = async()=>{
@@ -69,6 +71,7 @@ const Settings = () => {
       fetchCategoryAndPostfromStore();
       const theme = localStorage.getItem("accent-theme");
       if(theme) setTheme(theme);
+   // eslint-disable-next-line react-hooks/exhaustive-deps
    },[])
 
    useEffect(()=>{
@@ -142,6 +145,7 @@ const Settings = () => {
 
    const resetButtonHandler = async() => {
       setResetLoading(true);
+      // eslint-disable-next-line no-unused-vars
       const response = await resetSettings();
       getSettingsOnRender();
       setResetLoading(false);
@@ -152,6 +156,7 @@ const Settings = () => {
    };
    const setSettingsHandler = async() => {
       setLoading(true);
+      // eslint-disable-next-line no-unused-vars
       const response  = await setSettings({mode:mode,theme:theme,pushNotification:notifications.push , emailNotification:notifications.email , homeFeedType:feed || selectedCategories});
 
       setLoading(false);

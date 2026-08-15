@@ -47,6 +47,7 @@ const handleLikeClick = ()=>{
 
 
 const DevToPostCard = ({ post }) => {
+  // eslint-disable-next-line no-unused-vars
   const navigate = useNavigate();
 
   return (

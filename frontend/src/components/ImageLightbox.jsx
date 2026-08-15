@@ -57,6 +57,7 @@ const ImageLightbox = ({ images, currentIndex, onClose, onPrev, onNext }) => {
 
       {/* Image container */}
       <div className="max-w-[90vw] max-h-[90vh] flex items-center justify-center">
+        {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
         <img
           src={images[currentIndex]}
           alt={`Lightbox image ${currentIndex + 1}`}

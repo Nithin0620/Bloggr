@@ -8,10 +8,12 @@ const ReadingListDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { currentList, loading, fetchListById, removePostFromList } = useReadingListStore();
+  // eslint-disable-next-line no-unused-vars
   const [liked, setLiked] = useState(false);
 
   useEffect(() => {
     fetchListById(id);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleRemovePost = async (postId) => {

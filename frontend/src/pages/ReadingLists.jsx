@@ -15,6 +15,7 @@ const ReadingLists = () => {
 
   useEffect(() => {
     fetchMyLists();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCreate = async () => {

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+// eslint-disable-next-line no-unused-vars
 import { Sparkles, CheckCircle2, AlertTriangle, FileText, Search, BookOpen, ChevronDown, ChevronUp } from "lucide-react";
 
 const ArticleInsights = ({ post }) => {

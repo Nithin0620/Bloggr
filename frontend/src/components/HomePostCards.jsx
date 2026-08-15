@@ -3,6 +3,7 @@ import { FaRegCommentDots } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
 import { usePageStore } from '../store/PageStore';
 import { useNavigate } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import { usePostStore } from '../store/PostStore';
 import { useIntractionStore } from '../store/IntractionStore';
 import { FaRegHeart } from "react-icons/fa6";

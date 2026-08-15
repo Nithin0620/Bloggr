@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line no-unused-vars
 import { MessageSquare, Send, Sparkles, Loader, X, Bot, User, HelpCircle } from "lucide-react";
 import toast from "react-hot-toast";
 

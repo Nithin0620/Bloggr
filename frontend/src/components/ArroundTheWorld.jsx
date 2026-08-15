@@ -1,5 +1,6 @@
 import React, { useEffect,useState } from 'react'
 import DevToPostCard from './DevToPostCard'
+// eslint-disable-next-line no-unused-vars
 import { usePostStore } from '../store/PostStore'
 
 const ArroundTheWorld = () => {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useReadingListStore } from "../store/ReadingListStore";
 import { Loader, Plus, Check } from "lucide-react";
+// eslint-disable-next-line no-unused-vars
 import toast from "react-hot-toast";
 
 const AddToReadingListModal = ({ isOpen, onClose, postId }) => {
@@ -15,6 +16,7 @@ const AddToReadingListModal = ({ isOpen, onClose, postId }) => {
     if (isOpen) {
       fetchMyLists();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const handleAdd = async (listId) => {

@@ -21,6 +21,7 @@ const Signup = () => {
   const handleSignUp = (data) => {
     setBeforeSignUpData(data);
     setnavigate(navigate)
+    // eslint-disable-next-line no-unused-vars
     const success = sendotp(data.email);
     // if(success===true) navigate("/verifyemail")
   };

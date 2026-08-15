@@ -14,6 +14,7 @@ import { useTagStore } from "../store/TagStore";
 
 const CreatePostHandler = () => {
    const {isCreatePostOpen, setIsCreatePostOpen,setCurrentPage} = usePageStore();
+   // eslint-disable-next-line no-unused-vars
    const { createPost,fetchCategories,createPostLoading ,fetchPosts, aiGenerateMeta, aiSuggestCategories} = usePostStore();
   const { authUser } = useAuthStore();
    const { register, handleSubmit, reset ,setValue, getValues} = useForm();
@@ -37,6 +38,7 @@ const CreatePostHandler = () => {
       }
       fetchCategoryAndPostfromStore();
       fetchTags();
+   // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
    
 

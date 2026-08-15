@@ -1,4 +1,5 @@
 import React from 'react';
+// eslint-disable-next-line no-unused-vars
 import Box from '@mui/material/Box';
 import Skeleton from '@mui/material/Skeleton';
 

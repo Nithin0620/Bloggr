@@ -15,6 +15,7 @@ const AddCategoryModal = ({ isOpen, setAddCategoryOpen,setCategoryCreated }) => 
     if (!categoryName.trim()) return;
     
     setLoading(true);
+    // eslint-disable-next-line no-unused-vars
     const success = await createCategory(categoryName);
     setCategoryCreated(true);
     setLoading(false);
