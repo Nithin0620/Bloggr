@@ -16,14 +16,6 @@ exports.protectRoute = async (req, res, next) => {
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      if (!decoded) {
-         return res.status(401).json({
-            success: false,
-            code: "INVALID_TOKEN",
-            message: "Unauthorised - Invalid token",
-         });
-      }
-
       const user = await User.findById(decoded.userId).select("-password");
 
       if (!user) {
@@ -44,6 +36,14 @@ exports.protectRoute = async (req, res, next) => {
             success: false,
             code: "JWT_EXPIRED",
             message: "Token has expired",
+         });
+      }
+
+      if (e.name === "JsonWebTokenError") {
+         return res.status(401).json({
+            success: false,
+            code: "INVALID_TOKEN",
+            message: "Unauthorised - Invalid token",
          });
       }
 
