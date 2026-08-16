@@ -202,7 +202,7 @@ describe('UserProfile Controller', () => {
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData().success).toBe(true);
-      expect(mockUser.profilePic).toContain('api.dicebear.com');
+      expect(mockUser.profilePic).toBe('https://api.dicebear.com/5.x/initials/svg?seed=John Doe');
     });
 
     it('should return 500 on server error', async () => {
