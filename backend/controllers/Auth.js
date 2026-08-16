@@ -140,7 +140,7 @@ exports.login = async(req,res)=>{
             message:"Login successfull",
          })
       }else{
-            return res.status(500).json({
+            return res.status(401).json({
             success: false,
             message: "Password is incorrect",
          });
