@@ -1,6 +1,6 @@
 import React from "react";
-// eslint-disable-next-line no-unused-vars
-import { Eye, Heart, MessageSquare } from "lucide-react";
+import { Eye, Heart } from "lucide-react";
+
 
 const EngagementChart = ({ topPosts }) => {
   if (!topPosts || topPosts.length === 0) return null;
