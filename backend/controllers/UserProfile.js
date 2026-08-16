@@ -119,11 +119,10 @@ exports.uploadProfilePic = async(req,res)=>{
          return res.status(404).json({ success: false, message: "User not found" });
       }
 
+      if(!req.file || !req.file.path) return res.status(400).json({success:false,message:"image not found"});
+
       const image = req.file.path;
       logger.info("image",image)
-      
-
-      if(!image) return res.status(400).json({success:false,message:"image not found"});
 
       const uploadResponse  = await cloudinaryInstance.uploader.upload(image);
       if(uploadResponse) user.profilePic = uploadResponse.secure_url;
