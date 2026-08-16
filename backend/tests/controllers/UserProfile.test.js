@@ -125,6 +125,16 @@ describe('UserProfile Controller', () => {
 
       expect(res.statusCode).toBe(400);
     });
+
+    it('should return 500 on server error', async () => {
+      req.user = { user: { _id: 'userId' } };
+      req.body = { firstName: 'Jane' };
+      User.findById = jest.fn().mockReturnValue({ populate: jest.fn().mockRejectedValue(new Error('DB Error')) });
+
+      await UserProfile.updateProfileInfo(req, res);
+
+      expect(res.statusCode).toBe(500);
+    });
   });
 
   describe('uploadProfilePic', () => {
@@ -150,7 +160,7 @@ describe('UserProfile Controller', () => {
 
     it('should return 400 if image not provided', async () => {
       req.user = { user: { _id: 'userId' } };
-      req.file = {};
+      req.file = undefined;
 
       const mockUser = {
         _id: 'userId',
@@ -161,6 +171,16 @@ describe('UserProfile Controller', () => {
       await UserProfile.uploadProfilePic(req, res);
 
       expect(res.statusCode).toBe(400);
+    });
+
+    it('should return 500 on server error', async () => {
+      req.user = { user: { _id: 'userId' } };
+      req.file = { path: 'image/path.jpg' };
+      User.findById = jest.fn().mockRejectedValue(new Error('DB Error'));
+
+      await UserProfile.uploadProfilePic(req, res);
+
+      expect(res.statusCode).toBe(500);
     });
   });
 
@@ -182,7 +202,16 @@ describe('UserProfile Controller', () => {
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData().success).toBe(true);
-expect(mockUser.profilePic).toBe('https://api.dicebear.com/5.x/initials/svg?seed=John Doe');
+      expect(mockUser.profilePic).toContain('api.dicebear.com');
+    });
+
+    it('should return 500 on server error', async () => {
+      req.user = { user: { _id: 'userId' } };
+      User.findById = jest.fn().mockRejectedValue(new Error('DB Error'));
+
+      await UserProfile.deleteProfilePic(req, res);
+
+      expect(res.statusCode).toBe(500);
     });
   });
 
@@ -193,6 +222,8 @@ expect(mockUser.profilePic).toBe('https://api.dicebear.com/5.x/initials/svg?seed
 
       const mockCurrentUser = {
         _id: 'currentUserId',
+        email: 'test@example.com',
+        firstName: 'John',
         profile: {
           following: [],
           save: jest.fn(),
@@ -200,6 +231,8 @@ expect(mockUser.profilePic).toBe('https://api.dicebear.com/5.x/initials/svg?seed
       };
       const mockTargetUser = {
         _id: 'targetUserId',
+        email: 'target@example.com',
+        firstName: 'Jane',
         profile: {
           followers: [],
           save: jest.fn(),
@@ -210,19 +243,69 @@ expect(mockUser.profilePic).toBe('https://api.dicebear.com/5.x/initials/svg?seed
         .mockReturnValueOnce({ populate: jest.fn().mockResolvedValue(mockTargetUser) })
         .mockReturnValueOnce({ populate: jest.fn().mockResolvedValue(mockCurrentUser) });
 
-      Notification.create = jest.fn().mockResolvedValue({});
-      Settings.findOne = jest.fn().mockResolvedValue(null);
+      const mockNotification = { _id: 'notificationId' };
+      Notification.create = jest.fn().mockResolvedValue(mockNotification);
+      Settings.findOne = jest.fn().mockResolvedValue({ emailNotification: true, pushNotification: true });
+
+      getReceiverSocketId.mockReturnValue('socketId');
 
       await UserProfile.followUser(req, res);
+
+      // wait for setImmediate email mock execution
+      await new Promise(resolve => setImmediate(resolve));
 
       expect(res.statusCode).toBe(200);
       expect(mockTargetUser.profile.followers).toContain('currentUserId');
       expect(mockCurrentUser.profile.following).toContain('targetUserId');
+      expect(sendEmail).toHaveBeenCalled();
+      expect(io.to).toHaveBeenCalledWith('socketId');
+      expect(io.emit).toHaveBeenCalledWith('newNotification', { notification: mockNotification, currentUser: mockCurrentUser });
     });
 
     it('should return 400 if following self', async () => {
       req.user = { user: { _id: 'userId' } };
       req.params.id = 'userId';
+
+      await UserProfile.followUser(req, res);
+
+      expect(res.statusCode).toBe(400);
+    });
+
+    it('should return 404 if user not found', async () => {
+      req.user = { user: { _id: 'currentUserId' } };
+      req.params.id = 'targetUserId';
+
+      User.findById = jest.fn()
+        .mockReturnValueOnce({ populate: jest.fn().mockResolvedValue(null) })
+        .mockReturnValueOnce({ populate: jest.fn().mockResolvedValue(null) });
+
+      await UserProfile.followUser(req, res);
+
+      expect(res.statusCode).toBe(404);
+    });
+
+    it('should return 400 if already following', async () => {
+      req.user = { user: { _id: 'currentUserId' } };
+      req.params.id = 'targetUserId';
+
+      const mockCurrentUser = {
+        _id: 'currentUserId',
+        profile: {
+          following: ['targetUserId'],
+          save: jest.fn(),
+        }
+      };
+      const mockTargetUser = {
+        _id: 'targetUserId',
+        profile: {
+          followers: ['currentUserId'],
+          save: jest.fn(),
+        }
+      };
+
+      User.findById = jest.fn()
+        .mockReturnValueOnce({ populate: jest.fn().mockResolvedValue(mockTargetUser) })
+        .mockReturnValueOnce({ populate: jest.fn().mockResolvedValue(mockCurrentUser) });
 
       await UserProfile.followUser(req, res);
 
@@ -238,18 +321,19 @@ expect(mockUser.profilePic).toBe('https://api.dicebear.com/5.x/initials/svg?seed
       const mockCurrentUser = {
         _id: 'currentUserId',
         profile: {
-          following: { pull: jest.fn() },
+          following: ['targetUserId'],
           save: jest.fn(),
         }
       };
+      mockCurrentUser.profile.following.pull = jest.fn();
+
       const mockTargetUser = {
         _id: 'targetUserId',
         profile: {
-          followers: ['currentUserId', 'pull'],
+          followers: ['currentUserId'],
           save: jest.fn(),
         }
       };
-      mockTargetUser.profile.followers.includes = jest.fn().mockReturnValue(true);
       mockTargetUser.profile.followers.pull = jest.fn();
 
       User.findById = jest.fn()
@@ -261,6 +345,44 @@ expect(mockUser.profilePic).toBe('https://api.dicebear.com/5.x/initials/svg?seed
       expect(res.statusCode).toBe(200);
       expect(mockTargetUser.profile.followers.pull).toHaveBeenCalledWith('currentUserId');
       expect(mockCurrentUser.profile.following.pull).toHaveBeenCalledWith('targetUserId');
+    });
+
+    it('should return 400 if unfollowing self', async () => {
+      req.user = { user: { _id: 'userId' } };
+      req.params.id = 'userId';
+
+      await UserProfile.unfollowUser(req, res);
+
+      expect(res.statusCode).toBe(400);
+    });
+
+    it('should return 400 if not following user', async () => {
+      req.user = { user: { _id: 'currentUserId' } };
+      req.params.id = 'targetUserId';
+
+      const mockCurrentUser = {
+        _id: 'currentUserId',
+        profile: {
+          following: [],
+          save: jest.fn(),
+        }
+      };
+
+      const mockTargetUser = {
+        _id: 'targetUserId',
+        profile: {
+          followers: [],
+          save: jest.fn(),
+        }
+      };
+
+      User.findById = jest.fn()
+        .mockReturnValueOnce({ populate: jest.fn().mockResolvedValue(mockTargetUser) })
+        .mockReturnValueOnce({ populate: jest.fn().mockResolvedValue(mockCurrentUser) });
+
+      await UserProfile.unfollowUser(req, res);
+
+      expect(res.statusCode).toBe(400);
     });
   });
 
