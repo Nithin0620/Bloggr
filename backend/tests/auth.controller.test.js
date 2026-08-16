@@ -57,7 +57,7 @@ describe("Auth Controller", () => {
             });
         });
 
-        it("should return 500 if password does not match", async () => {
+        it("should return 401 if password does not match", async () => {
             req.body = { email: "test@example.com", password: "password123" };
 
             const mockUser = { _id: "user-id", email: "test@example.com", password: "hashed-password" };
@@ -71,7 +71,7 @@ describe("Auth Controller", () => {
 
             await login(req, res);
 
-            expect(res.statusCode).toBe(500);
+            expect(res.statusCode).toBe(401);
             expect(res._getJSONData()).toEqual({
                 success: false,
                 message: "Password is incorrect",

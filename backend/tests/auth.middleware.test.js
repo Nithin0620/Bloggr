@@ -33,9 +33,11 @@ describe("Auth Middleware - protectRoute", () => {
         expect(next).not.toHaveBeenCalled();
     });
 
-    it("should return 401 if token is invalid", async () => {
+    it("should return 401 if token is invalid (JsonWebTokenError)", async () => {
         req.cookies = { jwt: "invalid-token" };
-        jwt.verify.mockReturnValue(null);
+        const invalidError = new Error();
+        invalidError.name = "JsonWebTokenError";
+        jwt.verify.mockImplementation(() => { throw invalidError; });
 
         await protectRoute(req, res, next);
 
