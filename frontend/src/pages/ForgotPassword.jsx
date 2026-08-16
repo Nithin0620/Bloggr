@@ -14,6 +14,7 @@ const ForgotPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
+  // eslint-disable-next-line no-unused-vars
   const { setnavigate } = useAuthStore();
   const BASE_URL =
     process.env.REACT_APP_MODE === "development"

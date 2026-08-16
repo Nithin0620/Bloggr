@@ -6,7 +6,7 @@ import { FaBookmark } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const Bookmarks = () => {
-  const { bookmarks, loading, fetchBookmarks } = useBookmarkStore();
+  const { loading, fetchBookmarks } = useBookmarkStore();
   const [posts, setPosts] = useState([]);
   const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
@@ -17,6 +17,7 @@ const Bookmarks = () => {
       setPosts(data);
     };
     load();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [liked]);
 
   return (

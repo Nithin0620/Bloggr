@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { usePostStore } from '../store/PostStore'
 import { useNavigate } from 'react-router-dom'
 import { usePageStore } from '../store/PageStore'
+// eslint-disable-next-line no-unused-vars
 import { Loader } from 'lucide-react'
+// eslint-disable-next-line no-unused-vars
 import { truncateContent } from '../lib/utils'
 
 const RelatedBlogs = ({ postId }) => {

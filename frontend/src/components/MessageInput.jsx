@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useChatStore } from "../store/ChatStore";
-import { Image, Loader, Send, X } from "lucide-react";
+import { Image, Loader, Send } from "lucide-react";
 import toast from "react-hot-toast";
 import { IoMdClose } from "react-icons/io";
 

@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState, useMemo } from 'react'
 import { usePostStore } from '../store/PostStore'
 import { FaRegHeart, FaHeart, FaRegBookmark, FaBookmark } from "react-icons/fa";
@@ -5,6 +6,7 @@ import { FaRegCommentDots } from "react-icons/fa";
 import { IoIosStats } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
 import { useIntractionStore } from '../store/IntractionStore';
+// eslint-disable-next-line no-unused-vars
 import {Loader, Sparkles} from "lucide-react"
 import { usePageStore } from '../store/PageStore';
 import { truncateContent } from '../lib/utils';

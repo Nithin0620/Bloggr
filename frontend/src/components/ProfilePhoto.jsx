@@ -36,7 +36,7 @@ const ProfilePhoto = ({setLiked, user, setProfilePicOpen }) => {
       const formData = new FormData();
       formData.append("image", file);
       setLoading(true);
-      const success = await updateProfilePic(formData);
+      await updateProfilePic(formData);
       setLiked(true);
 
       setLoading(false);
@@ -46,6 +46,7 @@ const ProfilePhoto = ({setLiked, user, setProfilePicOpen }) => {
 
    const deleteProfilePhoto = async() => {
       setLoading(true);
+      // eslint-disable-next-line no-unused-vars
       const success = await deleteProfilePic(imagePreview);
       setLiked(true);
       setLoading(false);

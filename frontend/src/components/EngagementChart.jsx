@@ -1,5 +1,6 @@
 import React from "react";
-import { Eye, Heart, MessageSquare } from "lucide-react";
+import { Eye, Heart } from "lucide-react";
+
 
 const EngagementChart = ({ topPosts }) => {
   if (!topPosts || topPosts.length === 0) return null;

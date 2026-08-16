@@ -27,6 +27,7 @@ const Profile = () => {
   const [postUpdated, setPostUpdated] = useState(false);
   const [posts, setPosts] = useState(null);
   const [editProfile, setEditProfile] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const navigate = useNavigate();
   const { fetchUserProfile, editProfileInfo, Followuser, unFollowUser, getFollowers, getFollowings } = useProfileStore();
   const { aiGenerateBio } = usePostStore();
@@ -35,6 +36,7 @@ const Profile = () => {
   const [Followers, setFollowers] = useState([]);
   const [FollowersId, setFollowersId] = useState([]);
   const [Followings, setFollowings] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [FollowingsId, setFollowingsId] = useState([]);
   const [followerModal, setFollowerModal] = useState(false);
   const [followingModal, setFollowingModal] = useState(false);
@@ -64,6 +66,7 @@ const Profile = () => {
       setLoading(false);
     };
     fetchProfileData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deleted, postUpdated, liked, userId]);
 
   useEffect(() => {
@@ -110,6 +113,7 @@ const Profile = () => {
 
   const handleProfileUpdate = async (data) => {
     setLoading(true);
+    // eslint-disable-next-line no-unused-vars
     const success = await editProfileInfo(data);
     setLiked(true);
     setLoading(false);

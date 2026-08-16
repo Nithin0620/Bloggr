@@ -71,6 +71,7 @@ const AIAssistant = ({ editor, onLoadingChange }) => {
    const [showMenu, setShowMenu] = useState(false);
    const [customPrompt, setCustomPrompt] = useState("");
    const [isGenerating, setIsGenerating] = useState(false);
+   // eslint-disable-next-line no-unused-vars
    const [selectedText, setSelectedText] = useState("");
    const menuRef = useRef(null);
    const [dropdownStyle, setDropdownStyle] = useState({});

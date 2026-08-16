@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { MessageSquare, Send, Sparkles, Loader, X, Bot, User, HelpCircle } from "lucide-react";
+import { Send, Sparkles, Loader, X, Bot, User } from "lucide-react";
 import toast from "react-hot-toast";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:4000/api/v1";

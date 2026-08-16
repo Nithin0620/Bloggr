@@ -14,10 +14,12 @@ import { Sparkles, Loader } from "lucide-react";
 import toast from "react-hot-toast";
 
 const Home = () => {
+  // eslint-disable-next-line no-unused-vars
   const [liked,setLiked] = useState(false);
   const {token,authUser} = useAuthStore();
   const {isCreatePostOpen} = usePageStore();
   const {getAllPostLikedByCurrentUser} = useIntractionStore();
+  // eslint-disable-next-line no-unused-vars
   const { fetchCategories, posts, fetchPosts, fetchPostsByCategories, fetchMorePosts, hasMore, fetchPostLoading, aiSearchPosts, semanticVectorSearch } = usePostStore();
   const [categories, setCategories] = useState([]);
   const [Post, setPost] = useState([]);
@@ -52,6 +54,7 @@ const Home = () => {
     setCategorySelected("All Categories");
     getAllPostLikedByCurrentUser();
     fetchCategoryAndPostfromStore();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCreatePostOpen, categoryCreated]);
 
   const lastPostRef = useCallback((node) => {

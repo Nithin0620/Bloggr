@@ -1,6 +1,7 @@
 import { TbLogout2 } from "react-icons/tb";
 import { IoMdShare } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import toast from 'react-hot-toast';
 import {useAuthStore} from "../store/AuthStore";
 import { useShareModalStore } from "../store/ShareModal";
@@ -9,6 +10,8 @@ import { usePageStore } from "../store/PageStore";
 const ProfileDropDown = ({ setOpenProfileDropDown }) => {
   const {openShareModal } = useShareModalStore();
   const {setCurrentPage} = usePageStore();
+  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   const { authUser, logout,isLogoutModalOpen,setIsLogoutModalOpen  } =useAuthStore();
   const navigate = useNavigate();
 

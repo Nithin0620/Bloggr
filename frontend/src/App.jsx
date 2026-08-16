@@ -31,6 +31,7 @@ const App = () => {
 
     // Listen for system theme changes (for "System" mode)
     startSystemThemeListener();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 

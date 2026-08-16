@@ -27,6 +27,7 @@ import toast from 'react-hot-toast';
 const ReadMorePost = () => {
    const {LikeUnlikePost,postsLikedByUser} = useIntractionStore();
    const {bookmarkedPostIds, toggleBookmark} = useBookmarkStore();
+   // eslint-disable-next-line no-unused-vars
    const {token, authUser} = useAuthStore();
    
 
@@ -142,6 +143,7 @@ const ReadMorePost = () => {
          setSummaryLoading(false);
       };
       generateSummary();
+   // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [post?._id, post?.content]);
 
    const {setCurrentPage} = usePageStore();

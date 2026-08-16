@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
+// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line no-unused-vars
 import { Mic, Play, Pause, Loader, User, Bot, Volume2, Sparkles, ChevronUp, ChevronDown } from "lucide-react";
 import toast from "react-hot-toast";
 

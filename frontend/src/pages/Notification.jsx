@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MdOutlineDeleteOutline } from "react-icons/md";
+// eslint-disable-next-line no-unused-vars
 import {toast} from "react-hot-toast"
 import { useNavigate } from "react-router-dom";
 import { useIntractionStore } from "../store/IntractionStore";
@@ -9,6 +10,7 @@ import Ripples from 'react-ripples';
 import { truncateContent } from '../lib/utils';
 
 
+// eslint-disable-next-line no-unused-vars
 const dummyNotifications = [
   {
     _id: "1",
@@ -84,7 +86,9 @@ const Notification = () => {
   useEffect(()=>{
     
     setIsUpdated(false);
+    // eslint-disable-next-line no-unused-vars
     const array = getAllNotificationFunction();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[isUpdated])
 
   const handleSelected = (selector) => {
