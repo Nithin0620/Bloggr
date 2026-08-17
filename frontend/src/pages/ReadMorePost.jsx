@@ -55,45 +55,10 @@ const ReadMorePost = () => {
    const [postSummary, setPostSummary] = useState(null);
 
    const {postId} = useParams();
-   const [post,setPost] =useState({
-            "_id": "6880a85524dadbeff66740ea",
-            "title": "5 Ways to Make Your Developer Portfolio Stand Out in 2025",
-            "author": {
-                "_id": "687f2df9f63a839959e579f7",
-                "firstName": "Nithin",
-                "lastName": "KS"
-            },
-            "content": "Your developer portfolio is more than just a website—it's your personal brand. In a sea of developers, your portfolio can either be a game-changer or get lost in the crowd. Here are 5 powerful ways to make yours stand out in 2025.\r\n\r\n1. 🖼️ Make It Visually Appealing\r\nFirst impressions matter. Use clean typography, consistent colors, and responsive design. Tools like Tailwind CSS or shadcn/ui can help you build fast and beautifully.\r\n\r\nBonus tip: Add subtle animations using Framer Motion to make interactions smooth and professional.\r\n\r\n2. 📌 Show, Don’t Just Tell\r\nDon’t just list your skills—demonstrate them with live projects. Add links to:\r\n\r\nGitHub repos\r\n\r\nLive demos\r\n\r\nCase studies or blog posts explaining your process\r\n\r\nRecruiters love developers who can walk the talk.\r\n\r\n3. 📽️ Add a Personal Introduction\r\nA short video introduction or about-me section makes you more relatable. Let your personality shine—talk about your journey, your motivation, or even a fun fact about yourself.\r\n\r\n4. 🧠 Focus on Value-Based Projects\r\nBuild and showcase projects that solve real problems, even if they're small:\r\n\r\nA task manager for students\r\n\r\nA weather app with local storage\r\n\r\nAn AI-powered chatbot for exam prep\r\n\r\nThese kinds of projects show you're not just a coder—you’re a problem-solver.\r\n\r\n5. 🛠️ Keep Updating It\r\nYour portfolio is not a one-time thing. Update it with:\r\n\r\nNew projects\r\n\r\nTech stack updates\r\n\r\nBlog posts or certifications\r\n\r\nInclude a blog section to share what you’ve learned recently—it shows you're actively growing.\r\n\r\n🚀 Final Advice\r\nYour portfolio is your story—make it honest, functional, and reflective of your goals. Keep it updated, focused, and personalized. In 2025, your portfolio might just be the thing that lands you your dream job.",
-            "categories": [
-                {
-                    "_id": "687f39d71ace835152d1d512",
-                    "name": "DevOps"
-                },
-                {
-                    "_id": "686d23d6f4e71788efea3a53",
-                    "name": "Tech"
-                }
-            ],
-            "likes": [
-                {
-                    "_id": "687f2df9f63a839959e579f7",
-                    "firstName": "Nithin",
-                    "lastName": "KS",
-                    "createdAt": "2025-07-22T06:21:45.811Z"
-                }
-            ],
-            "comments": [],
-            "image": "https://res.cloudinary.com/dii5njq9f/image/upload/v1753262157/jhhlwhljc9zjsoljhh0f.jpg",
-            "views": 8,
-            "readTime": "5",
-            "createdAt": "2025-07-23T09:16:05.745Z",
-            "updatedAt": "2025-07-23T13:08:41.754Z",
-            "__v": 21
-        });
-
-   const [liked,setLiked] = useState(false);
-   const [likeCount, setLikeCount] = useState(post.likes.length);
-   const [isLiked, setIsLiked] = useState(postsLikedByUser.includes(post._id));
+   const [post, setPost] = useState(null);
+   const [liked, setLiked] = useState(false);
+   const [likeCount, setLikeCount] = useState(0);
+   const [isLiked, setIsLiked] = useState(false);
    const [lightboxOpen, setLightboxOpen] = useState(false);
    const [lightboxImages, setLightboxImages] = useState([]);
    const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -120,17 +85,20 @@ const ReadMorePost = () => {
 
    useEffect(()=>{
       if(liked === false) window.scrollTo({top:0,behavior:'smooth'});
+      setPostSummary(null);
       const fetchReadMorePost = async()=>{
          setLoading(true);
          const fetchedPost = await getPostByID(postId);
          if (fetchedPost) {
             setPost(fetchedPost);
+            setLikeCount(Array.isArray(fetchedPost.likes) ? fetchedPost.likes.length : 0);
+            setIsLiked(Array.isArray(postsLikedByUser) ? postsLikedByUser.includes(fetchedPost._id) : false);
          }
          setLoading(false);
       }
       fetchReadMorePost();
       setLiked(false);
-   },[liked, getPostByID, postId]);
+   },[liked, getPostByID, postId, postsLikedByUser]);
 
    useEffect(() => {
       if (!post || !post._id || !post.content) return;
@@ -163,6 +131,26 @@ const ReadMorePost = () => {
          setLikeCount(result.likesCount);
          setIsLiked(result.liked);
       }
+   }
+
+   if (!post && loading) {
+      return (
+         <div className="min-h-[70vh] flex items-center justify-center accent-bg-mode">
+            <Loader className="w-8 h-8 animate-spin text-emerald-500" />
+         </div>
+      );
+   }
+
+   if (!post && !loading) {
+      return (
+         <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center accent-bg-mode accent-text-mode">
+            <h2 className="text-2xl font-bold mb-2">Post not found</h2>
+            <p className="text-sm opacity-70 mb-6">The article you are looking for does not exist or has been removed.</p>
+            <button onClick={() => navigate("/")} className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium transition">
+               Back to Home
+            </button>
+         </div>
+      );
    }
 
    return (

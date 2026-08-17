@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const citationSchema = new mongoose.Schema({
-  articleId: { type: mongoose.Schema.Types.ObjectId, ref: "Post" },
+  articleId: { type: String },
   articleTitle: String,
   chunkText: String,
   score: Number,

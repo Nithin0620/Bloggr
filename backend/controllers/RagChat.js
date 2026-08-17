@@ -4,7 +4,7 @@ const ChatHistory = require("../models/chatHistory");
 exports.ask = async (req, res) => {
   try {
     const { question, sessionId } = req.body;
-    const userId = req.user._id;
+    const userId = req.user?.user?._id || req.user?._id;
 
     if (!question || !question.trim()) {
       return res.status(400).json({
@@ -16,7 +16,7 @@ exports.ask = async (req, res) => {
     let chat = null;
     let sessionIndex = -1;
 
-    if (sessionId) {
+    if (sessionId && userId) {
       chat = await ChatHistory.findOne({ user: userId });
       if (chat) {
         sessionIndex = chat.sessions.findIndex(
@@ -25,34 +25,38 @@ exports.ask = async (req, res) => {
       }
     }
 
-    if (!chat) {
+    if (!chat && userId) {
       chat = new ChatHistory({ user: userId, sessions: [{ title: question.substring(0, 60) }] });
       sessionIndex = 0;
     }
 
-    if (sessionIndex < 0) {
+    if (chat && sessionIndex < 0) {
       chat.sessions.push({ title: question.substring(0, 60) });
       sessionIndex = chat.sessions.length - 1;
     }
 
-    const session = chat.sessions[sessionIndex];
+    const session = chat?.sessions?.[sessionIndex];
 
-    const history = session.messages.map((m) => ({
-      role: m.role,
-      content: m.content,
-    }));
+    const history = session?.messages
+      ? session.messages.map((m) => ({
+          role: m.role,
+          content: m.content,
+        }))
+      : [];
 
     const { answer, citations } = await askRagChat({ question, history });
 
-    session.messages.push({ role: "user", content: question.trim() });
-    session.messages.push({ role: "assistant", content: answer, citations });
-    await chat.save();
+    if (chat && session) {
+      session.messages.push({ role: "user", content: question.trim() });
+      session.messages.push({ role: "assistant", content: answer, citations });
+      await chat.save();
+    }
 
     return res.status(200).json({
       success: true,
       answer,
       citations,
-      sessionId: session._id.toString(),
+      sessionId: session?._id ? session._id.toString() : null,
     });
   } catch (error) {
     console.error("RAG chat error:", error.message);
@@ -65,7 +69,11 @@ exports.ask = async (req, res) => {
 
 exports.getSessions = async (req, res) => {
   try {
-    const chat = await ChatHistory.findOne({ user: req.user._id }).select("sessions._id sessions.title sessions.createdAt");
+    const userId = req.user?.user?._id || req.user?._id;
+    if (!userId) {
+      return res.status(200).json({ success: true, sessions: [] });
+    }
+    const chat = await ChatHistory.findOne({ user: userId }).select("sessions._id sessions.title sessions.createdAt");
     if (!chat) {
       return res.status(200).json({ success: true, sessions: [] });
     }
@@ -79,7 +87,11 @@ exports.getSessions = async (req, res) => {
 exports.getSessionHistory = async (req, res) => {
   try {
     const { sessionId } = req.params;
-    const chat = await ChatHistory.findOne({ user: req.user._id });
+    const userId = req.user?.user?._id || req.user?._id;
+    if (!userId) {
+      return res.status(404).json({ success: false, message: "No user found" });
+    }
+    const chat = await ChatHistory.findOne({ user: userId });
     if (!chat) {
       return res.status(404).json({ success: false, message: "No chat history found" });
     }
