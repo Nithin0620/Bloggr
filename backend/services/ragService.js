@@ -6,6 +6,8 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+const GROQ_MODEL = process.env.GROQ_MODEL || "groq/compound-mini";
+
 async function askRagChat({ question, history = [] }) {
   const queryVector = await generateEmbedding(question.trim());
   const matches = await searchSimilarChunks(queryVector, 8);
@@ -55,7 +57,7 @@ Instructions:
   ];
 
   const completion = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: GROQ_MODEL,
     messages,
     temperature: 0.3,
   });

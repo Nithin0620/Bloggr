@@ -73,12 +73,24 @@ async function deleteArticleChunks(articleId) {
  */
 async function searchSimilarChunks(queryVector, limit = 20, filter = null) {
   try {
-    const searchResult = await qdrantClient.search(COLLECTION_NAME, {
-      vector: queryVector,
-      limit,
-      filter: filter || undefined,
-    });
-    return searchResult || [];
+    if (typeof qdrantClient.query === "function") {
+      const searchResult = await qdrantClient.query(COLLECTION_NAME, {
+        query: queryVector,
+        limit,
+        filter: filter || undefined,
+        with_payload: true,
+      });
+      return searchResult?.points || searchResult || [];
+    } else if (typeof qdrantClient.search === "function") {
+      const searchResult = await qdrantClient.search(COLLECTION_NAME, {
+        vector: queryVector,
+        limit,
+        filter: filter || undefined,
+        with_payload: true,
+      });
+      return searchResult || [];
+    }
+    return [];
   } catch (error) {
     console.error("Vector search failed in Qdrant:", error.message);
     return [];

@@ -8,6 +8,8 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+const GROQ_MODEL = process.env.GROQ_MODEL || "groq/compound-mini";
+
 exports.askAboutArticle = async (req, res) => {
   try {
     const { articleId, question } = req.body;
@@ -55,7 +57,7 @@ Instructions:
 - If the answer cannot be found in the article, state politely that the article does not cover that specific detail.`;
 
     const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: GROQ_MODEL,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: question.trim() },
@@ -95,7 +97,7 @@ exports.summarizeArticle = async (req, res) => {
     if (type === "oneliner") instruction = "Provide a single punchy one-liner summary.";
 
     const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: GROQ_MODEL,
       messages: [
         {
           role: "system",

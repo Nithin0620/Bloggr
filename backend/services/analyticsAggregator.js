@@ -5,6 +5,8 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+const GROQ_MODEL = process.env.GROQ_MODEL || "groq/compound-mini";
+
 async function getAuthorStats(authorId) {
   const posts = await Post.find({ author: authorId })
     .populate("categories", "name")
@@ -58,7 +60,7 @@ async function generateInsights(statsSummary) {
 
   try {
     const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: GROQ_MODEL,
       messages: [
         {
           role: "system",

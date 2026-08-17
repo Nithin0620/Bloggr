@@ -5,6 +5,8 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+const GROQ_MODEL = process.env.GROQ_MODEL || "groq/compound-mini";
+
 const stripHtml = (html) => {
   if (!html) return "";
   return html
@@ -45,7 +47,7 @@ exports.aiGenerateMeta = async (req, res) => {
     }
 
     const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: GROQ_MODEL,
       messages: [
         {
           role: "system",
@@ -162,7 +164,7 @@ exports.aiSuggestCategories = async (req, res) => {
     }
 
     const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: GROQ_MODEL,
       messages: [
         {
           role: "system",
@@ -243,7 +245,7 @@ exports.aiSummarize = async (req, res) => {
     }
 
     const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: GROQ_MODEL,
       messages: [
         {
           role: "system",
@@ -340,7 +342,7 @@ exports.aiSuggestComment = async (req, res) => {
     const plainPost = postContent ? stripHtml(postContent).slice(0, 2000) : "";
 
     const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: GROQ_MODEL,
       messages: [
         {
           role: "system",
@@ -447,7 +449,7 @@ exports.aiGenerateBio = async (req, res) => {
       .join("\n");
 
     const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: GROQ_MODEL,
       messages: [
         {
           role: "system",
@@ -539,7 +541,7 @@ exports.aiSearch = async (req, res) => {
     const categoryNames = categories.map((c) => c.name);
 
     const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: GROQ_MODEL,
       messages: [
         {
           role: "system",
@@ -699,7 +701,7 @@ exports.aiSentimentScore = async (req, res) => {
       }));
 
       const completion = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
+        model: GROQ_MODEL,
         messages: [
           {
             role: "system",
@@ -812,7 +814,7 @@ exports.aiWrite = async (req, res) => {
         : `Previous text:\n${text}\n\nInstruction: ${prompt}`;
 
     const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: GROQ_MODEL,
       messages: [
         { role: "system", content: systemMessage },
         { role: "user", content: userMessage },

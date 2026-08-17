@@ -4,6 +4,8 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+const GROQ_MODEL = process.env.GROQ_MODEL || "groq/compound-mini";
+
 async function generateConversation({ title, content, summary }) {
   const plainText = (content || "")
     .replace(/<[^>]*>/g, " ")
@@ -36,7 +38,7 @@ Return ONLY a JSON array of objects:
 
   try {
     const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: GROQ_MODEL,
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
       response_format: { type: "json_object" },
