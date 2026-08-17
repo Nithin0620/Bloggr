@@ -7,9 +7,13 @@ COPY frontend/package*.json ./
 RUN npm ci
 
 COPY frontend .
+COPY frontend/.env .env
 
 ARG REACT_APP_MODE
 ENV REACT_APP_MODE=${REACT_APP_MODE}
+
+ARG REACT_APP_GA_MEASUREMENT_ID
+ENV REACT_APP_GA_MEASUREMENT_ID=${REACT_APP_GA_MEASUREMENT_ID}
 
 RUN npm run build
 

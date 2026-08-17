@@ -1,20 +1,35 @@
 import React, { useEffect } from 'react'
 import Footbar from './components/Footbar'
 import Navbar from './components/Navbar'
-import { Outlet } from "react-router-dom"
+import { Outlet, useLocation, useNavigate } from "react-router-dom"
 import { useAuthStore } from './store/AuthStore'
-import { useNavigate } from 'react-router-dom'
 import LogoutModal from "./components/LogoutModal"
 import { applyMode, applyTheme, startSystemThemeListener } from './lib/SetColours'
 import ShareModal from './components/ShareModal'
 import { useIntractionStore } from './store/IntractionStore'
 import { useBookmarkStore } from './store/BookmarkStore'
+import { initGA, trackPageView, setGAUser } from './lib/analytics'
 
 const App = () => {
   const navigate = useNavigate();
-  const { setnavigate, checkAuth } = useAuthStore();
+  const location = useLocation();
+  const { authUser, setnavigate, checkAuth } = useAuthStore();
   const { getAllPostLikedByCurrentUser } = useIntractionStore();
   const { fetchBookmarkedIds } = useBookmarkStore();
+
+  useEffect(() => {
+    initGA();
+  }, []);
+
+  useEffect(() => {
+    trackPageView(location.pathname + location.search);
+  }, [location]);
+
+  useEffect(() => {
+    if (authUser?._id) {
+      setGAUser(authUser._id);
+    }
+  }, [authUser]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
