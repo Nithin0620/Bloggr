@@ -12,6 +12,7 @@ import { FaPlus } from "react-icons/fa6";
 import AddCategoryModal from "../components/AddCategoryModal ";
 import { Sparkles, Loader } from "lucide-react";
 import toast from "react-hot-toast";
+import { SEED_CATEGORIES, SEED_POSTS } from "../lib/seedData";
 
 const Home = () => {
   // eslint-disable-next-line no-unused-vars
@@ -21,9 +22,15 @@ const Home = () => {
   const {getAllPostLikedByCurrentUser} = useIntractionStore();
   // eslint-disable-next-line no-unused-vars
   const { fetchCategories, posts, fetchPosts, fetchPostsByCategories, fetchMorePosts, hasMore, fetchPostLoading, aiSearchPosts, semanticVectorSearch } = usePostStore();
-  const [categories, setCategories] = useState([]);
-  const [Post, setPost] = useState([]);
-  const [PostCopy, setPostCopy] = useState([]);
+  const [categories, setCategories] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("bloggr_cached_categories")) || SEED_CATEGORIES; } catch { return SEED_CATEGORIES; }
+  });
+  const [Post, setPost] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("bloggr_cached_posts")) || SEED_POSTS; } catch { return SEED_POSTS; }
+  });
+  const [PostCopy, setPostCopy] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("bloggr_cached_posts")) || SEED_POSTS; } catch { return SEED_POSTS; }
+  });
   const [loading, setLoading] = useState(false);
   const [categoryCreated, setCategoryCreated] = useState(false);
   const [categorySelected, setCategorySelected] = useState("");
@@ -35,16 +42,18 @@ const Home = () => {
   const searchDebounceRef = useRef(null);
 
   const fetchCategoryAndPostfromStore = async()=>{
-      setLoading(true);
+      if (Post.length === 0) setLoading(true);
       const array = await fetchCategories();
-      let PostArray = [];
-
-      PostArray = await fetchPosts();
+      let PostArray = await fetchPosts();
 
       setCategorySelected("All Categories");
-      setPost(PostArray);
-      setPostCopy(PostArray);
-      setCategories(array);
+      if (PostArray && PostArray.length > 0) {
+        setPost(PostArray);
+        setPostCopy(PostArray);
+      }
+      if (array && array.length > 0) {
+        setCategories(array);
+      }
       setLoading(false);
     }
 

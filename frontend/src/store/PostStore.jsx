@@ -1,9 +1,27 @@
 import { create } from "zustand";
 import axios from "axios";
-import { toast } from "react-hot-toast"
+import { toast } from "react-hot-toast";
+import { SEED_CATEGORIES, SEED_POSTS } from "../lib/seedData";
 
 const BASE_URL = process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api/v1" : "https://bloggr-y7gx.onrender.com/api/v1";
 
+
+const getCachedData = (key, fallback) => {
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : fallback;
+  } catch (e) {
+    return fallback;
+  }
+};
+
+const setCachedData = (key, data) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (e) {
+    console.warn("Storage quota exceeded or error caching data:", e);
+  }
+};
 
 export const usePostStore = create((set, get) => ({
   createPostLoading: false,
@@ -11,9 +29,9 @@ export const usePostStore = create((set, get) => ({
 
   readMorePostData: null,
   isReadMoreLoading: false,
-  categoriesList: [],
+  categoriesList: getCachedData("bloggr_cached_categories", SEED_CATEGORIES),
 
-  posts: [],
+  posts: getCachedData("bloggr_cached_posts", SEED_POSTS),
   nextCursor: null,
   hasMore: true,
   fetchPostLoading: false,
@@ -23,19 +41,26 @@ export const usePostStore = create((set, get) => ({
   },
 
   fetchCategories: async () => {
-    set({ createPostLoading: true });
+    const cached = getCachedData("bloggr_cached_categories", null);
+    if (cached && Array.isArray(cached) && cached.length > 0) {
+      set({ categoriesList: cached });
+    } else {
+      set({ createPostLoading: true });
+    }
+
     try {
       const res = await axios.get(`${BASE_URL}/category/getallcategory`);
       if (res.data.success) {
         const categoryArray = res.data.data.map(category => category.name);
         set({ categoriesList: categoryArray });
+        setCachedData("bloggr_cached_categories", categoryArray);
         return categoryArray;
       }
-      return [];
+      return cached || [];
     }
     catch (e) {
       console.error("fetchCategories error:", e.response?.data || e.message);
-      return [];
+      return cached || [];
     }
     finally {
       set({ createPostLoading: false });
@@ -79,20 +104,33 @@ export const usePostStore = create((set, get) => ({
   },
 
   fetchPosts: async () => {
-    set({ fetchPostLoading: true });
+    const cached = getCachedData("bloggr_cached_posts", null);
+    if (cached && Array.isArray(cached) && cached.length > 0) {
+      set({ posts: cached });
+    } else {
+      set({ fetchPostLoading: true });
+    }
+
     try {
       const response = await axios.get(`${BASE_URL}/post/getallposts`);
-      set({
-        posts: response.data.data,
-        nextCursor: response.data.nextCursor,
-        hasMore: response.data.hasMore,
-      })
-      return response.data.data;
+      if (response.data?.success || response.data?.data) {
+        const freshPosts = response.data.data || [];
+        set({
+          posts: freshPosts,
+          nextCursor: response.data.nextCursor,
+          hasMore: response.data.hasMore,
+        });
+        setCachedData("bloggr_cached_posts", freshPosts);
+        return freshPosts;
+      }
+      return cached || [];
     }
     catch (e) {
       console.error("fetchPosts error:", e.response?.data || e.message);
-      toast.error(e.response?.data?.message || "Failed to load posts")
-      return [];
+      if (!cached || cached.length === 0) {
+        toast.error(e.response?.data?.message || "Failed to load posts");
+      }
+      return cached || [];
     }
     finally {
       set({ fetchPostLoading: false });
@@ -136,16 +174,32 @@ export const usePostStore = create((set, get) => ({
   },
 
   getPostByID: async (postId) => {
-    set({ isReadMoreLoading: true });
+    // If the post is already in loaded posts or local storage, display immediately
+    const existing = get().posts?.find((p) => p._id === postId || p.id === postId);
+    if (existing) {
+      set({ readMorePostData: existing, isReadMoreLoading: false });
+    } else {
+      const cached = getCachedData(`bloggr_post_${postId}`, null);
+      if (cached) {
+        set({ readMorePostData: cached, isReadMoreLoading: false });
+      } else {
+        set({ isReadMoreLoading: true });
+      }
+    }
+
     try {
       const response = await axios.get(`${BASE_URL}/post/getpostbyid/${postId}`);
-      set({ readMorePostData: response.data.data })
-      return response.data.data;
+      if (response.data?.success) {
+        set({ readMorePostData: response.data.data });
+        setCachedData(`bloggr_post_${postId}`, response.data.data);
+        return response.data.data;
+      }
     }
     catch (e) {
       console.error("getPostByID error:", e.response?.data || e.message);
-      toast.error(e.response?.data?.message || "Failed to load post");
-      return [];
+      if (!get().readMorePostData) {
+        toast.error(e.response?.data?.message || "Failed to load post");
+      }
     }
     finally {
       set({ isReadMoreLoading: false });

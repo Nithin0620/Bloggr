@@ -33,6 +33,7 @@ exports.getAllCategory = async(req,res)=>{
       if(!categories) return res.status(404).json({success:false,message:"categories not found"});
 
 
+      res.setHeader("Cache-Control", "public, max-age=300, s-maxage=900, stale-while-revalidate=86400");
       return res.status(200).json({success:true,message:"Categories fetched Successfully",data:categories});
    }
        catch(e){

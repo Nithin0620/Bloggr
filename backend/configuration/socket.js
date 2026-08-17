@@ -8,13 +8,26 @@ const app = express();
 const server =http.createServer(app);
 
 
+const defaultOrigins = [
+   "http://localhost:3000",
+   "https://bloggr-y7gx.onrender.com",
+   "https://bloggrplatform.pages.dev",
+   "https://bloggr.devnithin.xyz",
+   "http://bloggr.devnithin.xyz",
+];
+
+const envOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
+  : [];
+if (process.env.FRONTEND_URL) {
+  envOrigins.push(process.env.FRONTEND_URL.trim());
+}
+
+const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
+
 const io = new Server(server,{
    cors : {
-      origin: [
-         "http://localhost:3000",
-         "https://bloggr-y7gx.onrender.com",
-         "https://bloggrplatform.pages.dev",
-      ],
+      origin: allowedOrigins,
       credentials:true,
    }
 });

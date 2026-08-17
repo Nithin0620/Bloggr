@@ -329,6 +329,7 @@ exports.getAllPosts = async (req, res) => {
     const posts = hasMore ? response.slice(0, limit) : response;
     const nextCursor = hasMore ? posts[posts.length - 1].createdAt : null;
 
+    res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300, stale-while-revalidate=86400");
     return res.status(200).json({
       success: true,
       message: "All posts fetched successfully",

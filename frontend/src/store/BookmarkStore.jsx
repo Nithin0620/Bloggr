@@ -7,9 +7,26 @@ const BASE_URL =
     ? "http://localhost:4000/api/v1"
     : "https://bloggr-y7gx.onrender.com/api/v1";
 
+const getCachedData = (key, fallback) => {
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : fallback;
+  } catch (e) {
+    return fallback;
+  }
+};
+
+const setCachedData = (key, data) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (e) {
+    console.warn("Storage quota exceeded or error caching data:", e);
+  }
+};
+
 export const useBookmarkStore = create((set, get) => ({
-  bookmarkedPostIds: [],
-  bookmarks: [],
+  bookmarkedPostIds: getCachedData("bloggr_bookmarked_ids", []),
+  bookmarks: getCachedData("bloggr_bookmarks", []),
   loading: false,
 
   toggleBookmark: async (postId) => {
@@ -23,6 +40,7 @@ export const useBookmarkStore = create((set, get) => ({
           const ids = bookmarked
             ? [...state.bookmarkedPostIds, postId]
             : state.bookmarkedPostIds.filter((id) => id !== postId);
+          setCachedData("bloggr_bookmarked_ids", ids);
           return { bookmarkedPostIds: ids };
         });
         toast.success(bookmarked ? "Post bookmarked" : "Bookmark removed");
@@ -40,6 +58,7 @@ export const useBookmarkStore = create((set, get) => ({
       });
       if (res.data.success) {
         set({ bookmarkedPostIds: res.data.data });
+        setCachedData("bloggr_bookmarked_ids", res.data.data);
       }
     } catch (e) {
       console.error("fetchBookmarkedIds error:", e.response?.data || e.message);
@@ -47,20 +66,29 @@ export const useBookmarkStore = create((set, get) => ({
   },
 
   fetchBookmarks: async () => {
-    set({ loading: true });
+    const cached = getCachedData("bloggr_bookmarks", null);
+    if (cached && Array.isArray(cached) && cached.length > 0) {
+      set({ bookmarks: cached });
+    } else {
+      set({ loading: true });
+    }
+
     try {
       const res = await axios.get(`${BASE_URL}/bookmarks/getall`, {
         withCredentials: true,
       });
       if (res.data.success) {
         set({ bookmarks: res.data.data });
+        setCachedData("bloggr_bookmarks", res.data.data);
         return res.data.data;
       }
-      return [];
+      return cached || [];
     } catch (e) {
       console.error("fetchBookmarks error:", e.response?.data || e.message);
-      toast.error(e.response?.data?.message || "Failed to fetch bookmarks");
-      return [];
+      if (!cached || cached.length === 0) {
+        toast.error(e.response?.data?.message || "Failed to fetch bookmarks");
+      }
+      return cached || [];
     } finally {
       set({ loading: false });
     }

@@ -4,11 +4,11 @@ import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./Router";
 import { Toaster } from "react-hot-toast";
+import { setupAxiosInterceptors } from "./lib/setupAxios";
+
+setupAxiosInterceptors();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-
-// console.log("in the index.js")
-// console.log("Is root null?", document.getElementById("root") === null); 
 
 root.render(
   <React.StrictMode>
