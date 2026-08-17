@@ -339,7 +339,7 @@ export const usePostStore = create((set, get) => ({
       return null;
     } catch (e) {
       console.error("aiGenerateMeta error:", e.response?.data || e.message);
-      toast.error(e.response?.data?.message || "Failed to generate title and summary");
+      toast.error("Our AI service is currently facing downtime. Please give us some time to rectify it.");
       return null;
     }
   },
@@ -357,7 +357,7 @@ export const usePostStore = create((set, get) => ({
       return [];
     } catch (e) {
       console.error("aiSuggestCategories error:", e.response?.data || e.message);
-      toast.error(e.response?.data?.message || "Failed to suggest categories");
+      toast.error("Our AI service is currently facing downtime. Please give us some time to rectify it.");
       return [];
     }
   },
@@ -374,8 +374,7 @@ export const usePostStore = create((set, get) => ({
       }
       return null;
     } catch (e) {
-      console.error("aiSummarize error:", e.response?.data || e.message);
-      toast.error(e.response?.data?.message || "Failed to generate summary");
+      console.warn("aiSummarize background warning:", e.response?.data || e.message);
       return null;
     }
   },
@@ -393,6 +392,7 @@ export const usePostStore = create((set, get) => ({
       return [];
     } catch (e) {
       console.error("aiSuggestComment error:", e.response?.data || e.message);
+      toast.error("Our AI service is currently facing downtime. Please give us some time to rectify it.");
       return [];
     }
   },
@@ -483,7 +483,7 @@ export const usePostStore = create((set, get) => ({
       return null;
     } catch (e) {
       console.error("aiGenerateBio error:", e.response?.data || e.message);
-      toast.error(e.response?.data?.message || "Failed to generate bio");
+      toast.error("Our AI service is currently facing downtime. Please give us some time to rectify it.");
       return null;
     }
   },

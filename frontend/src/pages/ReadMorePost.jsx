@@ -123,7 +123,9 @@ const ReadMorePost = () => {
       const fetchReadMorePost = async()=>{
          setLoading(true);
          const fetchedPost = await getPostByID(postId);
-         setPost(fetchedPost)
+         if (fetchedPost) {
+            setPost(fetchedPost);
+         }
          setLoading(false);
       }
       fetchReadMorePost();
@@ -162,18 +164,6 @@ const ReadMorePost = () => {
       }
    }
 
-   // if(loading || !post) return (
-   //   <div className="relative min-h-max">
-   //       {loading && (
-   //       <div className="absolute inset-0 flex justify-center items-cente z-10">
-   //          <div >
-   //             <Loader className="animate-spin" />
-   //          </div>
-   //       </div>
-   //       )}
-   //   </div>
-   // )
-
    return (
       <div className="relative px-4 md:px-12 pb-20 lg:px-24 transition-colors duration-300 accent-bg-mode accent-text-mode">
          <ReadingProgress />
@@ -199,17 +189,20 @@ const ReadMorePost = () => {
          <div className="flex flex-col lg:flex-row lg:gap-8">
             {/* LEFT: Post Content */}
             <div className="w-full lg:w-[70%] space-y-6">
-               <h1 className="text-3xl font-bold accent-text">{post.title}</h1>
+               <h1 className="text-3xl font-bold accent-text">{post?.title}</h1>
 
                <div className="flex flex-wrap gap-2 items-center transition-colors duration-300 accent-bg-mode accent-box-shadow accent-text-mode">
-                  {post.categories.map((category, index) => (
-                     <span
-                        key={index}
-                        className="text-sm px-2 py-1 rounded-full ring-2 mr-3 accent-shadow accent-box-shadow"
-                     >
-                        {category.name}
-                     </span>
-                  ))}
+                  {(Array.isArray(post?.categories) ? post.categories : []).map((category, index) => {
+                     const catName = typeof category === "string" ? category : category?.name || "General";
+                     return (
+                        <span
+                           key={index}
+                           className="text-sm px-2 py-1 rounded-full ring-2 mr-3 accent-shadow accent-box-shadow"
+                        >
+                           {catName}
+                        </span>
+                     );
+                  })}
                   {post.grammar?.score !== undefined && (
                      <span
                         className={`text-xs px-2.5 py-1 rounded-full font-semibold border ${

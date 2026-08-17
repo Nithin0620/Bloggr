@@ -1,4 +1,4 @@
-const { crypto, randomUUID } = require("crypto");
+const { randomUUID } = require("crypto");
 const { qdrantClient, COLLECTION_NAME } = require("../configuration/qdrant");
 
 /**
@@ -25,8 +25,8 @@ async function upsertArticleChunks(articleId, chunksWithEmbeddings, metadata = {
         title: metadata.title || "",
         authorId: metadata.authorId ? metadata.authorId.toString() : "",
         authorName: metadata.authorName || "",
-        tags: metadata.tags || [],
-        categories: metadata.categories || [],
+        tags: Array.isArray(metadata.tags) ? metadata.tags : [],
+        categories: Array.isArray(metadata.categories) ? metadata.categories : [],
         createdAt: metadata.createdAt || new Date().toISOString(),
       },
     }));
@@ -78,9 +78,9 @@ async function searchSimilarChunks(queryVector, limit = 20, filter = null) {
       limit,
       filter: filter || undefined,
     });
-    return searchResult;
+    return searchResult || [];
   } catch (error) {
-    console.error("Vector search failed:", error.message);
+    console.error("Vector search failed in Qdrant:", error.message);
     return [];
   }
 }

@@ -32,7 +32,7 @@ async function initQdrantCollection() {
       }
     }
   } catch (error) {
-    console.warn("Qdrant connection warning (Make sure Qdrant container is running):", error.message);
+    console.warn("Qdrant connection warning (Make sure Qdrant container/cloud is running):", error.message);
   }
 }
 

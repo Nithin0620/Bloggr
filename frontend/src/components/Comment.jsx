@@ -17,7 +17,7 @@ const Comment = ({ post:id, postTitle, postContent }) => {
   const inputRef = useRef(null);
   const { getComments,sendComment ,deleteComment, aiSuggestComment} = usePostStore();
   const [loading, setLoading] = useState(false);
-  const [comments, setComments] = useState(null);
+  const [comments, setComments] = useState([]);
   const [suggestions, setSuggestions] = useState(null);
   const [suggestLoading, setSuggestLoading] = useState(false);
 
@@ -29,7 +29,12 @@ const Comment = ({ post:id, postTitle, postContent }) => {
       setLoading(true);
       try {
         const fetchedComments = await getComments(id);
-        setComments(fetchedComments.data || []);
+        const list = Array.isArray(fetchedComments)
+          ? fetchedComments
+          : Array.isArray(fetchedComments?.data)
+          ? fetchedComments.data
+          : [];
+        setComments(list);
       } catch (error) {
         console.error('Error fetching comments:', error);
         setComments([]);
@@ -39,7 +44,7 @@ const Comment = ({ post:id, postTitle, postContent }) => {
     };
     setNewComment(false);
     fetchComments();
-  }, [id, getComments,newComment]); 
+  }, [id, getComments, newComment]); 
 
 
   const handleSendComment = async()=>{

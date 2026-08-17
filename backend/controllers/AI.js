@@ -233,9 +233,12 @@ exports.aiSummarize = async (req, res) => {
     }
 
     if (!process.env.GROQ_API_KEY) {
-      return res.status(503).json({
-        success: false,
-        message: "AI assistant not configured. Add GROQ_API_KEY to backend/.env",
+      // Extractive fallback when AI key is not set
+      const sentences = plainText.match(/[^.!?]+[.!?]+/g) || [plainText.slice(0, 180) + "..."];
+      const fallbackSummary = sentences.slice(0, 3).join(" ").trim();
+      return res.status(200).json({
+        success: true,
+        data: { summary: fallbackSummary, isFallback: true },
       });
     }
 
@@ -272,7 +275,9 @@ Rules:
 
     let result = completion.choices[0]?.message?.content?.trim();
     if (!result) {
-      return res.status(500).json({ success: false, message: "AI returned empty response" });
+      const sentences = plainText.match(/[^.!?]+[.!?]+/g) || [plainText.slice(0, 180) + "..."];
+      const fallbackSummary = sentences.slice(0, 3).join(" ").trim();
+      return res.status(200).json({ success: true, data: { summary: fallbackSummary, isFallback: true } });
     }
 
     let parsed;
@@ -283,12 +288,14 @@ Rules:
       if (match) {
         parsed = { summary: match[1] };
       } else {
-        return res.status(500).json({ success: false, message: "AI returned invalid response" });
+        const sentences = plainText.match(/[^.!?]+[.!?]+/g) || [plainText.slice(0, 180) + "..."];
+        parsed = { summary: sentences.slice(0, 3).join(" ").trim() };
       }
     }
 
     if (!parsed.summary) {
-      return res.status(500).json({ success: false, message: "AI response missing summary" });
+      const sentences = plainText.match(/[^.!?]+[.!?]+/g) || [plainText.slice(0, 180) + "..."];
+      parsed = { summary: sentences.slice(0, 3).join(" ").trim() };
     }
 
     if (postId) {
@@ -308,8 +315,10 @@ Rules:
 
     return res.status(200).json({ success: true, data: { summary: parsed.summary } });
   } catch (err) {
-    logger.error("AI summarization error", { error: err.message, stack: err.stack });
-    return res.status(500).json({ success: false, message: "AI assistant failed. Please try again." });
+    logger.warn("AI summarization using fallback due to error:", { error: err.message });
+    const sentences = stripHtml(req.body?.content || "").match(/[^.!?]+[.!?]+/g) || [(req.body?.content || "").slice(0, 180) + "..."];
+    const fallbackSummary = sentences.slice(0, 3).join(" ").trim() || "Overview not available.";
+    return res.status(200).json({ success: true, data: { summary: fallbackSummary, isFallback: true } });
   }
 };
 

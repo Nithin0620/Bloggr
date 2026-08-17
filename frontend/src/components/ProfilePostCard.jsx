@@ -56,24 +56,27 @@ const ProfilePostCard = ({
 
         <div className="flex gap-1 flex-col justify-between p-4 flex-1">
           <div className="flex flex-wrap gap-1 text-[0.7rem] font-medium">
-            {post.categories.map((category, index) => (
-              <span
-                key={index}
-                className="uppercase tracking-wide border accent-border rounded-lg px-1 py-[0.15rem]"
-              >
-                {category.name}
-              </span>
-            ))}
+            {(Array.isArray(post.categories) ? post.categories : []).map((category, index) => {
+              const catName = typeof category === "string" ? category : category?.name || "General";
+              return (
+                <span
+                  key={index}
+                  className="uppercase tracking-wide border accent-border rounded-lg px-1 py-[0.15rem]"
+                >
+                  {catName}
+                </span>
+              );
+            })}
           </div>
 
           <h2 className="text-base sm:text-lg font-semibold mt-1 accent-text">
-            {post.title.length <= 50
+            {(post.title || "").length <= 50
               ? post.title
-              : post.title.substring(0, 50) + "..."}
+              : (post.title || "").substring(0, 50) + "..."}
           </h2>
 
           <div className="text-sm mt-1 line-clamp-2">
-            {truncateContent(post.content, 100)}
+            {truncateContent(post.content || "", 100)}
           </div>
 
           <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -89,8 +92,8 @@ const ProfilePostCard = ({
                 onClick={handleLike}
                 className="flex items-center gap-1 hover:text-red-500 cursor-pointer transition-all duration-300"
               >
-                {post.likes.length}
-                {postsLikedByUser.includes(post._id) ? (
+                {Array.isArray(post.likes) ? post.likes.length : (typeof post.likes === "number" ? post.likes : 0)}
+                {Array.isArray(postsLikedByUser) && post._id && postsLikedByUser.includes(post._id) ? (
                   <FaHeart className="text-red-500" />
                 ) : (
                   <FaRegHeart />
@@ -98,26 +101,26 @@ const ProfilePostCard = ({
               </span>
 
               <span className="flex items-center gap-1 hover:text-green-500 transition-all duration-300">
-                {post.comments.length}
+                {Array.isArray(post.comments) ? post.comments.length : (typeof post.comments === "number" ? post.comments : 0)}
                 <FaRegCommentDots />
               </span>
 
               <span className="flex items-center gap-1 hover:text-blue-500 transition-all duration-300">
-                {post.views}
+                {post.views || 0}
                 <IoIosStats />
               </span>
 
               <button
                 onClick={() => {
                   if (!token) { return; }
-                  toggleBookmark(post._id);
+                  if (post?._id) toggleBookmark(post._id);
                 }}
                 className="flex items-center hover:text-yellow-500 transition duration-200"
               >
-                {bookmarkedPostIds.includes(post._id) ? <FaBookmark className="text-yellow-500" /> : <FaRegBookmark />}
+                {Array.isArray(bookmarkedPostIds) && post?._id && bookmarkedPostIds.includes(post._id) ? <FaBookmark className="text-yellow-500" /> : <FaRegBookmark />}
               </button>
 
-              {post.author._id === authUser._id && (
+              {post.author?._id === authUser?._id && (
                 <div className="flex items-center gap-3 text-[1rem] ml-2">
                   <button
                     onClick={handleUpdatePost}

@@ -142,7 +142,7 @@ const AIAssistant = ({ editor, onLoadingChange }) => {
           }
       } catch (err) {
          console.error("AI assistant error:", err);
-         toast.error(err.message || "AI assistant failed. Check your Groq API key in .env");
+         toast.error("Our AI service is currently facing downtime. Please give us some time to rectify it.");
       } finally {
          setIsGenerating(false);
          onLoadingChange?.(false);

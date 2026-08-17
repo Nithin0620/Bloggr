@@ -20,12 +20,14 @@ import Podcast from "./pages/Podcast"
 import ProtectRoute from "./components/ProtectRoute"
 import GuestOnlyRoute from "./components/GuestOnlyRoute"
 import NotFound from "./pages/NotFound"
+import { RouteErrorBoundary } from "./components/ErrorBoundary"
 
 
 export const router = createBrowserRouter([
    {
       path: "/",
-      element:<App/>,
+      element: <App/>,
+      errorElement: <RouteErrorBoundary />,
       children:[
          {
             path:"",

@@ -32,7 +32,7 @@ const Podcast = () => {
       }
     } catch (error) {
       console.error("Podcast error:", error);
-      toast.error("Failed to generate podcast");
+      toast.error("Our AI service is currently facing downtime. Please give us some time to rectify it.");
     } finally {
       setLoading(false);
     }

@@ -38,11 +38,11 @@ const ReaderAssistant = ({ articleId, articleTitle }) => {
           { role: "assistant", content: response.data.answer },
         ]);
       } else {
-        toast.error("Could not fetch answer");
+        toast.error("Our AI service is currently facing downtime. Please give us some time to rectify it.");
       }
     } catch (error) {
       console.error("Reader assistant API error:", error);
-      toast.error("Error communicating with AI assistant");
+      toast.error("Our AI service is currently facing downtime. Please give us some time to rectify it.");
     } finally {
       setLoading(false);
     }
@@ -68,7 +68,7 @@ const ReaderAssistant = ({ articleId, articleTitle }) => {
       }
     } catch (error) {
       console.error("Preset summary error:", error);
-      toast.error("Failed to generate preset summary");
+      toast.error("Our AI service is currently facing downtime. Please give us some time to rectify it.");
     } finally {
       setLoading(false);
     }

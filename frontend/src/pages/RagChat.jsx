@@ -48,11 +48,11 @@ const RagChat = () => {
           },
         ]);
       } else {
-        toast.error("Failed to fetch response");
+        toast.error("Our AI service is currently facing downtime. Please give us some time to rectify it.");
       }
     } catch (error) {
       console.error("RAG chat error:", error);
-      toast.error("Error communicating with RAG chat assistant");
+      toast.error("Our AI service is currently facing downtime. Please give us some time to rectify it.");
     } finally {
       setLoading(false);
     }
