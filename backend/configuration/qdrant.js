@@ -31,6 +31,14 @@ async function initQdrantCollection() {
         console.log(`Created Qdrant collection: ${COLLECTION_NAME}`);
       }
     }
+
+    // Ensure payload indices exist for filtering
+    try {
+      await qdrantClient.createPayloadIndex(COLLECTION_NAME, {
+        field_name: "articleId",
+        field_schema: "keyword",
+      });
+    } catch (_) {}
   } catch (error) {
     console.warn("Qdrant connection warning (Make sure Qdrant container/cloud is running):", error.message);
   }

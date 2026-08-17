@@ -6,7 +6,7 @@ import axios from "axios";
 import { Mic, Loader, Sparkles, Bot, User, ChevronUp, ChevronDown, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:4000/api/v1";
+const BASE_URL = process.env.REACT_APP_BASE_URL || (process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api/v1" : "https://bloggr-y7gx.onrender.com/api/v1");
 
 const Podcast = () => {
   const navigate = useNavigate();

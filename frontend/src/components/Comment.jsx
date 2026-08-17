@@ -25,7 +25,10 @@ const Comment = ({ post:id, postTitle, postContent }) => {
 
   useEffect(() => {
     const fetchComments = async () => {
-      if (!id) return;
+      if (!id || (typeof id === "string" && id.startsWith("seed-"))) {
+        setComments([]);
+        return;
+      }
       setLoading(true);
       try {
         const fetchedComments = await getComments(id);

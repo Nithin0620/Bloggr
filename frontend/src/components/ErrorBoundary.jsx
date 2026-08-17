@@ -1,10 +1,16 @@
 import React from "react";
 import { useRouteError, useNavigate } from "react-router-dom";
 import { RefreshCw, Home as HomeIcon } from "lucide-react";
+import { upgradeClaritySession, setClarityTag } from "../lib/clarity";
 
 export const RouteErrorBoundary = () => {
   const error = useRouteError();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    upgradeClaritySession("route_error");
+    setClarityTag("last_error", error?.message || "route_error");
+  }, [error]);
 
   console.error("Route error boundary caught error:", error);
 

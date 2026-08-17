@@ -54,9 +54,10 @@ const Separator = () => (
 );
 
 const AI_BASE_URL =
-   process.env.REACT_APP_MODE === "development"
+   process.env.REACT_APP_BASE_URL ||
+   (process.env.REACT_APP_MODE === "development"
       ? "http://localhost:4000/api/v1"
-      : "/api/v1";
+      : "https://bloggr-y7gx.onrender.com/api/v1");
 
 const AI_ACTIONS = [
    { label: "Help me write", prompt: "Continue writing from where the text left off. Match the tone and style." },

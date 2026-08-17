@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import CitationCard from "../components/CitationCard";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:4000/api/v1";
+const BASE_URL = process.env.REACT_APP_BASE_URL || (process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api/v1" : "https://bloggr-y7gx.onrender.com/api/v1");
 
 const RagChat = () => {
   // eslint-disable-next-line no-unused-vars

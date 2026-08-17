@@ -9,6 +9,7 @@ import ShareModal from './components/ShareModal'
 import { useIntractionStore } from './store/IntractionStore'
 import { useBookmarkStore } from './store/BookmarkStore'
 import { initGA, trackPageView, setGAUser } from './lib/analytics'
+import { initClarity, setClarityUser } from './lib/clarity'
 
 const App = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const App = () => {
 
   useEffect(() => {
     initGA();
+    initClarity();
   }, []);
 
   useEffect(() => {
@@ -28,6 +30,8 @@ const App = () => {
   useEffect(() => {
     if (authUser?._id) {
       setGAUser(authUser._id);
+      const fullName = authUser.firstName ? `${authUser.firstName} ${authUser.lastName || ""}`.trim() : undefined;
+      setClarityUser(authUser._id, undefined, undefined, fullName);
     }
   }, [authUser]);
 

@@ -15,15 +15,18 @@ const RelatedBlogs = ({ postId }) => {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (!postId) return
-    const fetchRelated = async () => {
-      setLoading(true)
-      const posts = await getRelatedPosts(postId)
-      setRelated(posts)
-      setLoading(false)
+    if (!postId || (typeof postId === "string" && postId.startsWith("seed-"))) {
+      setRelated([]);
+      return;
     }
-    fetchRelated()
-  }, [postId, getRelatedPosts])
+    const fetchRelated = async () => {
+      setLoading(true);
+      const posts = await getRelatedPosts(postId);
+      setRelated(Array.isArray(posts) ? posts : []);
+      setLoading(false);
+    };
+    fetchRelated();
+  }, [postId, getRelatedPosts]);
 
   const handleReadMore = (id) => {
     setCurrentPage("ReadMore")

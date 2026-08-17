@@ -134,6 +134,7 @@ const ReadMorePost = () => {
 
    useEffect(() => {
       if (!post || !post._id || !post.content) return;
+      if (typeof post._id === "string" && post._id.startsWith("seed-")) return;
       if (post.summary) {
          setPostSummary(post.summary);
          return;

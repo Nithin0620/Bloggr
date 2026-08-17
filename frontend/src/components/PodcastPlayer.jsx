@@ -6,7 +6,7 @@ import axios from "axios";
 import { Mic, Play, Pause, Loader, User, Bot, Volume2, Sparkles, ChevronUp, ChevronDown } from "lucide-react";
 import toast from "react-hot-toast";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:4000/api/v1";
+const BASE_URL = process.env.REACT_APP_BASE_URL || (process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api/v1" : "https://bloggr-y7gx.onrender.com/api/v1");
 
 const PodcastPlayer = ({ articleId, articleTitle }) => {
   const [podcast, setPodcast] = useState(null);

@@ -7,7 +7,7 @@ import StatCard from "../components/StatCard";
 import InsightCard from "../components/InsightCard";
 import EngagementChart from "../components/EngagementChart";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:4000/api/v1";
+const BASE_URL = process.env.REACT_APP_BASE_URL || (process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api/v1" : "https://bloggr-y7gx.onrender.com/api/v1");
 
 const Analytics = () => {
   const navigate = useNavigate();

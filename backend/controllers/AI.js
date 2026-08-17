@@ -226,12 +226,16 @@ exports.aiSummarize = async (req, res) => {
     const { content, postId } = req.body;
 
     if (!content) {
-      return res.status(400).json({ success: false, message: "Post content is required" });
+      return res.status(200).json({ success: true, data: { summary: "" } });
     }
 
     const plainText = stripHtml(content);
-    if (!plainText || plainText.length < 50) {
-      return res.status(400).json({ success: false, message: "Content too short to summarize" });
+    if (!plainText) {
+      return res.status(200).json({ success: true, data: { summary: "" } });
+    }
+
+    if (plainText.length < 50) {
+      return res.status(200).json({ success: true, data: { summary: plainText } });
     }
 
     if (!process.env.GROQ_API_KEY) {
