@@ -5,7 +5,7 @@ import axios from 'axios';
 axios.defaults.withCredentials = true;
 
 
-const BASE_URL = process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api/v1" : "https://bloggr-y7gx.onrender.com/api/v1";
+const BASE_URL = process.env.REACT_APP_BASE_URL || (process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api/v1" : "https://bloggr-y7gx.onrender.com/api/v1");
 
 export const useAuthStore = create((set,get)=>({
 
@@ -157,7 +157,7 @@ export const useAuthStore = create((set,get)=>({
       const {authUser} = get();
       if(!authUser || get().socket?.connected) return;
 
-      const socket = io(`${process.env.REACT_APP_MODE === "development" ? "http://localhost:4000" : "https://bloggr-y7gx.onrender.com"}`,{
+      const socket = io(`${process.env.REACT_APP_BASE_URL || (process.env.REACT_APP_MODE === "development" ? "http://localhost:4000" : "https://bloggr-y7gx.onrender.com")}`,{
          query:{
             userId:authUser._id,
          },

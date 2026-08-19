@@ -1,5 +1,6 @@
 services:
   backend:
+    image: ghcr.io/nithin0620/bloggr-backend:latest
     build:
       context: .
       dockerfile: backend/Dockerfile
@@ -10,11 +11,15 @@ services:
     env_file:
       - ./backend/.env
     environment:
-      - ENVIRONMENT=development
+      - ENVIRONMENT=production
+    depends_on:
+      - redis
+      - qdrant
     networks:
       - bloggr-net
 
   frontend:
+    image: ghcr.io/nithin0620/bloggr-frontend:latest
     build:
       context: .
       dockerfile: frontend/Dockerfile
@@ -26,6 +31,15 @@ services:
       - "3000:80"
     depends_on:
       - backend
+    networks:
+      - bloggr-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: bloggr-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
     networks:
       - bloggr-net
 

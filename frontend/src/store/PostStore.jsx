@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { SEED_CATEGORIES, SEED_POSTS } from "../lib/seedData";
 
-const BASE_URL = process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api/v1" : "https://bloggr-y7gx.onrender.com/api/v1";
+const BASE_URL = process.env.REACT_APP_BASE_URL || (process.env.REACT_APP_MODE === "development" ? "http://localhost:4000/api/v1" : "https://bloggr-y7gx.onrender.com/api/v1");
 
 
 const getCachedData = (key, fallback) => {

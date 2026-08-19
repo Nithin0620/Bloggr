@@ -44,6 +44,7 @@ const defaultOrigins = [
   "https://bloggrplatform.pages.dev",
   "https://bloggr.devnithin.xyz",
   "http://bloggr.devnithin.xyz",
+  "http://YOUR_EC2_PUBLIC_IP:3000",
 ];
 
 const envOrigins = process.env.ALLOWED_ORIGINS

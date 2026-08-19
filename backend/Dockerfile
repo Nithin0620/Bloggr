@@ -21,7 +21,6 @@ WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY backend .
-COPY backend/.env .env
 
 RUN chown -R appuser:appgroup /app
 

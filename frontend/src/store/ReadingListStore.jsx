@@ -3,9 +3,10 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 
 const BASE_URL =
-  process.env.REACT_APP_MODE === "development"
+  process.env.REACT_APP_BASE_URL ||
+  (process.env.REACT_APP_MODE === "development"
     ? "http://localhost:4000/api/v1"
-    : "https://bloggr-y7gx.onrender.com/api/v1";
+    : "https://bloggr-y7gx.onrender.com/api/v1");
 
 export const useReadingListStore = create((set, get) => ({
   lists: [],

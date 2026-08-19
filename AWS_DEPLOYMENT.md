@@ -1,7 +1,7 @@
-# Bloggr — AWS Deployment Guide (EC2, Docker, ECR, Jenkins)
+# Bloggr — AWS Deployment Guide (EC2, Docker, GitHub Actions, GHCR)
 
 Step-by-step guide to deploy Bloggr on AWS with a small budget (~$10 credit).
-Everything runs on **ONE** EC2 instance. No EKS (it costs ~$72/month — skip it on this budget).
+Everything runs on **ONE** EC2 instance. The build happens in GitHub Actions (no heavy compilation or git clone on the EC2 server).
 
 ---
 
@@ -9,17 +9,23 @@ Everything runs on **ONE** EC2 instance. No EKS (it costs ~$72/month — skip it
 
 ```
                     GitHub (github.com/Nithin0620/Bloggr)
-                       │  git push
+                       │  git push to main
                        ▼
-                    Jenkins  ────  SonarQube (code quality)
+             GitHub Actions (CI/CD)
+              ├── 1. Build Backend & Frontend Docker images
+              ├── 2. Push images to GitHub Container Registry (ghcr.io)
+              └── 3. SSH into EC2 Server
                        │
-          Docker build → ECR  →  EC2 (docker-compose)
-                                      │
-                                      ├── bloggr-backend  (Express + Socket.IO, :4000)
-                                      ├── bloggr-frontend (React build via nginx, :3000)
-                                      ├── redis           (queues, caching)
-                                      └── qdrant          (vector DB, RAG)
-   Mongo = MongoDB Atlas Free Tier (external, free forever)
+                       ▼
+                  EC2 Instance (Docker + Docker Compose)
+                       ├── Pulls images from ghcr.io (No git clone needed on EC2)
+                       │
+                       ├── bloggr-backend  (Express + Socket.IO, :4000)
+                       ├── bloggr-frontend (React build via nginx, :3000)
+                       ├── redis           (queues, caching, :6379)
+                       └── qdrant          (vector DB, RAG, :6333)
+
+    Mongo = MongoDB Atlas Free Tier (external, free forever)
 ```
 
 ---
@@ -69,184 +75,254 @@ origin: [
 
 ---
 
-## Phase 1 — Create the EC2 instance
+## Phase 1 — Create and Configure the EC2 Instance
+
+You do **not** need to git clone the source code on EC2. EC2 only hosts the `.env` file and `docker-compose.yml`, pulling pre-built Docker images directly from GitHub Container Registry (`ghcr.io`).
+
+### 1. Launch EC2
 
 1. AWS Console → **EC2 → Launch Instance**.
-2. Name: `bloggr-prod`. AMI: **Ubuntu 22.04 LTS**. Instance type: **t2.micro** (free tier, enough for demo).
-3. **Key pair**: create one (download the `.pem`, keep it safe — you'll SSH with it).
+2. Name: `bloggr-prod`. AMI: **Ubuntu 22.04 LTS**. Instance type: **t2.micro** (free tier eligible).
+3. **Key pair**: create or select your key pair (e.g. `bloggr-key.pem` — keep it safe).
 4. **Network settings** → edit security group, open these inbound ports:
 
    | Port | From | Why |
    |------|------|-----|
-   | 22   | Your IP only | SSH |
+   | 22   | 0.0.0.0/0 (or Your IP + GitHub Actions) | SSH for deployment |
    | 3000 | 0.0.0.0/0 | Bloggr frontend |
    | 4000 | 0.0.0.0/0 | Bloggr backend API |
-   | 8080 | 0.0.0.0/0 | Jenkins (Phase 3) |
 
    Do **not** open 6379 (Redis) or 6333 (Qdrant) to the internet.
-5. Storage: default 8 GB gp2 is fine. Launch.
+5. Storage: default 8 GB gp2/gp3 is fine. Launch.
 
-> 💰 Free tier: t2.micro = 750 h/month free. It's cheap, but **stop/terminate it when done** (Phase 8).
+### 2. SSH in + install Docker
 
-### SSH in + install Docker
-
+On your local machine:
 ```bash
 chmod 400 bloggr-key.pem
 ssh -i bloggr-key.pem ubuntu@YOUR_EC2_PUBLIC_IP
 ```
 
-On the server:
-
+On the EC2 server:
 ```bash
-sudo apt-get update && sudo apt-get install -y docker.io docker-compose-v2 git
+sudo apt-get update && sudo apt-get install -y docker.io docker-compose-v2
 sudo usermod -aG docker ubuntu
 sudo systemctl enable --now docker
-exit   # then SSH back in so the docker group applies
+exit   # Re-login so docker group permissions apply
 ```
 
----
+### 3. Setup Project Directory & `docker-compose.yml` on EC2
 
-## Phase 2 — Deploy Bloggr on the EC2
-
-### 1. Prepare `.env` files (on your laptop, then copy, or create on server)
-
-`backend/.env` (the app WILL crash at startup if this is missing or has a bad `DATABASE_URL`):
-
-```env
-DATABASE_URL=mongodb+srv://<user>:<pass>@<cluster>.mongodb.net/Bloggr   # Atlas free tier (M0)
-PORT=4000
-ENVIRONMENT=production
-JWT_SECRET=<long-random-string>
-REDIS_URL=redis://redis:6379        # matches the service name in compose
-QDRANT_URL=http://qdrant:6333
-FRONTEND_URL=http://YOUR_EC2_PUBLIC_IP:3000
-BACKEND_URL=http://YOUR_EC2_PUBLIC_IP:4000
-# Cloudinary, GROQ_API_KEY, MAIL_HOST/USER/PASS, GOOGLE/FACEBOOK OAuth — copy from your existing .env
+SSH back into EC2:
+```bash
+ssh -i bloggr-key.pem ubuntu@YOUR_EC2_PUBLIC_IP
+mkdir -p ~/bloggr
+cd ~/bloggr
 ```
 
-`frontend/.env`:
-
-```env
-REACT_APP_MODE=production
-REACT_APP_BASE_URL=http://YOUR_EC2_PUBLIC_IP:4000/api/v1
-```
-
-### 2. Add Redis to docker-compose.yml
-
-Your `docker-compose.yml` already has backend, frontend, qdrant — but **no Redis**, and the backend needs it for BullMQ queues. Add:
+Create `docker-compose.yml` (e.g. using `nano docker-compose.yml`):
 
 ```yaml
+services:
+  backend:
+    image: ghcr.io/nithin0620/bloggr-backend:latest
+    container_name: bloggr-backend
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    env_file:
+      - .env
+    environment:
+      - ENVIRONMENT=production
+    depends_on:
+      - redis
+      - qdrant
+    networks:
+      - bloggr-net
+
+  frontend:
+    image: ghcr.io/nithin0620/bloggr-frontend:latest
+    container_name: bloggr-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - bloggr-net
+
   redis:
     image: redis:7-alpine
     container_name: bloggr-redis
     restart: unless-stopped
     networks:
       - bloggr-net
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: bloggr-qdrant
+    restart: unless-stopped
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    networks:
+      - bloggr-net
+
+networks:
+  bloggr-net:
+    driver: bridge
+
+volumes:
+  qdrant_storage:
 ```
 
-### 3. Clone + deploy
+### 4. Create `.env` on EC2
 
+In `~/bloggr/`, create `.env` (`nano .env`):
+
+```env
+DATABASE_URL=mongodb+srv://<user>:<pass>@<cluster>.mongodb.net/Bloggr
+PORT=4000
+ENVIRONMENT=production
+JWT_SECRET=<long-random-string>
+REDIS_URL=redis://redis:6379
+QDRANT_URL=http://qdrant:6333
+FRONTEND_URL=http://YOUR_EC2_PUBLIC_IP:3000
+BACKEND_URL=http://YOUR_EC2_PUBLIC_IP:4000
+# Add your Cloudinary, GROQ_API_KEY, MAIL credentials, OAuth keys here
+```
+
+### 5. GHCR Authentication on EC2
+
+If your GitHub packages are private, log into GHCR on the EC2 server once:
 ```bash
-git clone https://github.com/Nithin0620/Bloggr.git
-cd Bloggr
-# copy your backend/.env and frontend/.env into the repo here
-docker compose up -d --build
-docker compose ps        # all 4 services "running"
+# Create a GitHub PAT (Personal Access Token) with 'read:packages' permission
+echo "<YOUR_GITHUB_PAT>" | docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --password-stdin
 ```
-
-### 4. Verify
-
-- Frontend: `http://YOUR_EC2_PUBLIC_IP:3000` — the React app loads.
-- API health: `curl http://localhost:4000/health` → `200 OK`.
-- Backend logs: `docker compose logs -f backend`.
-
-> If the site loads but API calls fail → you missed Phase 0 (frontend still calls Render, or CORS blocked your IP).
+*(If the package visibility is set to Public under GitHub Profile → Packages → Package Settings, `docker pull` will work without login).*
 
 ---
 
-## Phase 3 — CI/CD: ECR + Jenkins (optional but recommended)
+## Phase 2 — Setup GitHub Actions CI/CD (Build, GHCR Push & SSH Deploy)
 
-### 1. Create the ECR repo (one command, free)
+### 1. Add Repository Secrets in GitHub
 
-```bash
-# install AWS CLI + configure with your credentials (iam-user with AmazonEC2ContainerRegistryFullAccess)
-aws ecr create-repository --repository-name bloggr --region <your-region>
+Go to your repository on GitHub: **Settings → Secrets and variables → Actions → New repository secret**:
+
+| Secret Name | Value |
+|-------------|-------|
+| `EC2_HOST` | Your EC2 Public IP (e.g. `54.x.x.x`) |
+| `EC2_USER` | `ubuntu` |
+| `EC2_SSH_KEY` | Entire content of your `bloggr-key.pem` private key file |
+| `REACT_APP_BASE_URL` | `http://YOUR_EC2_PUBLIC_IP:4000/api/v1` |
+
+### 2. GitHub Actions Workflow (`.github/workflows/deploy.yml`)
+
+The workflow automatically:
+1. Builds the backend & frontend images on GitHub runners.
+2. Pushes them to GitHub Container Registry (`ghcr.io`).
+3. SSHes into your EC2 instance and restarts Docker Compose with the latest images.
+
+```yaml
+name: Build, Push to GHCR & Deploy to EC2
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  BACKEND_IMAGE: ghcr.io/${{ github.repository_owner }}/bloggr-backend
+  FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner }}/bloggr-frontend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Convert repo owner to lowercase
+        run: |
+          echo "REPO_OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: Build & Push Backend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: backend/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ env.REPO_OWNER }}/bloggr-backend:latest
+            ghcr.io/${{ env.REPO_OWNER }}/bloggr-backend:${{ github.sha }}
+
+      - name: Build & Push Frontend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: frontend/Dockerfile
+          build-args: |
+            REACT_APP_MODE=production
+            REACT_APP_BASE_URL=${{ secrets.REACT_APP_BASE_URL }}
+          push: true
+          tags: |
+            ghcr.io/${{ env.REPO_OWNER }}/bloggr-frontend:latest
+            ghcr.io/${{ env.REPO_OWNER }}/bloggr-frontend:${{ github.sha }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into EC2 and Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/bloggr
+            docker compose pull
+            docker compose up -d --remove-orphans
+            docker image prune -f
 ```
 
-Note the URI: `<account-id>.dkr.ecr.<region>.amazonaws.com/bloggr`.
+---
 
-### 2. Run Jenkins on the same EC2 (Docker)
+## Phase 3 — Verify & Test Deployment
 
-```bash
-docker run -d --name jenkins --restart=unless-stopped \
-  -p 8080:8080 -p 50000:50000 \
-  -v jenkins_home:/var/jenkins_home \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  jenkins/jenkins:lts
-```
+1. **Verify Services Running on EC2**:
+   ```bash
+   ssh -i bloggr-key.pem ubuntu@YOUR_EC2_PUBLIC_IP
+   cd ~/bloggr
+   docker compose ps
+   ```
+   All 4 services (`bloggr-backend`, `bloggr-frontend`, `bloggr-redis`, `bloggr-qdrant`) should show status "Up".
 
-Then:
-- Open `http://YOUR_EC2_PUBLIC_IP:8080`, unlock with the admin password from `docker logs jenkins`.
-- Install suggested plugins: **Pipeline**, **Docker Pipeline**, **SonarQube Scanner**, **GitHub Integration**.
-- Add credentials: `aws-ecr` (Access Key/Secret of an IAM user with ECR push access) and `github` (token with repo access).
+2. **Verify Frontend**:
+   Open `http://YOUR_EC2_PUBLIC_IP:3000` in your browser.
 
-### 3. Update your Jenkinsfile for ECR
+3. **Verify Backend Health**:
+   ```bash
+   curl http://YOUR_EC2_PUBLIC_IP:4000/health
+   ```
+   Should return `{"status":"ok", ...}` or `200 OK`.
 
-Your current `Jenkinsfile` pushes to Docker Hub. Change the `environment` block:
-
-```groovy
-environment {
-    SCANNER_HOME = tool 'sonarqubescanner'
-    AWS_REGION   = 'us-east-1'                                     // your region
-    ECR_REPO     = '<account-id>.dkr.ecr.<region>.amazonaws.com/bloggr'
-    DOCKER_TAG   = "build-${BUILD_NUMBER}"
-}
-```
-
-Replace the two `withDockerRegistry` stages with:
-
-```groovy
-stage('Build & Push to ECR') {
-    steps {
-        script {
-            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',
-                              accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                              secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-                sh """
-                    aws ecr get-login-password --region ${AWS_REGION} | \
-                      docker login --username AWS --password-stdin ${ECR_REPO}
-                    docker build -t ${ECR_REPO}:${DOCKER_TAG} -t ${ECR_REPO}:latest -f backend/Dockerfile .
-                    docker push ${ECR_REPO}:${DOCKER_TAG}
-                    docker push ${ECR_REPO}:latest
-                """
-            }
-        }
-    }
-}
-```
-
-### 4. Auto-deploy to EC2 (optional final stage)
-
-Add a stage that SSHes to the server and restarts the compose stack:
-
-```groovy
-stage('Deploy to EC2') {
-    steps {
-        sshagent(['ec2-ssh-key']) {
-            sh """
-                ssh -o StrictHostKeyChecking=no ubuntu@YOUR_EC2_PUBLIC_IP \
-                  'cd ~/Bloggr && git pull && docker compose up -d --build'
-            """
-        }
-    }
-}
-```
-
-### 5. Webhook
-
-GitHub → repo → **Settings → Webhooks** → add payload URL
-`http://YOUR_EC2_PUBLIC_IP:8080/github-webhook/`, content type `application/json`.
-Now every `git push` to `main` triggers the pipeline.
+4. **Check Logs**:
+   ```bash
+   docker compose logs -f backend
+   docker compose logs -f frontend
+   ```
 
 ---
 
