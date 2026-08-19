@@ -14,7 +14,10 @@ const defaultOrigins = [
    "https://bloggrplatform.pages.dev",
    "https://bloggr.devnithin.xyz",
    "http://bloggr.devnithin.xyz",
-   "http://YOUR_EC2_PUBLIC_IP:3000",
+   "https://bloggr.aws.devnithin.xyz",
+   "http://bloggr.aws.devnithin.xyz",
+   "http://bloggr.aws.devnithin.xyz:3000",
+   "http://18.233.6.248:3000",
 ];
 
 const envOrigins = process.env.ALLOWED_ORIGINS
@@ -28,7 +31,18 @@ const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
 
 const io = new Server(server,{
    cors : {
-      origin: allowedOrigins,
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        const isAllowed =
+          allowedOrigins.includes(origin) ||
+          /\.devnithin\.xyz(:[0-9]+)?$/.test(origin) ||
+          origin.startsWith("http://18.233.6.248") ||
+          origin.startsWith("https://18.233.6.248");
+        if (isAllowed) {
+          return callback(null, true);
+        }
+        return callback(new Error(`CORS blocked for origin: ${origin}`), false);
+      },
       credentials:true,
    }
 });
