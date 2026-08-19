@@ -9,7 +9,7 @@ services:
     ports:
       - "4000:4000"
     env_file:
-      - ./backend/.env
+      - .env
     environment:
       - ENVIRONMENT=production
     depends_on:
